@@ -10,6 +10,13 @@ export const GAME_IDS = [
   'poker',
   'keno',
   'hilo',
+  'baccarat',
+  'dragontiger',
+  'sicbo',
+  'limbo',
+  'tower',
+  'coinflip',
+  'scratch',
 ] as const
 
 export type GameId = (typeof GAME_IDS)[number]

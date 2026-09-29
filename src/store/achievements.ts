@@ -16,6 +16,12 @@ export type RoundTag =
   | 'keno-7'
   | 'craps-point'
   | 'hilo-10'
+  | 'baccarat-tie'
+  | 'sicbo-triple'
+  | 'limbo-100'
+  | 'tower-top'
+  | 'coin-5'
+  | 'scratch-top'
 
 /** The subset of casino state achievements are evaluated against. */
 export interface AchievementSnapshot {
@@ -296,6 +302,60 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     tier: 'gold',
     reward: 2_500,
     check: tagged('hilo-10'),
+  },
+  {
+    id: 'baccarat-tie',
+    icon: 'diamond-suit',
+    title: 'Равновесие',
+    description: 'Выиграйте ставку на ничью в баккаре.',
+    tier: 'silver',
+    reward: 1_500,
+    check: tagged('baccarat-tie'),
+  },
+  {
+    id: 'sicbo-triple',
+    icon: 'sic-bo',
+    title: 'Тройной удар',
+    description: 'Угадайте конкретную тройку в сик-бо.',
+    tier: 'platinum',
+    reward: 10_000,
+    check: tagged('sicbo-triple'),
+  },
+  {
+    id: 'limbo-100',
+    icon: 'bullseye',
+    title: 'Снайпер',
+    description: 'Выиграйте в «Лимбо» с целью ×100 или выше.',
+    tier: 'gold',
+    reward: 3_000,
+    check: tagged('limbo-100'),
+  },
+  {
+    id: 'tower-top',
+    icon: 'castle',
+    title: 'Покоритель башни',
+    description: 'Доберитесь до вершины «Башни».',
+    tier: 'gold',
+    reward: 3_000,
+    check: tagged('tower-top'),
+  },
+  {
+    id: 'coin-5',
+    icon: 'coin',
+    title: 'Пять из пяти',
+    description: 'Угадайте 5 бросков монетки подряд и заберите выигрыш.',
+    tier: 'silver',
+    reward: 1_500,
+    check: tagged('coin-5'),
+  },
+  {
+    id: 'scratch-top',
+    icon: 'crown',
+    title: 'Счастливый билет',
+    description: 'Найдите три короны на скретч-карте.',
+    tier: 'platinum',
+    reward: 10_000,
+    check: tagged('scratch-top'),
   },
 ]
 

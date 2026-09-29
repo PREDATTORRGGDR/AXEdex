@@ -12,7 +12,8 @@ import { join } from 'node:path'
 export const ICONS = [
   // Games
   'spade-suit', 'heart-suit', 'slot-machine', 'rocket', 'bomb', 'game-die', 'joker', 'input-numbers',
-  'crystal-ball', 'dragon-face', 'bullseye', 'castle', 'coin', 'admission-tickets',
+  'crystal-ball', 'dragon-face', 'tiger-face', 'bullseye', 'castle', 'coin', 'admission-tickets', 'diamond-suit',
+  'cherries', 'bell', 'skull', 'eagle',
   // Interface
   'wrapped-gift', 'spiral-calendar', 'tear-off-calendar', 'droplet', 'money-bag', 'glowing-star', 'trophy',
   'crown', 'sparkles', 'house', 'bust-in-silhouette', 'gem-stone', 'fire', 'bar-chart', 'hundred-points',

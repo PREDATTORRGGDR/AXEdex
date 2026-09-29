@@ -49,10 +49,10 @@ function Hero() {
             <Sparkles className="size-3.5" /> Добро пожаловать в AXEdex
           </p>
           <h2 className="mt-4 font-display text-2xl leading-tight font-black text-white sm:text-4xl">
-            Одиннадцать игр. <span className="text-gold-gradient">Ноль риска.</span>
+            {GAME_LIST.length} игр. <span className="text-gold-gradient">Ноль риска.</span>
           </h2>
           <p className="mt-2 max-w-md text-sm text-slate-400">
-            Рулетка, блэкджек, слоты, «Ракета» и ещё семь игр на бесплатные виртуальные фишки.
+            Рулетка, блэкджек, слоты, «Ракета» и ещё {GAME_LIST.length - 4} игр на бесплатные виртуальные фишки.
           </p>
 
           <div className="mt-6 flex flex-wrap items-end gap-x-8 gap-y-4">
