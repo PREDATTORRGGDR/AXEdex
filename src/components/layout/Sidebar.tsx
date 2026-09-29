@@ -72,7 +72,7 @@ export function Sidebar() {
         <NavItem icon="crown" label="Профиль" active={route.name === 'profile'} onClick={() => navigate(paths.profile)} />
         <NavItem
           icon="wrapped-gift"
-          label="Бесплатные фишки"
+          label="Бонусы"
           onClick={() => setRewardsOpen(true)}
           trailing={
             claimable && (

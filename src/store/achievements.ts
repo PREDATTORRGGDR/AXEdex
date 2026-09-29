@@ -57,14 +57,13 @@ export interface AchievementDef {
 
 const tagged = (tag: RoundTag) => (_: AchievementSnapshot, r?: AchievementRound) => !!r?.tags.includes(tag)
 
-export const ACHIEVEMENTS: readonly AchievementDef[] = [
+const DEFS: readonly Omit<AchievementDef, 'reward'>[] = [
   {
     id: 'first-round',
     icon: 'party-popper',
     title: 'Добро пожаловать',
     description: 'Сыграйте первый раунд в любой игре.',
     tier: 'bronze',
-    reward: 250,
     check: (s) => s.rounds >= 1,
     progress: (s) => [Math.min(s.rounds, 1), 1],
   },
@@ -74,7 +73,6 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'Большое турне',
     description: `Сыграйте во все ${GAME_IDS.length} игр.`,
     tier: 'gold',
-    reward: 5_000,
     check: (s) => s.gamesPlayed.length >= GAME_IDS.length,
     progress: (s) => [s.gamesPlayed.length, GAME_IDS.length],
   },
@@ -84,7 +82,6 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'Завсегдатай',
     description: 'Сыграйте 100 раундов.',
     tier: 'silver',
-    reward: 1_500,
     check: (s) => s.rounds >= 100,
     progress: (s) => [Math.min(s.rounds, 100), 100],
   },
@@ -94,7 +91,6 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'Марафонец',
     description: 'Сыграйте 1000 раундов.',
     tier: 'gold',
-    reward: 10_000,
     check: (s) => s.rounds >= 1_000,
     progress: (s) => [Math.min(s.rounds, 1_000), 1_000],
   },
@@ -102,19 +98,17 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     id: 'high-roller',
     icon: 'money-bag',
     title: 'Хайроллер',
-    description: 'Поставьте 5000 фишек или больше за один раунд.',
+    description: 'Поставьте 1000 фишек или больше за один раунд.',
     tier: 'silver',
-    reward: 1_000,
-    check: (_, r) => !!r && r.wager >= 5_000,
+    check: (_, r) => !!r && r.wager >= 1_000,
   },
   {
     id: 'big-winner',
     icon: 'trophy',
     title: 'Крупный куш',
-    description: 'Выиграйте 10 000 фишек чистыми за один раунд.',
+    description: 'Выиграйте 2500 фишек чистыми за один раунд.',
     tier: 'gold',
-    reward: 3_000,
-    check: (_, r) => !!r && r.net >= 10_000,
+    check: (_, r) => !!r && r.net >= 2_500,
   },
   {
     id: 'fifty-bagger',
@@ -122,7 +116,6 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'Полтинник',
     description: 'Получите выплату ×50 или больше.',
     tier: 'gold',
-    reward: 3_000,
     check: (_, r) => !!r && r.multiplier >= 50,
   },
   {
@@ -131,7 +124,6 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'Горячая серия',
     description: 'Выиграйте 5 раундов подряд.',
     tier: 'silver',
-    reward: 1_500,
     check: (s) => s.bestStreak >= 5,
     progress: (s) => [Math.min(s.bestStreak, 5), 5],
   },
@@ -141,29 +133,26 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'В огне',
     description: 'Выиграйте 10 раундов подряд.',
     tier: 'gold',
-    reward: 5_000,
     check: (s) => s.bestStreak >= 10,
     progress: (s) => [Math.min(s.bestStreak, 10), 10],
   },
   {
     id: 'six-figures',
     icon: 'gem-stone',
-    title: 'Шестизначный',
-    description: 'Доведите баланс до 100 000 фишек.',
+    title: 'Пять знаков',
+    description: 'Доведите баланс до 10 000 фишек.',
     tier: 'gold',
-    reward: 5_000,
-    check: (s) => s.peakBalance >= 100_000,
-    progress: (s) => [Math.min(s.peakBalance, 100_000), 100_000],
+    check: (s) => s.peakBalance >= 10_000,
+    progress: (s) => [Math.min(s.peakBalance, 10_000), 10_000],
   },
   {
     id: 'millionaire',
     icon: 'crown',
-    title: 'Фишечный миллионер',
-    description: 'Доведите баланс до 1 000 000 фишек.',
+    title: 'Шесть знаков',
+    description: 'Доведите баланс до 100 000 фишек.',
     tier: 'platinum',
-    reward: 25_000,
-    check: (s) => s.peakBalance >= 1_000_000,
-    progress: (s) => [Math.min(s.peakBalance, 1_000_000), 1_000_000],
+    check: (s) => s.peakBalance >= 100_000,
+    progress: (s) => [Math.min(s.peakBalance, 100_000), 100_000],
   },
   {
     id: 'rising-star',
@@ -171,7 +160,6 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'Восходящая звезда',
     description: 'Достигните 10-го уровня.',
     tier: 'silver',
-    reward: 2_000,
     check: (s) => s.level >= 10,
     progress: (s) => [Math.min(s.level, 10), 10],
   },
@@ -181,7 +169,6 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'ВИП-зал',
     description: 'Достигните 25-го уровня.',
     tier: 'platinum',
-    reward: 10_000,
     check: (s) => s.level >= 25,
     progress: (s) => [Math.min(s.level, 25), 25],
   },
@@ -191,7 +178,6 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'Верный гость',
     description: 'Забирайте ежедневный бонус 7 дней подряд.',
     tier: 'gold',
-    reward: 5_000,
     check: (s) => s.dailyStreak >= 7,
     progress: (s) => [Math.min(s.dailyStreak, 7), 7],
   },
@@ -199,9 +185,8 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     id: 'comeback',
     icon: 'flexed-biceps',
     title: 'Второе дыхание',
-    description: 'Опустошите баланс и возьмите бесплатное пополнение.',
+    description: 'Обанкротьтесь и получите помощь при банкротстве.',
     tier: 'bronze',
-    reward: 500,
     check: (s) => s.refills >= 1,
   },
   {
@@ -210,7 +195,6 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'Натуральный',
     description: 'Получите блэкджек с раздачи.',
     tier: 'bronze',
-    reward: 500,
     check: tagged('bj-natural'),
   },
   {
@@ -219,7 +203,6 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'Королевская особа',
     description: 'Соберите роял-флеш в видеопокере.',
     tier: 'platinum',
-    reward: 20_000,
     check: tagged('royal-flush'),
   },
   {
@@ -228,7 +211,6 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'Точно в цель',
     description: 'Выиграйте ставку на одно число в рулетке.',
     tier: 'silver',
-    reward: 1_000,
     check: tagged('roulette-straight'),
   },
   {
@@ -237,7 +219,6 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'Бонусный раунд',
     description: 'Запустите фриспины в Неон-слотах.',
     tier: 'silver',
-    reward: 1_000,
     check: tagged('slots-free-spins'),
   },
   {
@@ -246,7 +227,6 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'На Луну',
     description: 'Заберите выигрыш в «Ракете» на ×10 или выше.',
     tier: 'gold',
-    reward: 2_500,
     check: tagged('crash-10x'),
   },
   {
@@ -255,7 +235,6 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'Сапёр',
     description: 'Откройте 15 безопасных клеток за один раунд «Мин».',
     tier: 'gold',
-    reward: 2_500,
     check: tagged('mines-15'),
   },
   {
@@ -264,7 +243,6 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'На самом краю',
     description: 'Отправьте шарик Плинко в крайнюю лунку.',
     tier: 'gold',
-    reward: 2_500,
     check: tagged('plinko-edge'),
   },
   {
@@ -273,7 +251,6 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'Джекпот-сектор',
     description: 'Попадите в сектор джекпота на Колесе фортуны.',
     tier: 'gold',
-    reward: 2_500,
     check: tagged('wheel-jackpot'),
   },
   {
@@ -282,7 +259,6 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'Оракул Кено',
     description: 'Угадайте 7 или больше чисел в одном тираже Кено.',
     tier: 'gold',
-    reward: 2_500,
     check: tagged('keno-7'),
   },
   {
@@ -291,7 +267,6 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'Пойнт взят',
     description: 'Выиграйте ставку «Пас» после установки пойнта в крэпсе.',
     tier: 'bronze',
-    reward: 500,
     check: tagged('craps-point'),
   },
   {
@@ -300,7 +275,6 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'Ясновидящий',
     description: 'Угадайте 10 карт подряд в «Выше-Ниже».',
     tier: 'gold',
-    reward: 2_500,
     check: tagged('hilo-10'),
   },
   {
@@ -309,7 +283,6 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'Равновесие',
     description: 'Выиграйте ставку на ничью в баккаре.',
     tier: 'silver',
-    reward: 1_500,
     check: tagged('baccarat-tie'),
   },
   {
@@ -318,7 +291,6 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'Тройной удар',
     description: 'Угадайте конкретную тройку в сик-бо.',
     tier: 'platinum',
-    reward: 10_000,
     check: tagged('sicbo-triple'),
   },
   {
@@ -327,7 +299,6 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'Снайпер',
     description: 'Выиграйте в «Лимбо» с целью ×100 или выше.',
     tier: 'gold',
-    reward: 3_000,
     check: tagged('limbo-100'),
   },
   {
@@ -336,7 +307,6 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'Покоритель башни',
     description: 'Доберитесь до вершины «Башни».',
     tier: 'gold',
-    reward: 3_000,
     check: tagged('tower-top'),
   },
   {
@@ -345,7 +315,6 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'Пять из пяти',
     description: 'Угадайте 5 бросков монетки подряд и заберите выигрыш.',
     tier: 'silver',
-    reward: 1_500,
     check: tagged('coin-5'),
   },
   {
@@ -354,10 +323,14 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
     title: 'Счастливый билет',
     description: 'Найдите три короны на скретч-карте.',
     tier: 'platinum',
-    reward: 10_000,
     check: tagged('scratch-top'),
   },
 ]
+
+/** Chip rewards stay small on purpose: they are a pat on the back, not a salary. */
+export const TIER_REWARD: Record<AchievementTier, number> = { bronze: 50, silver: 150, gold: 500, platinum: 1_500 }
+
+export const ACHIEVEMENTS: readonly AchievementDef[] = DEFS.map((a) => ({ ...a, reward: TIER_REWARD[a.tier] }))
 
 export const ACHIEVEMENT_BY_ID = Object.fromEntries(ACHIEVEMENTS.map((a) => [a.id, a])) as Record<
   string,

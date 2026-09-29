@@ -1,6 +1,6 @@
-import { Award, RotateCcw, Settings2, Vibrate, Volume2 } from 'lucide-react'
+import { Award, Download, HardDriveDownload, RotateCcw, Settings2, Upload, Vibrate, Volume2 } from 'lucide-react'
 import { motion } from 'motion/react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { sfx } from '../audio/sfx'
 import { AchievementGrid } from '../components/profile/AchievementGrid'
 import { BalanceChart } from '../components/profile/BalanceChart'
@@ -17,8 +17,9 @@ import { cn } from '../lib/cn'
 import { formatChips, formatMultiplier, formatPercent, formatSigned, plural } from '../lib/format'
 import { navigate, paths } from '../router/router'
 import { ACHIEVEMENTS } from '../store/achievements'
-import { hasDecided, useCasino, winRate } from '../store/casino'
+import { hasDecided, STARTING_BALANCE, useCasino, winRate } from '../store/casino'
 import { levelFromXp, levelUpReward } from '../store/progression'
+import { exportSave, importSave } from '../store/backup'
 import { toast } from '../store/toasts'
 
 function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label: string }) {
@@ -45,6 +46,18 @@ function SettingsPanel() {
   const update = useCasino((s) => s.updateSettings)
   const reset = useCasino((s) => s.resetProgress)
   const [confirm, setConfirm] = useState(false)
+  const fileRef = useRef<HTMLInputElement>(null)
+
+  const onImport = async (file: File | undefined) => {
+    if (!file) return
+    try {
+      await importSave(file)
+      toast({ kind: 'info', title: 'Сохранение загружено', message: 'Страница обновится через секунду.' })
+      window.setTimeout(() => window.location.reload(), 900)
+    } catch (e) {
+      toast({ kind: 'warning', title: 'Не удалось загрузить', message: e instanceof Error ? e.message : 'Неизвестная ошибка.' })
+    }
+  }
 
   return (
     <Panel className="p-4 sm:p-5">
@@ -96,6 +109,22 @@ function SettingsPanel() {
           </div>
           <Toggle label="Вибрация" checked={settings.haptics} onChange={(haptics) => update({ haptics })} />
         </div>
+        <div className="flex flex-wrap items-center gap-3 py-3">
+          <HardDriveDownload className="size-5 text-emerald-300" />
+          <div className="min-w-40 flex-1">
+            <p className="text-sm font-semibold text-white">Сохранение</p>
+            <p className="text-xs text-slate-500">Прогресс автоматически хранится в этом браузере. Сделайте копию, чтобы перенести его.</p>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="glass" size="sm" icon={Download} onClick={exportSave}>
+              Скачать
+            </Button>
+            <Button variant="glass" size="sm" icon={Upload} onClick={() => fileRef.current?.click()}>
+              Загрузить
+            </Button>
+            <input ref={fileRef} type="file" accept="application/json,.json" className="hidden" onChange={(e) => void onImport(e.target.files?.[0])} />
+          </div>
+        </div>
         <div className="flex items-center gap-3 pt-3">
           <RotateCcw className="size-5 text-rose-300" />
           <div className="flex-1">
@@ -110,7 +139,7 @@ function SettingsPanel() {
 
       <Modal open={confirm} onClose={() => setConfirm(false)} title="Сбросить прогресс?" sheet={false}>
         <p className="text-sm text-slate-300">
-          Баланс вернётся к стартовым 10 000 фишек, а опыт, статистика и достижения будут удалены. Это действие нельзя
+          Баланс вернётся к стартовым {formatChips(STARTING_BALANCE)} фишкам, а опыт, статистика и достижения будут удалены. Это действие нельзя
           отменить.
         </p>
         <div className="mt-5 flex gap-2">
@@ -237,7 +266,7 @@ export function Profile() {
         <StatTile index={3} emoji="hundred-points" accent="violet" label="Лучший множитель" value={lifetime.bestMultiplier ? formatMultiplier(lifetime.bestMultiplier) : '—'} hint={`Лучшая серия: ${lifetime.bestStreak} ${plural(lifetime.bestStreak, ['победа', 'победы', 'побед'])}`} />
         <StatTile index={4} emoji="coin" accent="gold" label="Всего поставлено" value={formatChips(lifetime.wagered)} hint={`Возвращено ${formatChips(lifetime.returned)}`} />
         <StatTile index={5} emoji="bar-chart" accent={net >= 0 ? 'emerald' : 'rose'} label="Чистый итог" value={formatSigned(net)} hint="за всё время" />
-        <StatTile index={6} emoji="wrapped-gift" accent="emerald" label="Бесплатные фишки" value={formatChips(lifetime.rewardChips)} hint={`Бонусов: ${lifetime.dailyClaims} · кранов: ${lifetime.faucetClaims} · пополнений: ${lifetime.refills}`} />
+        <StatTile index={6} emoji="wrapped-gift" accent="emerald" label="Бонусные фишки" value={formatChips(lifetime.rewardChips)} hint={`Бонусов: ${lifetime.dailyClaims} · помощи банка: ${lifetime.refills}`} />
         <StatTile index={7} emoji="fire" accent="rose" label="Серия бонусов" value={`${daily.streak} / 7`} hint={`Пик баланса: ${formatChips(lifetime.peakBalance)}`} />
       </div>
 
@@ -266,6 +295,10 @@ export function Profile() {
         </SectionTitle>
         <AchievementGrid />
       </Panel>
+
+      <p className="pb-2 text-center text-[11px] text-slate-600">
+        Иконки: Microsoft Fluent Emoji (MIT). Эмблема AXEdex создана на основе «Crossed axes» с game-icons.net (CC BY 3.0).
+      </p>
     </div>
   )
 }

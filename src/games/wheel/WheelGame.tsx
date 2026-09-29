@@ -67,7 +67,7 @@ export default function WheelGame() {
   const jackpotId = useSvgId('jackpot')
   const [pointerScope, animatePointer] = useAnimate<HTMLDivElement>()
 
-  const [bet, setBet] = useState(100)
+  const [bet, setBet] = useState(10)
   const [risk, setRisk] = useState<WheelRisk>('medium')
   const [spinning, setSpinning] = useState(false)
   const [landed, setLanded] = useState<number | null>(null)

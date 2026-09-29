@@ -51,7 +51,7 @@ export default function CoinFlipGame() {
   const mounted = useMountedRef()
   const [banner, showBanner] = useResultBanner(2400)
 
-  const [bet, setBet] = useState(100)
+  const [bet, setBet] = useState(10)
   const [phase, setPhase] = useState<Phase>('idle')
   const [wins, setWins] = useState(0)
   const [flipping, setFlipping] = useState(false)

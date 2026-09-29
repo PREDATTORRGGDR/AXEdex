@@ -87,8 +87,8 @@ export function TopBar() {
                 ? 'border-emerald-400/50 bg-emerald-400/10 text-emerald-300 shadow-glow-green'
                 : 'border-white/10 bg-white/[0.03] text-slate-300 hover:text-white',
             )}
-            aria-label="Бесплатные фишки"
-            title="Бесплатные фишки"
+            aria-label="Бонусы"
+            title="Бонусы"
           >
             <Icon name="wrapped-gift" size={26} className={cn(claimable && 'animate-wiggle')} />
             {claimable && (

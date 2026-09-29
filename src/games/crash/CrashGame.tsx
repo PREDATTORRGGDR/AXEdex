@@ -62,7 +62,7 @@ export default function CrashGame() {
   const [shakeScope, shake] = useAnimate<HTMLDivElement>()
   const [banner, showBanner] = useResultBanner(2800)
 
-  const [bet, setBet] = useState(100)
+  const [bet, setBet] = useState(10)
   const [autoOn, setAutoOn] = useState(false)
   const [autoValue, setAutoValue] = useState(2)
   const [phase, setPhase] = useState<Phase>('idle')

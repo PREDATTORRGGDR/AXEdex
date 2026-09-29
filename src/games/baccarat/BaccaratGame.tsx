@@ -63,7 +63,7 @@ export default function BaccaratGame() {
   const [banner, showBanner] = useResultBanner(2800)
   const { road, push } = useRoad()
   const chips = useChipBets<BaccaratBet>()
-  const [chip, setChip] = useState(100)
+  const [chip, setChip] = useState(10)
   const [busy, setBusy] = useState(false)
   const [player, setPlayer] = useState<Card[]>([])
   const [banker, setBanker] = useState<Card[]>([])

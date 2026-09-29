@@ -50,8 +50,9 @@ export function xpForRound(wager: number, won: boolean): number {
   return won ? Math.floor(base * 1.25) : base
 }
 
+/** Small chip reward for a level-up: 20 × the new level. */
 export function levelUpReward(level: number): number {
-  return 250 * level
+  return 20 * level
 }
 
 const TITLES: [minLevel: number, title: string][] = [

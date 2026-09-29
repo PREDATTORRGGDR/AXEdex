@@ -32,7 +32,7 @@ export default function TowerGame() {
   const [banner, showBanner] = useResultBanner(2600)
   const [scope, animateBoard] = useAnimate<HTMLDivElement>()
 
-  const [bet, setBet] = useState(100)
+  const [bet, setBet] = useState(10)
   const [level, setLevel] = useState<TowerLevel>('medium')
   const [phase, setPhase] = useState<Phase>('idle')
   const [traps, setTraps] = useState<number[][]>([])

@@ -24,7 +24,7 @@ export default function KenoGame() {
   const mounted = useMountedRef()
   const [banner, showBanner] = useResultBanner(2600)
 
-  const [bet, setBet] = useState(100)
+  const [bet, setBet] = useState(10)
   const [picks, setPicks] = useState<number[]>([])
   const [drawn, setDrawn] = useState<number[]>([])
   const [drawing, setDrawing] = useState(false)

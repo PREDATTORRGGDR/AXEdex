@@ -74,7 +74,7 @@ export default function PlinkoGame() {
   const [wrapRef, { width }] = useElementSize<HTMLDivElement>()
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
-  const [bet, setBet] = useState(50)
+  const [bet, setBet] = useState(5)
   const [risk, setRisk] = useState<Risk>('medium')
   const [rows, setRows] = useState<Rows>(12)
   const [inFlight, setInFlight] = useState(0)

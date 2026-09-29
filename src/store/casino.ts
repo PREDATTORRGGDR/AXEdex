@@ -10,25 +10,21 @@ import { toast } from './toasts'
 /* ------------------------------------------------------------------ */
 /* Economy constants: all chips are free, virtual and worthless.       */
 /* ------------------------------------------------------------------ */
-export const STARTING_BALANCE = 10_000
-/** A free refill tops the balance back up to this amount. */
-export const REFILL_TARGET = 10_000
-/** Refills unlock once the balance drops below this. */
-export const REFILL_THRESHOLD = 100
+export const STARTING_BALANCE = 1_000
+/** Below this the player is broke: no chip on the rack can be bet. */
+export const BANKRUPT_THRESHOLD = 10
+/** One-off aid for a broke player; deliberately small and rate-limited. */
+export const BANKRUPT_AID = 250
+export const BANKRUPT_COOLDOWN_MS = 8 * 60 * 60 * 1000
 export const DAILY_COOLDOWN_MS = 24 * 60 * 60 * 1000
 /** Claiming within this window of the previous claim keeps the streak alive. */
 export const DAILY_STREAK_WINDOW_MS = 48 * 60 * 60 * 1000
 export const DAILY_MAX_STREAK = 7
 
-export const FAUCET_COOLDOWN_MS = 60 * 60 * 1000
-
-export function faucetAmount(level: number): number {
-  return 500 + 100 * Math.min(Math.max(level, 1) - 1, 20)
-}
-
+/** Modest daily bonus: 100 chips, +50 per consecutive day, capped at 400. */
 export function dailyBonusAmount(streakDay: number): number {
   const day = Math.min(Math.max(streakDay, 1), DAILY_MAX_STREAK)
-  return 1_000 + (day - 1) * 500
+  return 100 + (day - 1) * 50
 }
 
 /* ------------------------------------------------------------------ */
@@ -85,7 +81,6 @@ export interface LifetimeStats extends GameStats {
   peakBalance: number
   refills: number
   dailyClaims: number
-  faucetClaims: number
   /** Free chips received from achievements and level-ups. */
   rewardChips: number
 }
@@ -109,7 +104,8 @@ export interface DailyState {
 interface CasinoData {
   balance: number
   xp: number
-  faucetLastClaimAt: number | null
+  /** When the last bankruptcy aid was taken. */
+  refillLastAt: number | null
   favorites: GameId[]
   openRounds: OpenRound[]
   lifetime: LifetimeStats
@@ -135,8 +131,7 @@ interface CasinoActions {
   /** Settles every open round that carries a fallback. Runs on app start. */
   recoverRounds: () => void
   claimDailyBonus: (now?: number) => number
-  claimFaucet: (now?: number) => number
-  claimRefill: () => number
+  claimRefill: (now?: number) => number
   toggleFavorite: (game: GameId) => void
   updateSettings: (patch: Partial<Settings>) => void
   resetProgress: () => void
@@ -165,7 +160,7 @@ export const emptyGameStats = (): GameStats => ({
 const initialData = (): CasinoData => ({
   balance: STARTING_BALANCE,
   xp: 0,
-  faucetLastClaimAt: null,
+  refillLastAt: null,
   favorites: [],
   openRounds: [],
   lifetime: {
@@ -175,7 +170,6 @@ const initialData = (): CasinoData => ({
     peakBalance: STARTING_BALANCE,
     refills: 0,
     dailyClaims: 0,
-    faucetClaims: 0,
     rewardChips: 0,
   },
   games: {},
@@ -248,21 +242,22 @@ export function getDailyStatus(daily: DailyState, now = Date.now()): DailyStatus
   }
 }
 
-export const canRefill = (s: Pick<CasinoData, 'balance'>) => s.balance < REFILL_THRESHOLD
-
-export interface FaucetStatus {
+export interface RefillStatus {
+  /** The player is broke: balance below the smallest chip and nothing in play. */
+  broke: boolean
+  /** Broke and the cooldown has passed. */
   available: boolean
   nextAt: number
   amount: number
 }
 
-export function getFaucetStatus(lastClaimAt: number | null, xp: number, now = Date.now()): FaucetStatus {
-  const available = lastClaimAt === null || now - lastClaimAt >= FAUCET_COOLDOWN_MS
-  return {
-    available,
-    nextAt: lastClaimAt === null ? now : Math.max(now, lastClaimAt + FAUCET_COOLDOWN_MS),
-    amount: faucetAmount(levelFromXp(xp).level),
-  }
+export function getRefillStatus(
+  s: Pick<CasinoData, 'balance' | 'openRounds' | 'refillLastAt'>,
+  now = Date.now(),
+): RefillStatus {
+  const broke = s.balance < BANKRUPT_THRESHOLD && s.openRounds.length === 0
+  const nextAt = s.refillLastAt === null ? now : Math.max(now, s.refillLastAt + BANKRUPT_COOLDOWN_MS)
+  return { broke, available: broke && nextAt <= now, nextAt, amount: BANKRUPT_AID }
 }
 
 /** Credits free chips outside of a round (bonuses, rewards). */
@@ -422,31 +417,15 @@ export const useCasino = create<CasinoState>()(
           return status.amount
         },
 
-        claimFaucet: (now = Date.now()) => {
-          const status = getFaucetStatus(get().faucetLastClaimAt, get().xp, now)
+        claimRefill: (now = Date.now()) => {
+          const status = getRefillStatus(get(), now)
           if (!status.available) return 0
           set((s) => {
             const { peakBalance, ...credit } = creditFree(s, status.amount)
-            return {
-              ...credit,
-              faucetLastClaimAt: now,
-              lifetime: { ...s.lifetime, faucetClaims: s.lifetime.faucetClaims + 1, peakBalance },
-            }
-          })
-          return status.amount
-        },
-
-        claimRefill: () => {
-          const s = get()
-          if (!canRefill(s)) return 0
-          const amount = REFILL_TARGET - s.balance
-          set({
-            balance: REFILL_TARGET,
-            lifetime: { ...s.lifetime, refills: s.lifetime.refills + 1 },
-            balanceHistory: pushHistory(s.balanceHistory, REFILL_TARGET),
+            return { ...credit, refillLastAt: now, lifetime: { ...s.lifetime, refills: s.lifetime.refills + 1, peakBalance } }
           })
           unlockAchievements()
-          return amount
+          return status.amount
         },
 
         toggleFavorite: (game) =>
@@ -461,12 +440,14 @@ export const useCasino = create<CasinoState>()(
     },
     {
       name: `${STORAGE_PREFIX}:casino`,
-      version: 1,
+      // v2: tighter economy. Earlier saves came from the generous prototype, so start fresh.
+      version: 2,
+      migrate: () => initialData(),
       storage: persistStorage,
       partialize: (s): CasinoData => ({
         balance: s.balance,
         xp: s.xp,
-        faucetLastClaimAt: s.faucetLastClaimAt,
+        refillLastAt: s.refillLastAt,
         favorites: s.favorites,
         openRounds: s.openRounds,
         lifetime: s.lifetime,

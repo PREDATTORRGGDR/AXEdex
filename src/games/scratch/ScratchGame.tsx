@@ -137,7 +137,7 @@ export default function ScratchGame() {
   const guard = useRoundGuard()
   const [banner, showBanner] = useResultBanner(2800)
 
-  const [bet, setBet] = useState(100)
+  const [bet, setBet] = useState(10)
   const [ticket, setTicket] = useState<Ticket | null>(null)
   const [ticketId, setTicketId] = useState(0)
   const [cleared, setCleared] = useState(false)

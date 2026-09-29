@@ -1,19 +1,18 @@
-import { Check, Droplets, Gift, LifeBuoy, Lock } from 'lucide-react'
+import { Check, Gift, LifeBuoy, Lock } from 'lucide-react'
 import { motion } from 'motion/react'
 import { sfx, haptic } from '../../audio/sfx'
 import { useNow } from '../../hooks/useNow'
 import { cn } from '../../lib/cn'
 import { formatChips, formatDuration } from '../../lib/format'
 import {
-  canRefill,
+  BANKRUPT_AID,
+  BANKRUPT_COOLDOWN_MS,
+  BANKRUPT_THRESHOLD,
   DAILY_COOLDOWN_MS,
   DAILY_MAX_STREAK,
   dailyBonusAmount,
-  FAUCET_COOLDOWN_MS,
   getDailyStatus,
-  getFaucetStatus,
-  REFILL_TARGET,
-  REFILL_THRESHOLD,
+  getRefillStatus,
   useCasino,
 } from '../../store/casino'
 import { celebrate } from '../../store/fx'
@@ -124,103 +123,63 @@ export function DailyBonusCard({ compact }: { compact?: boolean }) {
   )
 }
 
-export function FaucetCard() {
-  const now = useNow()
-  const faucetAt = useCasino((s) => s.faucetLastClaimAt)
-  const xp = useCasino((s) => s.xp)
-  const claim = useCasino((s) => s.claimFaucet)
-  const status = getFaucetStatus(faucetAt, xp, now)
-
-  return (
-    <div className="relative overflow-hidden rounded-2xl border border-emerald-400/20 bg-[linear-gradient(135deg,rgba(52,245,160,0.12),rgba(7,11,24,0.6)_60%)] p-4">
-      <div className="absolute -top-10 -right-10 size-36 rounded-full bg-emerald-400/15 blur-3xl" />
-      <div className="relative flex items-center gap-3">
-        <div className="grid size-12 shrink-0 place-items-center rounded-xl bg-emerald-400/15">
-          <Icon name="droplet" size={32} />
-        </div>
-        <div className="min-w-0 flex-1">
-          <h3 className="font-display text-sm font-bold text-white">Ежечасный кран</h3>
-          <p className="text-xs text-slate-400">Бесплатные фишки раз в час. Сумма растёт с уровнем.</p>
-        </div>
-      </div>
-      <div className="relative mt-4">
-        {status.available ? (
-          <Button
-            variant="emerald"
-            size="lg"
-            icon={Droplets}
-            sound={false}
-            className="w-full"
-            onClick={() => onClaimed(claim(), 'Кран открыт')}
-          >
-            Забрать {formatChips(status.amount)}
-          </Button>
-        ) : (
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-400">Кран наполнится через</span>
-              <span className="font-bold text-emerald-300 tabular-nums">{formatDuration(status.nextAt - now)}</span>
-            </div>
-            <CooldownBar remaining={status.nextAt - now} total={FAUCET_COOLDOWN_MS} />
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
-
+/** Bankruptcy aid: only when completely broke, and only once per cooldown. */
 export function RefillCard() {
+  const now = useNow()
   const balance = useCasino((s) => s.balance)
+  const openRounds = useCasino((s) => s.openRounds)
+  const refillLastAt = useCasino((s) => s.refillLastAt)
   const claim = useCasino((s) => s.claimRefill)
-  const available = canRefill({ balance })
+  const status = getRefillStatus({ balance, openRounds, refillLastAt }, now)
+
   return (
     <div
       className={cn(
         'relative overflow-hidden rounded-2xl border p-4',
-        available
+        status.available
           ? 'border-cyan-300/40 bg-[linear-gradient(135deg,rgba(34,211,238,0.16),rgba(7,11,24,0.6)_60%)]'
           : 'border-white/5 bg-white/[0.02]',
       )}
     >
       <div className="flex items-center gap-3">
-        <div className={cn('grid size-12 shrink-0 place-items-center rounded-xl', available ? 'bg-cyan-400/15' : 'bg-white/5')}>
-          <Icon name="money-bag" size={32} className={cn(!available && 'opacity-50 grayscale')} />
+        <div className={cn('grid size-12 shrink-0 place-items-center rounded-xl', status.broke ? 'bg-cyan-400/15' : 'bg-white/5')}>
+          <Icon name="money-bag" size={32} className={cn(!status.broke && 'opacity-50 grayscale')} />
         </div>
         <div className="min-w-0 flex-1">
-          <h3 className="font-display text-sm font-bold text-white">Бесплатное пополнение</h3>
+          <h3 className="font-display text-sm font-bold text-white">Помощь при банкротстве</h3>
           <p className="text-xs text-slate-400">
-            {available
-              ? `Баланс почти пуст — восстановим его до ${formatChips(REFILL_TARGET)} фишек.`
-              : `Доступно, когда на балансе меньше ${formatChips(REFILL_THRESHOLD)} фишек.`}
+            {status.broke
+              ? `Фишки закончились. Банк выдаёт ${formatChips(BANKRUPT_AID)} фишек не чаще раза в 8 часов.`
+              : `Только если на балансе меньше ${formatChips(BANKRUPT_THRESHOLD)} фишек: ${formatChips(BANKRUPT_AID)} фишек раз в 8 часов.`}
           </p>
         </div>
       </div>
-      {available && (
-        <Button
-          variant="cyan"
-          size="lg"
-          icon={LifeBuoy}
-          sound={false}
-          className="mt-4 w-full"
-          onClick={() => onClaimed(claim(), 'Баланс пополнен')}
-        >
-          Пополнить бесплатно
+      {status.available && (
+        <Button variant="cyan" size="lg" icon={LifeBuoy} sound={false} className="mt-4 w-full" onClick={() => onClaimed(claim(), 'Помощь получена')}>
+          Получить {formatChips(status.amount)}
         </Button>
+      )}
+      {status.broke && !status.available && (
+        <div className="mt-4 space-y-2">
+          <div className="flex items-center justify-between text-xs">
+            <span className="flex items-center gap-1.5 text-slate-400">
+              <Lock className="size-3.5" /> Банк откроется через
+            </span>
+            <span className="font-bold text-cyan-300 tabular-nums">{formatDuration(status.nextAt - now)}</span>
+          </div>
+          <CooldownBar remaining={status.nextAt - now} total={BANKRUPT_COOLDOWN_MS} />
+        </div>
       )}
     </div>
   )
 }
 
-/** Everything free, in one place: daily bonus, hourly faucet, refill. */
+/** Every source of free chips: the daily bonus and bankruptcy aid. */
 export function RewardsPanel() {
   return (
     <div className="space-y-3">
-      <RefillCard />
       <DailyBonusCard />
-      <FaucetCard />
-      <p className="px-1 text-center text-[11px] leading-relaxed text-slate-500">
-        Фишки виртуальные и бесплатные: их нельзя купить, продать или обменять на деньги.
-      </p>
+      <RefillCard />
     </div>
   )
 }

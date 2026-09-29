@@ -22,7 +22,7 @@ export default function LimboGame() {
   const mounted = useMountedRef()
   const numberRef = useRef<HTMLSpanElement>(null)
 
-  const [bet, setBet] = useState(100)
+  const [bet, setBet] = useState(10)
   const [target, setTarget] = useState(2)
   const [targetDraft, setTargetDraft] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)

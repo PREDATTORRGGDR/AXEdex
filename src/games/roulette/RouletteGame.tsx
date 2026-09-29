@@ -118,7 +118,7 @@ export default function RouletteGame() {
   const guard = useRoundGuard()
   const [banner, showBanner] = useResultBanner(3000)
 
-  const [chip, setChip] = useState(25)
+  const [chip, setChip] = useState(5)
   const [bets, setBets] = useState<Bets>({})
   const [history, setHistory] = useState<Bets[]>([])
   const [spin, setSpin] = useState<ActiveSpin | null>(null)

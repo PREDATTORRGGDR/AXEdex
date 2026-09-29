@@ -167,7 +167,7 @@ export default function SlotsGame() {
   const mounted = useMountedRef()
   const [banner, showBanner] = useResultBanner(3200)
 
-  const [lineBet, setLineBet] = useState(10)
+  const [lineBet, setLineBet] = useState(1)
   const [strips, setStrips] = useState<SymbolId[][]>(() => initialGrid())
   const [spinId, setSpinId] = useState(0)
   const [spinning, setSpinning] = useState(false)

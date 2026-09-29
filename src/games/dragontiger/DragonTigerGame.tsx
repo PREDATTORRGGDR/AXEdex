@@ -48,7 +48,7 @@ export default function DragonTigerGame() {
   const mounted = useMountedRef()
   const [banner, showBanner] = useResultBanner(2600)
   const chips = useChipBets<DTBet>()
-  const [chip, setChip] = useState(100)
+  const [chip, setChip] = useState(10)
   const [busy, setBusy] = useState(false)
   const [cards, setCards] = useState<{ dragon: Card | null; tiger: Card | null }>({ dragon: null, tiger: null })
   const [revealed, setRevealed] = useState({ dragon: false, tiger: false })

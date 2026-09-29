@@ -170,7 +170,7 @@ export const useBlackjack = create<BlackjackState>()(
         holeRevealed: false,
         hands: [],
         active: 0,
-        bet: 100,
+        bet: 10,
         insurance: 0,
         roundId: null,
         results: null,

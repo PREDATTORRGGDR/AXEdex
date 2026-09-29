@@ -3,7 +3,7 @@ import { GAMES } from '../../games/meta'
 import { cn } from '../../lib/cn'
 import { formatChips, formatMultiplier, formatSigned, plural } from '../../lib/format'
 import { ACHIEVEMENTS } from '../../store/achievements'
-import { useCasino } from '../../store/casino'
+import { DAILY_MAX_STREAK, dailyBonusAmount, useCasino } from '../../store/casino'
 import { levelFromXp } from '../../store/progression'
 
 interface TickerItem {
@@ -13,10 +13,10 @@ interface TickerItem {
 }
 
 const TIPS: TickerItem[] = [
-  { key: 't1', text: 'Ежедневный бонус растёт 7 дней подряд — до 4000 фишек', tone: 'gold' },
-  { key: 't2', text: 'Кран выдаёт бесплатные фишки каждый час', tone: 'neutral' },
+  { key: 't1', text: `Ежедневный бонус растёт 7 дней подряд — до ${dailyBonusAmount(DAILY_MAX_STREAK)} фишек`, tone: 'gold' },
+  { key: 't2', text: 'Берегите фишки: помощь при банкротстве — не чаще раза в 8 часов', tone: 'neutral' },
   { key: 't3', text: 'Отмечайте любимые игры сердечком — они всегда будут первыми', tone: 'neutral' },
-  { key: 't4', text: 'Каждый раунд приносит опыт, а новый уровень — фишки в подарок', tone: 'gold' },
+  { key: 't4', text: 'Каждый раунд приносит опыт, а новый уровень — немного фишек', tone: 'gold' },
   {
     key: 't5',
     text: `${ACHIEVEMENTS.length} ${plural(ACHIEVEMENTS.length, ['достижение ждёт', 'достижения ждут', 'достижений ждут'])} вас в профиле`,

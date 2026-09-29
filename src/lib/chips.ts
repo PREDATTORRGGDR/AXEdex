@@ -1,5 +1,5 @@
 /** Chip denominations and their colors, shared by every table game. */
-export const CHIP_VALUES = [10, 25, 100, 500, 1_000, 5_000] as const
+export const CHIP_VALUES = [1, 5, 10, 25, 100, 500] as const
 
 interface ChipStyle {
   base: string
@@ -8,6 +8,8 @@ interface ChipStyle {
 }
 
 const CHIP_STYLES: Record<number, ChipStyle> = {
+  1: { base: '#e5e7eb', edge: '#3b82f6', ink: '#1e293b' },
+  5: { base: '#dc2626', edge: '#fee2e2', ink: '#ffffff' },
   10: { base: '#2563eb', edge: '#dbeafe', ink: '#ffffff' },
   25: { base: '#059669', edge: '#d1fae5', ink: '#ffffff' },
   100: { base: '#111827', edge: '#fcd96b', ink: '#fcd96b' },
@@ -16,9 +18,11 @@ const CHIP_STYLES: Record<number, ChipStyle> = {
   5000: { base: '#db2777', edge: '#fce7f3', ink: '#ffffff' },
 }
 
+const STYLE_STEPS = [1, 5, 10, 25, 100, 500, 1000, 5000]
+
 export function chipStyle(value: number): ChipStyle {
-  let best = CHIP_STYLES[10]
-  for (const v of CHIP_VALUES) if (value >= v) best = CHIP_STYLES[v]
+  let best = CHIP_STYLES[1]
+  for (const v of STYLE_STEPS) if (value >= v) best = CHIP_STYLES[v]
   return best
 }
 

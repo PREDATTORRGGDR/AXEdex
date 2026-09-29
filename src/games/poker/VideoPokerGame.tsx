@@ -18,7 +18,7 @@ import { deal, draw, evaluateHand, HAND_NAMES, HAND_ORDER, MAX_COINS, payPerCoin
 
 type Phase = 'idle' | 'dealing' | 'hold' | 'drawing' | 'result'
 
-const COIN_VALUES = [5, 10, 25, 50, 100, 500]
+const COIN_VALUES = [1, 2, 5, 10, 25, 50]
 
 function settlement(hand: Card[], coins: number, coinValue: number) {
   const rank = evaluateHand(hand)
@@ -37,7 +37,7 @@ export default function VideoPokerGame() {
   const [banner, showBanner] = useResultBanner(2600)
 
   const [coins, setCoins] = useState(5)
-  const [coinValue, setCoinValue] = useState(10)
+  const [coinValue, setCoinValue] = useState(1)
   const [phase, setPhase] = useState<Phase>('idle')
   const [hand, setHand] = useState<Card[]>([])
   const [deck, setDeck] = useState<Card[]>([])

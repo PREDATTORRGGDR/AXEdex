@@ -145,7 +145,7 @@ export default function BlackjackGame() {
   const actions = useBlackjack(useShallow(selectActions))
   const { setBet, deal, resolveInsurance, hit, stand, double, split, newRound, reconcile } = useBlackjack.getState()
   const balance = useCasino((s) => s.balance)
-  const [chip, setChip] = useState(100)
+  const [chip, setChip] = useState(10)
   const [banner, showBanner] = useResultBanner(2600)
   const shownFor = useRef<HandResult[] | null>(null)
 

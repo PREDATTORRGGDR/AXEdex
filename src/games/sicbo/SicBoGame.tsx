@@ -25,7 +25,7 @@ export default function SicBoGame() {
   const mounted = useMountedRef()
   const [banner, showBanner] = useResultBanner(2600)
   const chips = useChipBets<SicBoBet>()
-  const [chip, setChip] = useState(25)
+  const [chip, setChip] = useState(5)
   const [busy, setBusy] = useState(false)
   const [roll, setRoll] = useState<SicBoRoll>([1, 3, 5])
   const [rollId, setRollId] = useState(0)

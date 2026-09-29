@@ -32,7 +32,7 @@ export const useMines = create<MinesState>()(
   persist(
     (set, get) => ({
       phase: 'idle',
-      bet: 100,
+      bet: 10,
       mines: 3,
       minePositions: [],
       revealed: [],

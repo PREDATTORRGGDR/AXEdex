@@ -43,7 +43,7 @@ export default function DiceGame() {
   const [banner, showBanner] = useResultBanner(2400)
 
   const [mode, setMode] = useState<Mode>('hilo')
-  const [bet, setBet] = useState(100)
+  const [bet, setBet] = useState(10)
   const [pick, setPick] = useState<HiLoPick>('over')
   const [crapsBet, setCrapsBet] = useState<CrapsBet>('pass')
   const [dice, setDice] = useState<Roll>([3, 4])

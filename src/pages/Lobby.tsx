@@ -1,4 +1,4 @@
-import { Flame, Gift, Heart, History, Search, Shuffle, Sparkles, X } from 'lucide-react'
+import { Flame, Gift, Heart, History, Search, Shuffle, Sparkles, Trophy, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useMemo, useState } from 'react'
 import { sfx } from '../audio/sfx'
@@ -10,13 +10,14 @@ import { Button } from '../components/ui/Button'
 import { Panel, SectionTitle } from '../components/ui/Panel'
 import { Icon } from '../components/ui/Icon'
 import { StatTile } from '../components/ui/StatTile'
-import { DailyBonusCard, FaucetCard } from '../components/wallet/RewardsPanel'
+import { DailyBonusCard, RefillCard } from '../components/wallet/RewardsPanel'
 import { GAME_IDS } from '../games/ids'
 import { CATEGORY_LABELS, GAME_LIST, GAMES, type GameCategory } from '../games/meta'
 import { cn } from '../lib/cn'
 import { formatChips, formatMultiplier, formatPercent, formatSigned, plural, timeAgo } from '../lib/format'
 import { randomInt } from '../lib/rng'
 import { navigate, paths } from '../router/router'
+import { ACHIEVEMENTS } from '../store/achievements'
 import { hasDecided, useCasino, winRate } from '../store/casino'
 import { levelFromXp } from '../store/progression'
 import { useUi } from '../store/ui'
@@ -86,7 +87,7 @@ function Hero() {
               Случайная игра
             </Button>
             <Button variant="glass" size="lg" icon={Gift} onClick={() => setRewardsOpen(true)}>
-              Бесплатные фишки
+              Бонусы
             </Button>
           </div>
         </div>
@@ -111,7 +112,7 @@ function Hero() {
             <span className="max-w-[16rem] text-xs text-slate-300">{spotlight.tagline}</span>
           </div>
         </button>
-        <FaucetCard />
+        <DailyBonusCard compact />
       </div>
     </section>
   )
@@ -174,6 +175,67 @@ function RecentActivity() {
           })}
         </ul>
       )}
+    </Panel>
+  )
+}
+
+/** The three locked achievements the player is closest to. */
+function NextAchievements() {
+  const state = useCasino()
+  const snapshot = {
+    balance: state.balance,
+    peakBalance: state.lifetime.peakBalance,
+    rounds: state.lifetime.rounds,
+    currentStreak: state.lifetime.currentStreak,
+    bestStreak: state.lifetime.bestStreak,
+    refills: state.lifetime.refills,
+    dailyStreak: state.daily.streak,
+    level: levelFromXp(state.xp).level,
+    gamesPlayed: GAME_IDS.filter((g) => (state.games[g]?.rounds ?? 0) > 0),
+  }
+  const next = ACHIEVEMENTS.filter((a) => !state.achievements[a.id] && a.progress)
+    .map((a) => {
+      const [cur, target] = a.progress!(snapshot)
+      return { a, cur, target, ratio: cur / target }
+    })
+    .sort((x, y) => y.ratio - x.ratio)
+    .slice(0, 3)
+
+  return (
+    <Panel className="p-4 sm:p-5">
+      <SectionTitle
+        action={
+          <button type="button" onClick={() => navigate(paths.profile)} className="text-xs font-semibold text-gold-300 hover:text-gold-200">
+            Все достижения
+          </button>
+        }
+      >
+        <span className="inline-flex items-center gap-2">
+          <Trophy className="size-4" /> Цели
+        </span>
+      </SectionTitle>
+      <ul className="space-y-3">
+        {next.map(({ a, cur, target, ratio }) => (
+          <li key={a.id} className="flex items-center gap-3">
+            <Icon name={a.icon} size={34} className="drop-shadow-[0_4px_6px_rgba(0,0,0,0.45)]" />
+            <div className="min-w-0 flex-1">
+              <div className="flex items-baseline justify-between gap-2">
+                <p className="truncate text-sm font-semibold text-white">{a.title}</p>
+                <span className="shrink-0 text-[11px] text-gold-300 tabular-nums">+{formatChips(a.reward)}</span>
+              </div>
+              <div className="mt-1 flex items-center gap-2">
+                <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/[0.06]">
+                  <div className="h-full rounded-full bg-gradient-to-r from-violet-400 to-emerald-300" style={{ width: `${Math.min(1, ratio) * 100}%` }} />
+                </div>
+                <span className="shrink-0 text-[10px] text-slate-500 tabular-nums">
+                  {formatChips(cur)}/{formatChips(target)}
+                </span>
+              </div>
+            </div>
+          </li>
+        ))}
+        {next.length === 0 && <li className="text-sm text-slate-500">Все цели выполнены!</li>}
+      </ul>
     </Panel>
   )
 }
@@ -270,7 +332,10 @@ export function Lobby() {
 
       <section className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
         <RecentActivity />
-        <DailyBonusCard />
+        <div className="space-y-4">
+          <NextAchievements />
+          <RefillCard />
+        </div>
       </section>
     </div>
   )

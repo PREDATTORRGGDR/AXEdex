@@ -8,6 +8,7 @@ import { GameShell } from './components/game/GameShell'
 import { CelebrationLayer } from './components/ui/CelebrationLayer'
 import { Modal } from './components/ui/Modal'
 import { Toaster } from './components/ui/Toaster'
+import { BankruptcyWatcher } from './components/wallet/BankruptcyWatcher'
 import { RewardsPanel } from './components/wallet/RewardsPanel'
 import { GAMES } from './games/meta'
 import { Lobby } from './pages/Lobby'
@@ -70,10 +71,11 @@ export default function App() {
       </div>
       <MobileNav />
       <GamesSheet />
-      <Modal open={rewardsOpen} onClose={() => setRewardsOpen(false)} title="Бесплатные фишки">
+      <Modal open={rewardsOpen} onClose={() => setRewardsOpen(false)} title="Бонусы">
         <RewardsPanel />
       </Modal>
       <Toaster />
+      <BankruptcyWatcher />
       <CelebrationLayer />
     </MotionConfig>
   )

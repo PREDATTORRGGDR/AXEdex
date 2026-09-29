@@ -38,7 +38,7 @@ export default function HiLoGame() {
   const balance = useCasino((s) => s.balance)
   const [banner, showBanner] = useResultBanner(2600)
 
-  const [bet, setBet] = useState(100)
+  const [bet, setBet] = useState(10)
   const [phase, setPhase] = useState<Phase>('idle')
   const [steps, setSteps] = useState<Step[]>([])
   const [multiplier, setMultiplier] = useState(1)
