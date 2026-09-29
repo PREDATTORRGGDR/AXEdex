@@ -11,7 +11,7 @@ interface Delta {
   value: number
 }
 
-/** Header balance with a rolling counter and floating +/− deltas. */
+/** Header balance well with a rolling counter and floating +/− deltas. */
 export function BalancePill({ className }: { className?: string }) {
   const balance = useCasino((s) => s.balance)
   const inPlay = useCasino((s) => s.openRounds.reduce((sum, r) => sum + r.wager, 0))
@@ -29,23 +29,15 @@ export function BalancePill({ className }: { className?: string }) {
 
   return (
     <div
-      className={cn(
-        'gold-border relative flex h-11 items-center gap-2 rounded-2xl pr-3.5 pl-1.5 shadow-[0_0_24px_-8px_rgb(245_197_66/0.5)]',
-        className,
-      )}
-      title={inPlay > 0 ? `В игре: ${formatChips(inPlay)}` : undefined}
+      className={cn('well relative flex h-10 min-w-0 items-center gap-2 rounded-xl pr-3 pl-1.5 sm:h-11 sm:pr-4', className)}
+      title={inPlay > 0 ? `У грі: ${formatChips(inPlay)}` : undefined}
     >
-      <motion.div
-        key={delta?.id ?? 'chip'}
-        initial={{ rotateY: 0 }}
-        animate={{ rotateY: delta ? 360 : 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <CasinoChip value={1000} size={30} label="" />
+      <motion.div key={delta?.id ?? 'chip'} className="shrink-0" initial={{ rotateY: 0 }} animate={{ rotateY: delta ? 360 : 0 }} transition={{ duration: 0.6 }}>
+        <CasinoChip value={1000} size={26} label="" />
       </motion.div>
-      <div className="flex flex-col leading-none">
-        <span className="text-[9px] font-bold tracking-[0.2em] text-gold-300/70 uppercase">Баланс</span>
-        <AnimatedNumber value={balance} className="text-base font-extrabold text-white tabular-nums sm:text-lg" />
+      <div className="flex min-w-0 flex-col leading-none">
+        <span className="text-[8.5px] font-bold tracking-[0.22em] text-slate-500 uppercase">Баланс</span>
+        <AnimatedNumber value={balance} className="num mt-0.5 truncate text-[15px] font-bold text-white sm:text-base" />
       </div>
       <AnimatePresence>
         {delta && (
@@ -56,8 +48,8 @@ export function BalancePill({ className }: { className?: string }) {
             exit={{ opacity: 0, y: 30 }}
             transition={{ duration: 0.5 }}
             className={cn(
-              'pointer-events-none absolute top-full right-2 rounded-md px-1.5 py-0.5 text-xs font-bold tabular-nums',
-              delta.value > 0 ? 'bg-emerald-400/15 text-emerald-300' : 'bg-rose-500/15 text-rose-300',
+              'num pointer-events-none absolute top-full right-2 rounded-md px-1.5 py-0.5 text-xs font-bold ring-1',
+              delta.value > 0 ? 'bg-ink-950/90 text-neon-emerald ring-neon-emerald/30' : 'bg-ink-950/90 text-neon-red ring-neon-red/30',
             )}
           >
             {formatSigned(delta.value)}

@@ -1,7 +1,8 @@
 import { Gamepad2, Gift, House, UserRound, type LucideIcon } from 'lucide-react'
 import { motion } from 'motion/react'
+import { useMemo, useState } from 'react'
 import { sfx } from '../../audio/sfx'
-import { GAME_LIST } from '../../games/meta'
+import { CATEGORY_LABELS, GAME_LIST, type GameCategory } from '../../games/meta'
 import { cn } from '../../lib/cn'
 import { navigate, paths, useRoute } from '../../router/router'
 import { useCasino } from '../../store/casino'
@@ -18,68 +19,108 @@ function Tab({ icon: Icon, label, active, onClick, dot }: { icon: LucideIcon; la
         sfx.play('click')
         onClick()
       }}
-      className={cn('relative flex flex-1 flex-col items-center gap-1 py-2 text-[10px] font-semibold', active ? 'text-gold-200' : 'text-slate-400')}
+      className={cn(
+        'relative flex min-w-0 flex-1 flex-col items-center gap-1 pt-2.5 pb-1.5 text-[10.5px] font-bold tracking-wide transition-colors',
+        active ? 'text-neon-emerald' : 'text-slate-500 active:text-slate-300',
+      )}
       aria-current={active ? 'page' : undefined}
     >
       {active && (
         <motion.span
           layoutId="mobile-tab"
-          className="absolute inset-x-3 top-0 h-0.5 rounded-full bg-gold-300 shadow-glow-gold"
+          className="absolute inset-x-4 top-0 h-[3px] rounded-b-full bg-neon-emerald shadow-[0_0_14px_rgba(25,245,163,0.95)]"
           transition={{ type: 'spring', stiffness: 500, damping: 36 }}
         />
       )}
-      <span className="relative">
-        <Icon className="size-[22px]" strokeWidth={active ? 2.3 : 1.9} />
-        {dot && <span className="absolute -top-0.5 -right-1 size-2.5 rounded-full border-2 border-ink-900 bg-emerald-400" />}
+      <span className={cn('relative grid size-8 place-items-center rounded-xl transition-colors', active && 'bg-neon-emerald/10')}>
+        <Icon className={cn('size-[21px]', active && 'drop-shadow-[0_0_6px_rgba(25,245,163,0.7)]')} strokeWidth={active ? 2.3 : 1.9} />
+        {dot && (
+          <span className="absolute -top-0.5 -right-0.5 flex size-2.5">
+            <span className="absolute inline-flex size-full animate-ping rounded-full bg-neon-gold opacity-75" />
+            <span className="relative inline-flex size-2.5 rounded-full border-2 border-ink-900 bg-neon-gold" />
+          </span>
+        )}
       </span>
-      {label}
+      <span className="max-w-full truncate">{label}</span>
     </button>
   )
 }
 
 export function MobileNav() {
   const route = useRoute()
-  const { gamesOpen, setGamesOpen, setRewardsOpen } = useUi()
+  const { gamesOpen, setGamesOpen, rewardsOpen, setRewardsOpen } = useUi()
   const claimable = useHasClaimable()
+  const overlay = gamesOpen || rewardsOpen
 
   return (
     <nav
-      className="glass-strong fixed inset-x-0 bottom-0 z-50 flex rounded-t-2xl border-b-0 px-2 safe-bottom lg:hidden"
-      aria-label="Навигация"
+      className="backdrop-glass fixed inset-x-0 bottom-0 z-50 flex border-t border-white/[0.06] bg-ink-950/85 px-1 shadow-[0_-12px_32px_-12px_rgba(0,0,0,0.9)] safe-bottom lg:hidden"
+      aria-label="Навігація"
     >
-      <Tab icon={House} label="Лобби" active={route.name === 'lobby'} onClick={() => navigate(paths.lobby)} />
-      <Tab icon={Gamepad2} label="Игры" active={route.name === 'game' || gamesOpen} onClick={() => setGamesOpen(true)} />
-      <Tab icon={Gift} label="Бонусы" dot={claimable} onClick={() => setRewardsOpen(true)} />
-      <Tab icon={UserRound} label="Профиль" active={route.name === 'profile'} onClick={() => navigate(paths.profile)} />
+      <Tab icon={House} label="Лобі" active={!overlay && route.name === 'lobby'} onClick={() => navigate(paths.lobby)} />
+      <Tab icon={Gamepad2} label="Ігри" active={gamesOpen || (!rewardsOpen && route.name === 'game')} onClick={() => setGamesOpen(true)} />
+      <Tab icon={Gift} label="Бонуси" active={rewardsOpen} dot={claimable} onClick={() => setRewardsOpen(true)} />
+      <Tab icon={UserRound} label="Профіль" active={!overlay && route.name === 'profile'} onClick={() => navigate(paths.profile)} />
     </nav>
   )
 }
 
-/** Quick game switcher sheet (mobile "Игры" tab). */
+const FILTERS: ('all' | GameCategory)[] = ['all', 'table', 'cards', 'slots', 'instant']
+
+/** Quick game switcher sheet (mobile "Ігри" tab). */
 export function GamesSheet() {
   const { gamesOpen, setGamesOpen } = useUi()
+  const route = useRoute()
   const favorites = useCasino((s) => s.favorites)
-  const sorted = [...GAME_LIST].sort((a, b) => Number(favorites.includes(b.id)) - Number(favorites.includes(a.id)))
+  const [filter, setFilter] = useState<(typeof FILTERS)[number]>('all')
+  const list = useMemo(
+    () =>
+      [...GAME_LIST]
+        .filter((g) => filter === 'all' || g.category === filter)
+        .sort((a, b) => Number(favorites.includes(b.id)) - Number(favorites.includes(a.id))),
+    [favorites, filter],
+  )
   return (
-    <Modal open={gamesOpen} onClose={() => setGamesOpen(false)} title="Все игры">
-      <div className="grid grid-cols-2 gap-3">
-        {sorted.map((g) => (
+    <Modal open={gamesOpen} onClose={() => setGamesOpen(false)} title="Усі ігри">
+      <div className="no-scrollbar -mx-5 mb-4 flex gap-2 overflow-x-auto px-5">
+        {FILTERS.map((f) => (
           <button
-            key={g.id}
+            key={f}
             type="button"
-            onClick={() => {
-              sfx.play('click')
-              setGamesOpen(false)
-              navigate(paths.game(g.id))
-            }}
-            className="overflow-hidden rounded-2xl border border-white/10 text-left transition active:scale-[0.97]"
+            onClick={() => (sfx.play('click'), setFilter(f))}
+            className={cn(
+              'h-8 shrink-0 rounded-lg border px-3 text-xs font-bold transition',
+              filter === f ? 'border-neon-emerald/40 bg-neon-emerald/10 text-neon-emerald' : 'border-white/[0.07] bg-white/[0.02] text-slate-400',
+            )}
           >
-            <GameArt game={g} className="h-24" iconSize={44} />
-            <div className="bg-ink-900/80 px-3 py-2">
-              <p className="truncate text-sm font-bold text-white">{g.name}</p>
-            </div>
+            {f === 'all' ? 'Усі' : CATEGORY_LABELS[f]}
           </button>
         ))}
+      </div>
+      <div className="grid grid-cols-3 gap-2.5">
+        {list.map((g) => {
+          const current = route.name === 'game' && route.id === g.id
+          return (
+            <button
+              key={g.id}
+              type="button"
+              onClick={() => {
+                sfx.play('click')
+                setGamesOpen(false)
+                navigate(paths.game(g.id))
+              }}
+              className={cn(
+                'min-w-0 overflow-hidden rounded-xl border text-left transition active:scale-[0.97]',
+                current ? 'border-neon-emerald/50 shadow-[0_0_18px_-6px_rgba(25,245,163,0.7)]' : 'border-white/[0.07]',
+              )}
+            >
+              <GameArt game={g} className="aspect-square" iconSize={40} />
+              <div className="bg-ink-950 px-2 py-1.5">
+                <p className="truncate text-[11.5px] font-bold text-white">{g.name}</p>
+              </div>
+            </button>
+          )
+        })}
       </div>
     </Modal>
   )

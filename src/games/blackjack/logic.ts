@@ -74,11 +74,11 @@ export function canDouble(hand: PlayerHand): boolean {
 export type HandOutcome = 'blackjack' | 'win' | 'push' | 'lose' | 'bust'
 
 export const OUTCOME_LABEL: Record<HandOutcome, string> = {
-  blackjack: 'Блэкджек!',
-  win: 'Победа',
-  push: 'Ничья',
-  lose: 'Проигрыш',
-  bust: 'Перебор',
+  blackjack: 'Блекджек!',
+  win: 'Перемога',
+  push: 'Нічия',
+  lose: 'Програш',
+  bust: 'Перебір',
 }
 
 export interface HandResult {

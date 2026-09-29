@@ -37,7 +37,7 @@ export default function LimboGame() {
     if (busy) return
     if (bet > balance) {
       sfx.play('error')
-      toast({ kind: 'warning', title: 'Недостаточно фишек' })
+      toast({ kind: 'warning', title: 'Недостатньо фішок' })
       return
     }
     const value = limboResult()
@@ -46,7 +46,7 @@ export default function LimboGame() {
     const roundId = useCasino.getState().startRound('limbo', bet, {
       payout,
       tags: win && target >= 100 ? ['limbo-100'] : undefined,
-      detail: `Цель ${formatMultiplier(target)} · выпало ${formatMultiplier(value)}`,
+      detail: `Ціль ${formatMultiplier(target)} · випало ${formatMultiplier(value)}`,
     })
     if (!roundId) return
     guard.track(roundId)
@@ -85,43 +85,43 @@ export default function LimboGame() {
   const chance = winChance(target)
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
-      <div className="min-w-0 space-y-4">
-        <Panel strong className="relative overflow-hidden p-6 sm:p-10">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_70%_at_50%_40%,rgba(129,140,248,0.2),transparent)]" />
+    <div className="grid gap-3 sm:gap-4 lg:grid-cols-[minmax(280px,340px)_minmax(0,1fr)] lg:items-start">
+      <div className="min-w-0 space-y-3 sm:space-y-4 lg:col-start-2 lg:row-start-1">
+        <Panel strong className="relative overflow-hidden bg-[linear-gradient(180deg,#0b0f16,#07090d)] p-6 sm:p-10">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_70%_at_50%_40%,rgba(157,123,255,0.16),transparent)]" />
           <div className="relative flex min-h-[260px] flex-col items-center justify-center gap-4 text-center">
-            <p className="text-xs font-bold tracking-[0.3em] text-indigo-200/70 uppercase">Результат</p>
+            <p className="eyebrow tracking-[0.3em]">Результат</p>
             <motion.span
               ref={numberRef}
               animate={outcome ? { scale: [1.25, 1] } : { scale: 1 }}
               transition={{ type: 'spring', stiffness: 300, damping: 14 }}
               className={cn(
-                'font-display text-6xl font-black tabular-nums sm:text-8xl',
-                !outcome && 'text-white [text-shadow:0_0_30px_rgba(129,140,248,0.6)]',
-                outcome?.win && 'text-emerald-300 text-glow-green',
-                outcome && !outcome.win && 'text-rose-400 [text-shadow:0_0_30px_rgba(255,77,109,0.6)]',
+                'num text-6xl font-bold sm:text-8xl',
+                !outcome && 'text-white [text-shadow:0_0_30px_rgba(157,123,255,0.6)]',
+                outcome?.win && 'text-neon-emerald text-glow-green',
+                outcome && !outcome.win && 'text-neon-red [text-shadow:0_0_30px_rgba(255,77,109,0.6)]',
               )}
             >
               {formatMultiplier(1)}
             </motion.span>
             <div className="flex flex-wrap items-center justify-center gap-2 text-sm">
-              <span className="rounded-full bg-white/[0.06] px-3 py-1 text-slate-300">
-                Цель <b className="text-white tabular-nums">{formatMultiplier(target)}</b>
+              <span className="well rounded-lg px-3 py-1 text-slate-400">
+                Ціль <b className="num text-white">{formatMultiplier(target)}</b>
               </span>
               {outcome && (
-                <motion.span initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className={cn('rounded-full px-3 py-1 font-bold tabular-nums', outcome.win ? 'bg-emerald-400/15 text-emerald-300' : 'bg-rose-500/15 text-rose-300')}>
-                  {outcome.win ? `Выигрыш +${formatChips(Math.floor(bet * target) - bet)}` : `Проигрыш −${formatChips(bet)}`}
+                <motion.span initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className={cn('num rounded-lg px-3 py-1 font-bold ring-1', outcome.win ? 'bg-neon-emerald/10 text-neon-emerald ring-neon-emerald/30' : 'bg-neon-red/10 text-neon-red ring-neon-red/30')}>
+                  {outcome.win ? `Виграш +${formatChips(Math.floor(bet * target) - bet)}` : `Програш −${formatChips(bet)}`}
                 </motion.span>
               )}
             </div>
           </div>
         </Panel>
         <Panel className="flex items-center gap-3 overflow-hidden p-3">
-          <span className="shrink-0 text-[11px] font-semibold tracking-wider text-slate-400 uppercase">История</span>
+          <span className="eyebrow shrink-0">Історія</span>
           <div className="no-scrollbar flex gap-1.5 overflow-x-auto">
-            {history.length === 0 && <span className="text-xs text-slate-500">Пока пусто</span>}
+            {history.length === 0 && <span className="text-xs text-slate-500">Поки порожньо</span>}
             {history.map((h) => (
-              <motion.span key={h.id} initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} className={cn('shrink-0 rounded-lg px-2 py-1 text-xs font-bold tabular-nums ring-1', h.win ? 'bg-emerald-400/15 text-emerald-300 ring-emerald-300/30' : 'bg-rose-500/15 text-rose-300 ring-rose-400/30')}>
+              <motion.span key={h.id} initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} className={cn('num shrink-0 rounded-md px-2 py-1 text-xs font-bold ring-1', h.win ? 'bg-neon-emerald/10 text-neon-emerald ring-neon-emerald/30' : 'bg-white/[0.03] text-slate-400 ring-white/10')}>
                 {formatMultiplier(h.value)}
               </motion.span>
             ))}
@@ -129,11 +129,11 @@ export default function LimboGame() {
         </Panel>
       </div>
 
-      <Panel strong className="flex flex-col gap-4 p-4 lg:self-start">
+      <Panel strong className="flex flex-col gap-4 p-4 lg:sticky lg:top-24 lg:col-start-1 lg:row-start-1">
         <BetInput value={bet} onChange={setBet} min={1} disabled={busy} />
         <div className="grid grid-cols-2 gap-2">
-          <label className="space-y-1.5">
-            <span className="text-xs font-medium text-slate-400">Целевой множитель</span>
+          <label className="min-w-0 space-y-1.5">
+            <span className="eyebrow block truncate">Ціль</span>
             <input
               inputMode="decimal"
               value={targetDraft ?? formatDecimal(target)}
@@ -141,12 +141,12 @@ export default function LimboGame() {
               onChange={(e) => setTargetDraft(e.target.value)}
               onBlur={() => targetDraft !== null && commitTarget(targetDraft)}
               onKeyDown={(e) => e.key === 'Enter' && targetDraft !== null && commitTarget(targetDraft)}
-              className="h-11 w-full rounded-xl border border-white/10 bg-ink-950/60 px-3 text-base font-bold text-white tabular-nums outline-none focus:border-gold-400/60"
+              className="field num h-11 w-full rounded-xl px-3 text-base font-bold"
             />
           </label>
-          <label className="space-y-1.5">
-            <span className="text-xs font-medium text-slate-400">Шанс победы</span>
-            <div className="flex h-11 items-center rounded-xl border border-white/10 bg-ink-950/60 px-3 text-base font-bold text-emerald-300 tabular-nums">{formatPercent(chance, 2)}</div>
+          <label className="min-w-0 space-y-1.5">
+            <span className="eyebrow block truncate">Шанс перемоги</span>
+            <div className="field num flex h-11 items-center rounded-xl px-3 text-base font-bold !text-neon-emerald">{formatPercent(chance, 2)}</div>
           </label>
         </div>
         <input
@@ -156,8 +156,8 @@ export default function LimboGame() {
           value={Math.round((Math.log(target) / Math.log(MAX_TARGET)) * 1000)}
           disabled={busy}
           onChange={(e) => setTarget(clampTarget(Math.max(MIN_TARGET, Math.exp((Number(e.target.value) / 1000) * Math.log(MAX_TARGET)))))}
-          className="w-full accent-indigo-400"
-          aria-label="Целевой множитель"
+          className="w-full accent-neon-violet"
+          aria-label="Цільовий множник"
         />
         <div className="grid grid-cols-6 gap-1">
           {PRESETS.map((p) => (
@@ -166,26 +166,27 @@ export default function LimboGame() {
               type="button"
               disabled={busy}
               onClick={() => (sfx.play('click'), setTarget(p))}
-              className={cn('h-8 rounded-lg text-[11px] font-bold transition', target === p ? 'bg-indigo-400/25 text-indigo-100 ring-1 ring-indigo-300/50' : 'bg-white/[0.05] text-slate-300 hover:bg-white/10')}
+              data-on={target === p}
+              className="preset num h-8 rounded-lg text-[11px]"
             >
               {formatDecimal(p, p % 1 ? 1 : 0)}×
             </button>
           ))}
         </div>
         <div className="grid grid-cols-2 gap-2 text-xs">
-          <button type="button" disabled={busy} className="rounded-lg bg-white/[0.04] py-1.5 text-slate-300 hover:bg-white/10" onClick={() => setTarget(targetForChance(0.5))}>
+          <button type="button" disabled={busy} className="preset h-8 rounded-lg" onClick={() => setTarget(targetForChance(0.5))}>
             Шанс 50%
           </button>
-          <button type="button" disabled={busy} className="rounded-lg bg-white/[0.04] py-1.5 text-slate-300 hover:bg-white/10" onClick={() => setTarget(targetForChance(0.1))}>
+          <button type="button" disabled={busy} className="preset h-8 rounded-lg" onClick={() => setTarget(targetForChance(0.1))}>
             Шанс 10%
           </button>
         </div>
-        <div className="flex items-center justify-between rounded-xl bg-white/[0.03] px-3 py-2 text-xs">
-          <span className="text-slate-400">Выигрыш при победе</span>
-          <b className="text-gold-200 tabular-nums">{formatChips(Math.floor(bet * target))}</b>
+        <div className="well flex items-center justify-between gap-2 rounded-xl px-3 py-2 text-xs">
+          <span className="text-slate-400">Виграш у разі перемоги</span>
+          <b className="num text-gold-200">{formatChips(Math.floor(bet * target))}</b>
         </div>
-        <Button variant="gold" size="xl" icon={Target} sound={false} disabled={busy || bet > balance} onClick={() => void play()}>
-          {busy ? 'Считаем…' : 'Играть'}
+        <Button variant="emerald" size="xl" icon={Target} sound={false} disabled={busy || bet > balance} onClick={() => void play()}>
+          {busy ? 'Рахуємо…' : 'Грати'}
         </Button>
       </Panel>
     </div>

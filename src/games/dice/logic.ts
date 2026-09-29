@@ -8,14 +8,14 @@ export function rollDice(rng: Rng = secureRandom): Roll {
 
 export const sumOf = (r: Roll) => r[0] + r[1]
 
-/* ------------------------------ Больше / Меньше ----------------------------- */
+/* ------------------------------ Більше / Менше ------------------------------ */
 
 export type HiLoPick = 'under' | 'seven' | 'over'
 
 /** Total return multipliers (stake included). */
 export const HILO_PAYOUT: Record<HiLoPick, number> = { under: 2.35, seven: 5.8, over: 2.35 }
 
-export const HILO_LABELS: Record<HiLoPick, string> = { under: 'Меньше 7', seven: 'Ровно 7', over: 'Больше 7' }
+export const HILO_LABELS: Record<HiLoPick, string> = { under: 'Менше 7', seven: 'Рівно 7', over: 'Більше 7' }
 
 /** Ways (out of 36) to roll each total. */
 const WAYS = [0, 0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1]
@@ -32,7 +32,7 @@ export function hiloWins(pick: HiLoPick, sum: number): boolean {
   return sum === 7
 }
 
-/* -------------------------------- Крэпс-лайт -------------------------------- */
+/* -------------------------------- Крепс-лайт -------------------------------- */
 
 export type CrapsBet = 'pass' | 'dontpass'
 export type CrapsResult = 'win' | 'lose' | 'push'

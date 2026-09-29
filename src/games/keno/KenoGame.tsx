@@ -54,7 +54,7 @@ export default function KenoGame() {
     if (drawing || picks.length === 0) return
     if (bet > balance) {
       sfx.play('error')
-      toast({ kind: 'warning', title: 'Недостаточно фишек' })
+      toast({ kind: 'warning', title: 'Недостатньо фішок' })
       return
     }
     const result = drawNumbers()
@@ -64,7 +64,7 @@ export default function KenoGame() {
     const roundId = useCasino.getState().startRound('keno', bet, {
       payout,
       tags: h >= 7 ? ['keno-7'] : undefined,
-      detail: `Угадано ${h} из ${picks.length}`,
+      detail: `Вгадано ${h} з ${picks.length}`,
     })
     if (!roundId) return
     guard.track(roundId)
@@ -86,22 +86,22 @@ export default function KenoGame() {
     setFinished(true)
     showBanner({
       kind: mult >= 10 ? 'bigwin' : payout > bet ? 'win' : payout === bet ? 'push' : 'lose',
-      title: `Угадано ${h} из ${picks.length}`,
+      title: `Вгадано ${h} з ${picks.length}`,
       amount: payout - bet,
       multiplier: mult || undefined,
     })
   }
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
-      <Panel strong className="relative overflow-hidden p-3 sm:p-6">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_0%,rgba(45,212,191,0.14),transparent)]" />
-        <div className="relative mb-3 flex items-center justify-between text-xs">
+    <div className="grid gap-3 sm:gap-4 lg:grid-cols-[minmax(280px,340px)_minmax(0,1fr)] lg:items-start">
+      <Panel strong className="relative overflow-hidden bg-[linear-gradient(180deg,#0b0f16,#07090d)] p-3 sm:p-6 lg:col-start-2 lg:row-start-1">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_0%,rgba(34,225,255,0.1),transparent)]" />
+        <div className="relative mb-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs">
           <span className="text-slate-400">
-            Выбрано <b className="text-white">{picks.length}</b> из {MAX_PICKS}
+            Обрано <b className="num text-white">{picks.length}</b> з {MAX_PICKS}
           </span>
           <span className="text-slate-400">
-            Совпадений <b className="text-emerald-300">{hits}</b> · шаров {drawn.length}/10
+            Збігів <b className="num text-neon-emerald">{hits}</b> · кульок <span className="num">{drawn.length}/10</span>
           </span>
         </div>
         <div className="relative grid grid-cols-8 gap-1.5 sm:gap-2">
@@ -120,13 +120,13 @@ export default function KenoGame() {
                 animate={isDrawn ? { scale: [1, 1.18, 1] } : { scale: 1 }}
                 transition={{ duration: 0.35 }}
                 aria-pressed={picked}
-                aria-label={`Число ${n}${picked ? ', выбрано' : ''}${isDrawn ? ', выпало' : ''}`}
+                aria-label={`Число ${n}${picked ? ', обрано' : ''}${isDrawn ? ', випало' : ''}`}
                 className={cn(
-                  'relative grid aspect-square place-items-center rounded-xl text-sm font-black tabular-nums transition-colors sm:text-base',
-                  hit && 'bg-[radial-gradient(circle,#6ee7b7,#059669)] text-ink-950 shadow-glow-green',
-                  picked && !isDrawn && 'bg-[linear-gradient(180deg,#fff0bd,#e2ab1c)] text-ink-950 shadow-[0_0_14px_rgba(252,217,107,0.45)]',
-                  !picked && isDrawn && 'bg-cyan-500/25 text-cyan-100 ring-2 ring-cyan-300/60',
-                  !picked && !isDrawn && 'bg-white/[0.05] text-slate-300 ring-1 ring-white/10 hover:bg-white/[0.1]',
+                  'num relative grid aspect-square place-items-center rounded-lg text-[13px] font-bold transition-colors sm:rounded-xl sm:text-base',
+                  hit && 'bg-[radial-gradient(circle,#8dffd6,#0bbf7e)] text-[#03140d] shadow-glow-green',
+                  picked && !isDrawn && 'bg-[linear-gradient(180deg,#fff0c2,#d9a73e)] text-[#1b1204] shadow-[inset_0_1px_0_rgba(255,255,255,0.6),0_3px_0_#6e4a0e,0_0_14px_rgba(230,194,106,0.4)]',
+                  !picked && isDrawn && 'bg-neon-cyan/15 text-cyan-100 ring-2 ring-neon-cyan/60',
+                  !picked && !isDrawn && 'border border-white/[0.07] bg-[linear-gradient(180deg,#1f2735,#161c27)] text-slate-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_3px_0_#0a0d13] hover:border-neon-emerald/40 hover:text-white',
                   finished && !picked && !isDrawn && 'opacity-50',
                 )}
               >
@@ -143,48 +143,48 @@ export default function KenoGame() {
               animate={{ y: 0, opacity: 1, scale: 1 }}
               transition={{ type: 'spring', stiffness: 500, damping: 20 }}
               className={cn(
-                'grid size-8 shrink-0 place-items-center rounded-full text-xs font-black shadow-lg sm:size-9',
-                picks.includes(n) ? 'bg-[radial-gradient(circle_at_35%_30%,#d1fae5,#10b981)] text-ink-950' : 'bg-[radial-gradient(circle_at_35%_30%,#e0f2fe,#0891b2)] text-ink-950',
+                'num grid size-8 shrink-0 place-items-center rounded-full text-xs font-bold shadow-lg sm:size-9',
+                picks.includes(n) ? 'bg-[radial-gradient(circle_at_35%_30%,#d9fff1,#0bbf7e)] text-[#03140d]' : 'bg-[radial-gradient(circle_at_35%_30%,#e3fcff,#0a9cc0)] text-ink-950',
               )}
             >
               {n}
             </motion.span>
           ))}
-          {drawn.length === 0 && <span className="text-xs text-slate-500">Шары тиража появятся здесь</span>}
+          {drawn.length === 0 && <span className="text-xs text-slate-500">Кульки тиражу з’являться тут</span>}
         </div>
         <ResultBanner result={banner} />
       </Panel>
 
-      <Panel strong className="flex flex-col gap-4 p-4 lg:self-start">
+      <Panel strong className="flex flex-col gap-4 p-4 lg:sticky lg:top-24 lg:col-start-1 lg:row-start-1">
         <BetInput value={bet} onChange={setBet} min={1} disabled={drawing} />
         <div className="grid grid-cols-2 gap-2">
           <Button variant="glass" icon={Shuffle} disabled={drawing} onClick={() => (setDrawn([]), setFinished(false), setPicks(quickPick(picks.length || MAX_PICKS)))}>
-            Случайно
+            Випадково
           </Button>
           <Button variant="glass" icon={Eraser} disabled={drawing || picks.length === 0} onClick={() => (setPicks([]), setDrawn([]), setFinished(false))}>
-            Очистить
+            Очистити
           </Button>
         </div>
         <div>
-          <p className="mb-1.5 text-xs font-medium text-slate-400">
-            {picks.length ? `Выплаты за ${picks.length} ${plural(picks.length, ['число', 'числа', 'чисел'])}` : 'Таблица выплат'}
+          <p className="eyebrow mb-1.5">
+            {picks.length ? `Виплати за ${picks.length} ${plural(picks.length, ['число', 'числа', 'чисел'])}` : 'Таблиця виплат'}
           </p>
           {picks.length === 0 ? (
-            <p className="rounded-xl bg-white/[0.03] p-3 text-xs text-slate-500">Выберите от 1 до 10 чисел на поле.</p>
+            <p className="well rounded-xl p-3 text-xs text-slate-500">Оберіть від 1 до 10 чисел на полі.</p>
           ) : (
             <div className="space-y-1">
               {Object.entries(table).map(([h, m]) => {
                 const active = finished && Number(h) === hits
                 return (
-                  <div key={h} className={cn('flex items-center justify-between rounded-lg px-3 py-1.5 text-xs', active ? 'bg-emerald-400/20 ring-1 ring-emerald-300/50' : 'bg-white/[0.03]')}>
+                  <div key={h} className={cn('flex items-center justify-between rounded-lg px-3 py-1.5 text-xs', active ? 'bg-neon-emerald/15 ring-1 ring-neon-emerald/50' : 'bg-white/[0.025]')}>
                     <span className="text-slate-300">
-                      {h} {plural(Number(h), ['совпадение', 'совпадения', 'совпадений'])}
+                      {h} {plural(Number(h), ['збіг', 'збіги', 'збігів'])}
                     </span>
                     <span className="flex items-center gap-3">
-                      <span className="text-slate-500 tabular-nums">
+                      <span className="num text-slate-500">
                         {hitChance(picks.length, Number(h)) < 0.001 ? '<0,1%' : formatPercent(hitChance(picks.length, Number(h)), 1)}
                       </span>
-                      <b className="w-14 text-right text-gold-200 tabular-nums">{multLabel(m)}</b>
+                      <b className="num w-14 text-right text-gold-200">{multLabel(m)}</b>
                     </span>
                   </div>
                 )
@@ -192,8 +192,8 @@ export default function KenoGame() {
             </div>
           )}
         </div>
-        <Button variant="gold" size="xl" icon={Grid3x3} sound={false} disabled={drawing || picks.length === 0 || bet > balance} onClick={() => void play()}>
-          {drawing ? 'Тираж…' : 'Начать тираж'}
+        <Button variant="emerald" size="xl" icon={Grid3x3} sound={false} disabled={drawing || picks.length === 0 || bet > balance} onClick={() => void play()}>
+          {drawing ? 'Тираж…' : 'Почати тираж'}
         </Button>
       </Panel>
     </div>

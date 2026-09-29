@@ -48,24 +48,24 @@ function Cell({ betKey, label, className, style, tone = 'felt', props, hovered, 
       }}
       onPointerEnter={() => setHovered(betKey)}
       onPointerLeave={() => setHovered(null)}
-      aria-label={`Ставка: ${betName(betKey)}${amount ? `, на столе ${amount}` : ''}`}
+      aria-label={`Ставка: ${betName(betKey)}${amount ? `, на столі ${amount}` : ''}`}
       style={style}
       className={cn(
-        'relative flex items-center justify-center border border-gold-200/15 font-bold text-white transition-[background-color,box-shadow,opacity,filter] duration-200 select-none',
+        'num relative flex items-center justify-center border border-white/[0.07] font-bold text-white transition-[background-color,box-shadow,opacity,filter] duration-200 select-none',
         'disabled:cursor-default',
-        tone === 'red' && 'bg-roulette-red/85 hover:bg-roulette-red',
-        tone === 'black' && 'bg-roulette-black/90 hover:bg-[#232838]',
-        tone === 'green' && 'bg-roulette-green/85 hover:bg-roulette-green',
-        tone === 'felt' && 'bg-white/[0.03] hover:bg-white/[0.09]',
-        lit && 'shadow-[inset_0_0_0_2px_rgba(252,217,107,0.9)] brightness-125',
-        isWinningNumber && 'z-10 animate-pulse shadow-[0_0_0_2px_#fcd96b,0_0_24px_4px_rgba(252,217,107,0.8)] brightness-150',
-        isWinningBet && !isNumber && 'shadow-[inset_0_0_0_2px_rgba(52,245,160,0.9),0_0_18px_rgba(52,245,160,0.5)]',
+        tone === 'red' && 'bg-[linear-gradient(180deg,#e0284a,#a8112f)] hover:brightness-125',
+        tone === 'black' && 'bg-[linear-gradient(180deg,#1b2130,#10141c)] hover:brightness-150',
+        tone === 'green' && 'bg-[linear-gradient(180deg,#12b877,#0a7a4f)] hover:brightness-125',
+        tone === 'felt' && 'bg-white/[0.025] hover:bg-neon-emerald/10',
+        lit && 'shadow-[inset_0_0_0_2px_rgba(25,245,163,0.9)] brightness-125',
+        isWinningNumber && 'z-10 animate-pulse shadow-[0_0_0_2px_#ffcf5a,0_0_24px_4px_rgba(255,207,90,0.75)] brightness-150',
+        isWinningBet && !isNumber && 'shadow-[inset_0_0_0_2px_rgba(25,245,163,0.9),0_0_18px_rgba(25,245,163,0.5)]',
         dimmed && 'opacity-45',
         vertical ? 'text-xs' : 'text-xs sm:text-sm',
         className,
       )}
     >
-      <span className={cn(!isNumber && 'text-[10px] font-semibold tracking-wide text-gold-100/90 uppercase sm:text-xs')}>{label}</span>
+      <span className={cn(!isNumber && 'font-sans text-[10px] font-bold tracking-wide text-slate-200 uppercase sm:text-[11px]')}>{label}</span>
       <AnimatePresence>
         {amount > 0 && (
           <motion.span
@@ -101,7 +101,7 @@ export function RouletteTable(props: RouletteTableProps) {
   if (vertical) {
     return (
       <div
-        className="felt grid overflow-hidden rounded-2xl border-2 border-gold-400/30 p-1.5"
+        className="felt grid overflow-hidden rounded-xl border border-white/[0.08] p-1.5"
         style={{ gridTemplateColumns: '0.85fr 0.85fr 1fr 1fr 1fr', gridTemplateRows: 'repeat(14, minmax(30px, 1fr))' }}
       >
         <Cell {...shared} betKey={straight(0)} label="0" tone="green" className="rounded-t-xl" style={{ gridColumn: '3 / 6', gridRow: 1 }} />
@@ -119,7 +119,7 @@ export function RouletteTable(props: RouletteTableProps) {
           )
         })}
         {(['col1', 'col2', 'col3'] as const).map((k, i) => (
-          <Cell key={k} {...shared} betKey={k} label="2 к 1" style={{ gridColumn: 3 + i, gridRow: 14 }} />
+          <Cell key={k} {...shared} betKey={k} label="2:1" style={{ gridColumn: 3 + i, gridRow: 14 }} />
         ))}
         {(['dozen1', 'dozen2', 'dozen3'] as const).map((k, i) => (
           <Cell
@@ -146,7 +146,7 @@ export function RouletteTable(props: RouletteTableProps) {
 
   return (
     <div
-      className="felt grid overflow-hidden rounded-2xl border-2 border-gold-400/30 p-2"
+      className="felt grid overflow-hidden rounded-xl border border-white/[0.08] p-2"
       style={{ gridTemplateColumns: '1.1fr repeat(12, 1fr) 1.15fr', gridTemplateRows: 'repeat(3, 52px) 44px 44px' }}
     >
       <Cell {...shared} betKey={straight(0)} label="0" tone="green" className="rounded-l-xl text-lg" style={{ gridColumn: 1, gridRow: '1 / 4' }} />
@@ -164,7 +164,7 @@ export function RouletteTable(props: RouletteTableProps) {
         )
       })}
       {(['col3', 'col2', 'col1'] as const).map((k, i) => (
-        <Cell key={k} {...shared} betKey={k} label="2 к 1" style={{ gridColumn: 14, gridRow: i + 1 }} />
+        <Cell key={k} {...shared} betKey={k} label="2:1" style={{ gridColumn: 14, gridRow: i + 1 }} />
       ))}
       {(['dozen1', 'dozen2', 'dozen3'] as const).map((k, i) => (
         <Cell key={k} {...shared} betKey={k} label={OUTSIDE_LABELS[k]} style={{ gridColumn: `${2 + i * 4} / span 4`, gridRow: 4 }} />

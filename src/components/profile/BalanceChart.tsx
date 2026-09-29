@@ -57,7 +57,7 @@ export function BalanceChart({ points }: { points: BalancePoint[] }) {
   return (
     <div ref={ref} className="relative w-full select-none">
       <p className="sr-only">
-        График баланса по последним {points.length} событиям: от {formatChips(first)} до {formatChips(last)} фишек.
+        Графік балансу за останніми {points.length} подіями: від {formatChips(first)} до {formatChips(last)} фішок.
       </p>
       {width > 0 && (
         <svg
@@ -68,12 +68,12 @@ export function BalanceChart({ points }: { points: BalancePoint[] }) {
           onPointerDown={(e) => onMove(e.clientX, e.currentTarget.getBoundingClientRect())}
           onPointerLeave={() => setHover(null)}
           role="img"
-          aria-label="Динамика баланса"
+          aria-label="Динаміка балансу"
         >
           <defs>
             <linearGradient id={areaId} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#fcd96b" stopOpacity="0.28" />
-              <stop offset="1" stopColor="#fcd96b" stopOpacity="0" />
+              <stop offset="0" stopColor="#19f5a3" stopOpacity="0.28" />
+              <stop offset="1" stopColor="#19f5a3" stopOpacity="0" />
             </linearGradient>
           </defs>
           {geom.ticks.map((t) => (
@@ -85,20 +85,20 @@ export function BalanceChart({ points }: { points: BalancePoint[] }) {
             </g>
           ))}
           <text x={PAD.left} y={HEIGHT - 6} className="fill-slate-500 text-[10px]">
-            раньше
+            раніше
           </text>
           <text x={width - PAD.right} y={HEIGHT - 6} textAnchor="end" className="fill-slate-500 text-[10px]">
-            сейчас
+            зараз
           </text>
           <path d={geom.area} fill={`url(#${areaId})`} />
-          <path d={geom.line} fill="none" stroke="#fcd96b" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+          <path d={geom.line} fill="none" stroke="#19f5a3" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
           {hp && hover !== null && (
             <g>
               <line x1={geom.x(hover)} x2={geom.x(hover)} y1={PAD.top} y2={HEIGHT - PAD.bottom} stroke="rgba(255,255,255,0.25)" strokeDasharray="3 3" />
-              <circle cx={geom.x(hover)} cy={geom.y(hp.balance)} r="5" fill="#fcd96b" stroke="#070b18" strokeWidth="2" />
+              <circle cx={geom.x(hover)} cy={geom.y(hp.balance)} r="5" fill="#19f5a3" stroke="#07090d" strokeWidth="2" />
             </g>
           )}
-          {!hp && <circle cx={geom.x(data.length - 1)} cy={geom.y(last)} r="4.5" fill="#fcd96b" stroke="#070b18" strokeWidth="2" />}
+          {!hp && <circle cx={geom.x(data.length - 1)} cy={geom.y(last)} r="4.5" fill="#19f5a3" stroke="#07090d" strokeWidth="2" />}
         </svg>
       )}
       {hp && hover !== null && (
@@ -108,7 +108,7 @@ export function BalanceChart({ points }: { points: BalancePoint[] }) {
             left: Math.min(Math.max(geom.x(hover) - 70, 0), Math.max(0, width - 140)),
           }}
         >
-          <p className="font-bold text-white tabular-nums">{formatChips(hp.balance)} фишек</p>
+          <p className="font-bold text-white tabular-nums">{formatChips(hp.balance)} фішок</p>
           <p className="text-slate-400">{timeAgo(hp.at)}</p>
         </div>
       )}

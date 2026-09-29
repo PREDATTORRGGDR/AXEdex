@@ -2,7 +2,7 @@ import type { LucideIcon } from 'lucide-react'
 import { motion } from 'motion/react'
 import type { ReactNode } from 'react'
 import { cn } from '../../lib/cn'
-import { Icon as ColorIcon } from './Icon'
+import { Icon as GlyphIcon } from './Icon'
 import type { IconName } from './iconNames'
 
 interface StatTileProps {
@@ -17,33 +17,34 @@ interface StatTileProps {
 }
 
 const ACCENTS = {
-  gold: 'bg-gold-400/12 text-gold-300',
-  emerald: 'bg-emerald-400/12 text-emerald-300',
-  violet: 'bg-violet-400/12 text-violet-300',
-  cyan: 'bg-cyan-400/12 text-cyan-300',
-  rose: 'bg-rose-400/12 text-rose-300',
+  gold: { chip: 'bg-gold-400/10 text-gold-300 ring-gold-300/20', bar: 'from-gold-300/70' },
+  emerald: { chip: 'bg-neon-emerald/10 text-neon-emerald ring-neon-emerald/20', bar: 'from-neon-emerald/70' },
+  violet: { chip: 'bg-neon-violet/10 text-neon-violet ring-neon-violet/20', bar: 'from-neon-violet/70' },
+  cyan: { chip: 'bg-neon-cyan/10 text-neon-cyan ring-neon-cyan/20', bar: 'from-neon-cyan/70' },
+  rose: { chip: 'bg-neon-red/10 text-neon-red ring-neon-red/20', bar: 'from-neon-red/70' },
 }
 
 /** KPI tile: label, headline value and an optional hint line. */
 export function StatTile({ label, value, hint, icon: Icon, emoji, accent = 'gold', className, index = 0 }: StatTileProps) {
+  const a = ACCENTS[accent]
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05, duration: 0.4 }}
-      className={cn('glass relative overflow-hidden rounded-2xl p-4', className)}
+      transition={{ delay: index * 0.04, duration: 0.35 }}
+      className={cn('glass group relative min-w-0 overflow-hidden rounded-2xl p-3.5 sm:p-4', className)}
     >
+      <span className={cn('absolute inset-x-0 top-0 h-px bg-gradient-to-r to-transparent', a.bar)} aria-hidden />
       <div className="flex items-start justify-between gap-2">
-        <p className="text-xs font-medium text-slate-400">{label}</p>
-        {emoji && <ColorIcon name={emoji} size={30} className="-mt-1 -mr-1 drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]" />}
-        {!emoji && Icon && (
-          <span className={cn('grid size-8 shrink-0 place-items-center rounded-lg', ACCENTS[accent])}>
-            <Icon className="size-4" />
+        <p className="min-w-0 text-[10.5px] leading-tight font-bold tracking-[0.12em] text-slate-500 uppercase sm:text-[11px]">{label}</p>
+        {(emoji || Icon) && (
+          <span className={cn('-mt-0.5 -mr-0.5 grid size-8 shrink-0 place-items-center rounded-lg ring-1', a.chip)}>
+            {emoji ? <GlyphIcon name={emoji} size={20} /> : Icon && <Icon className="size-4" />}
           </span>
         )}
       </div>
-      <p className="mt-1 text-2xl font-bold tracking-tight text-white">{value}</p>
-      {hint && <p className="mt-0.5 text-xs text-slate-500">{hint}</p>}
+      <p className="num mt-1.5 truncate text-xl font-bold text-white sm:text-2xl">{value}</p>
+      {hint && <p className="mt-0.5 truncate text-[11px] text-slate-500 sm:text-xs">{hint}</p>}
     </motion.div>
   )
 }

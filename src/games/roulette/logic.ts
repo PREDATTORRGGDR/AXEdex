@@ -17,7 +17,7 @@ export function colorOf(n: number): PocketColor {
   return RED.has(n) ? 'red' : 'black'
 }
 
-export const COLOR_NAMES: Record<PocketColor, string> = { red: 'Красное', black: 'Чёрное', green: 'Зеро' }
+export const COLOR_NAMES: Record<PocketColor, string> = { red: 'Червоне', black: 'Чорне', green: 'Зеро' }
 
 export function describeNumber(n: number): string {
   return n === 0 ? 'Зеро' : `${COLOR_NAMES[colorOf(n)]} ${n}`
@@ -61,18 +61,18 @@ const OUTSIDE: Record<OutsideBet, number[]> = {
 }
 
 export const OUTSIDE_LABELS: Record<OutsideBet, string> = {
-  red: 'Красное',
-  black: 'Чёрное',
-  even: 'Чёт',
-  odd: 'Нечет',
+  red: 'Червоне',
+  black: 'Чорне',
+  even: 'Парне',
+  odd: 'Непарне',
   low: '1–18',
   high: '19–36',
-  dozen1: '1-я дюжина',
-  dozen2: '2-я дюжина',
-  dozen3: '3-я дюжина',
-  col1: '2 к 1',
-  col2: '2 к 1',
-  col3: '2 к 1',
+  dozen1: '1-ша дюжина',
+  dozen2: '2-га дюжина',
+  dozen3: '3-тя дюжина',
+  col1: '2 до 1',
+  col2: '2 до 1',
+  col3: '2 до 1',
 }
 
 export const straight = (n: number): BetKey => `n${n}`
@@ -80,7 +80,7 @@ export const straight = (n: number): BetKey => `n${n}`
 /** Human-readable bet name (used for accessibility labels). */
 export function betName(key: BetKey): string {
   if (isStraight(key)) return key === 'n0' ? 'Зеро' : `Число ${key.slice(1)}`
-  if (key.startsWith('col')) return `Колонка ${key.slice(3)} (2 к 1)`
+  if (key.startsWith('col')) return `Колонка ${key.slice(3)} (2 до 1)`
   return OUTSIDE_LABELS[key]
 }
 

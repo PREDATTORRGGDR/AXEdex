@@ -32,9 +32,9 @@ export function optionsFor(rank: Rank): GuessOption[] {
     chance: ways / n,
     multiplier: stepMultiplier(ways / n),
   })
-  if (rank === 2) return [make('higher', 'Выше', n - 1), make('same', 'Такая же', 1)]
-  if (rank === 14) return [make('lower', 'Ниже', n - 1), make('same', 'Такая же', 1)]
-  return [make('higherEq', 'Выше или равно', 15 - rank), make('lowerEq', 'Ниже или равно', rank - 1)]
+  if (rank === 2) return [make('higher', 'Вище', n - 1), make('same', 'Така сама', 1)]
+  if (rank === 14) return [make('lower', 'Нижче', n - 1), make('same', 'Така сама', 1)]
+  return [make('higherEq', 'Вище або рівно', 15 - rank), make('lowerEq', 'Нижче або рівно', rank - 1)]
 }
 
 export function isCorrect(guess: GuessId, current: Rank, next: Rank): boolean {

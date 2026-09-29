@@ -41,15 +41,15 @@ export async function importSave(file: File): Promise<void> {
   try {
     parsed = JSON.parse(await file.text())
   } catch {
-    throw new Error('Файл повреждён или не является сохранением.')
+    throw new Error('Файл пошкоджено або це не збереження.')
   }
   const save = parsed as Partial<SaveFile>
   if (save.format !== FORMAT || typeof save.data !== 'object' || !save.data) {
-    throw new Error('Это не файл сохранения AXEdex.')
+    throw new Error('Це не файл збереження AXEdex.')
   }
   const entries = Object.entries(save.data).filter(([k, v]) => k.startsWith(`${STORAGE_PREFIX}:`) && typeof v === 'string')
   if (!entries.some(([k]) => k === `${STORAGE_PREFIX}:casino`)) {
-    throw new Error('В файле нет данных кошелька.')
+    throw new Error('У файлі немає даних гаманця.')
   }
   for (const k of ownKeys()) localStorage.removeItem(k)
   for (const [k, v] of entries) localStorage.setItem(k, v)

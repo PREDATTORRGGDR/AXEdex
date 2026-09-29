@@ -4,7 +4,7 @@ import { secureRandom, type Rng } from '../../lib/rng'
 export type DTBet = 'dragon' | 'tie' | 'tiger'
 export type DTWinner = 'dragon' | 'tiger' | 'tie'
 
-export const DT_LABELS: Record<DTBet, string> = { dragon: 'Дракон', tie: 'Ничья', tiger: 'Тигр' }
+export const DT_LABELS: Record<DTBet, string> = { dragon: 'Дракон', tie: 'Нічия', tiger: 'Тигр' }
 export const DT_ODDS: Record<DTBet, string> = { dragon: '1:1', tie: '11:1', tiger: '1:1' }
 
 /** Ace is low (1), king is high (13). */

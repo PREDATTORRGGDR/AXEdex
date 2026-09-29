@@ -54,12 +54,12 @@ export function sicBoPayout(bet: SicBoBet, stake: number, roll: SicBoRoll): numb
 }
 
 export function betLabel(bet: SicBoBet): string {
-  if (bet === 'small') return 'Малое'
-  if (bet === 'big') return 'Большое'
-  if (bet === 'odd') return 'Нечет'
-  if (bet === 'even') return 'Чёт'
-  if (bet === 'anyTriple') return 'Любая тройка'
-  if (bet.startsWith('triple')) return `Тройка ${bet.slice(6)}`
-  if (bet.startsWith('total')) return `Сумма ${bet.slice(5)}`
+  if (bet === 'small') return 'Мале'
+  if (bet === 'big') return 'Велике'
+  if (bet === 'odd') return 'Непарне'
+  if (bet === 'even') return 'Парне'
+  if (bet === 'anyTriple') return 'Будь-яка трійка'
+  if (bet.startsWith('triple')) return `Трійка ${bet.slice(6)}`
+  if (bet.startsWith('total')) return `Сума ${bet.slice(5)}`
   return `Число ${bet.slice(6)}`
 }

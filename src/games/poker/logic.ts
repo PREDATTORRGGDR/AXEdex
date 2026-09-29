@@ -18,12 +18,12 @@ export const HAND_NAMES: Record<HandRank, string> = {
   royal: 'Роял-флеш',
   straightFlush: 'Стрит-флеш',
   fourKind: 'Каре',
-  fullHouse: 'Фулл-хаус',
+  fullHouse: 'Фул-хаус',
   flush: 'Флеш',
   straight: 'Стрит',
-  threeKind: 'Тройка',
-  twoPair: 'Две пары',
-  jacksOrBetter: 'Валеты или старше',
+  threeKind: 'Трійка',
+  twoPair: 'Дві пари',
+  jacksOrBetter: 'Валети або старше',
 }
 
 /** «9/6 Jacks or Better» pays per coin. A royal flush pays 800 per coin at max bet. */

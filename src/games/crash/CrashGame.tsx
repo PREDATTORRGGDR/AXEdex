@@ -43,14 +43,14 @@ function settlementFor(bet: number, multiplier: number): Settlement {
   return {
     payout: payoutFor(bet, multiplier),
     tags: multiplier >= 10 ? ['crash-10x'] : undefined,
-    detail: `Забрал на ${formatMultiplier(multiplier)}`,
+    detail: `Забрано на ${formatMultiplier(multiplier)}`,
   }
 }
 
 function pillClass(p: number) {
-  if (p >= 10) return 'bg-gold-400/20 text-gold-200 ring-gold-300/40'
-  if (p >= 2) return 'bg-emerald-400/15 text-emerald-300 ring-emerald-300/30'
-  return 'bg-rose-500/15 text-rose-300 ring-rose-400/30'
+  if (p >= 10) return 'bg-gold-400/15 text-gold-200 ring-gold-300/40'
+  if (p >= 2) return 'bg-neon-emerald/10 text-neon-emerald ring-neon-emerald/30'
+  return 'bg-white/[0.03] text-slate-400 ring-white/10'
 }
 
 export default function CrashGame() {
@@ -145,8 +145,8 @@ export default function CrashGame() {
           haptic([60, 40, 80])
           if (shakeScope.current) void shake(shakeScope.current, { x: [0, -10, 9, -7, 6, -3, 0], y: [0, 5, -4, 3, -2, 0] }, { duration: 0.5 })
           if (!f.cashedAt) {
-            useCasino.getState().finishRound(f.roundId, { payout: 0, detail: `Взрыв на ${formatMultiplier(f.crash)}` })
-            showBanner({ kind: 'lose', title: `Взрыв на ${formatMultiplier(f.crash)}`, amount: -f.bet }, { silent: true })
+            useCasino.getState().finishRound(f.roundId, { payout: 0, detail: `Вибух на ${formatMultiplier(f.crash)}` })
+            showBanner({ kind: 'lose', title: `Вибух на ${formatMultiplier(f.crash)}`, amount: -f.bet }, { silent: true })
           }
           flight.current = null
           const tip = drawScene(ctx, width, height, s, dt)
@@ -212,7 +212,7 @@ export default function CrashGame() {
     const crash = crashPoint()
     const auto = autoOn && autoValue >= 1.01 ? Math.round(autoValue * 100) / 100 : null
     // If the tab dies mid-flight, settle as the auto cash-out would have.
-    const fallback: Settlement = auto && auto < crash ? settlementFor(bet, auto) : { payout: 0, detail: `Взрыв на ${formatMultiplier(crash)}` }
+    const fallback: Settlement = auto && auto < crash ? settlementFor(bet, auto) : { payout: 0, detail: `Вибух на ${formatMultiplier(crash)}` }
     const roundId = useCasino.getState().startRound('crash', bet, fallback)
     if (!roundId) {
       sfx.play('error')
@@ -240,11 +240,11 @@ export default function CrashGame() {
   const livePayout = payoutFor(flightBet, liveMult)
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
-      <div className="min-w-0 space-y-3">
-        <Panel strong className="relative overflow-hidden p-0">
+    <div className="grid gap-3 sm:gap-4 lg:grid-cols-[minmax(280px,340px)_minmax(0,1fr)] lg:items-start">
+      <div className="min-w-0 space-y-3 lg:col-start-2 lg:row-start-1">
+        <Panel strong className="relative overflow-hidden bg-[linear-gradient(180deg,#0b0f16,#07090d)] p-0">
           <div ref={shakeScope} className="relative">
-            <div ref={wrapRef} className="relative w-full bg-[radial-gradient(120%_100%_at_0%_100%,rgba(34,211,238,0.12),transparent_60%),radial-gradient(100%_80%_at_100%_0%,rgba(167,139,250,0.14),transparent_60%)]" style={{ height }}>
+            <div ref={wrapRef} className="relative w-full bg-[radial-gradient(120%_100%_at_0%_100%,rgba(34,225,255,0.12),transparent_60%),radial-gradient(100%_80%_at_100%_0%,rgba(25,245,163,0.1),transparent_60%)]" style={{ height }}>
               <canvas ref={canvasRef} className="absolute inset-0" aria-hidden />
               <div ref={rocketRef} className="pointer-events-none absolute top-0 left-0 will-change-transform">
                 <Rocket className="size-9 fill-cyan-200/30 text-white drop-shadow-[0_0_12px_rgba(34,211,238,0.9)]" strokeWidth={1.8} />
@@ -254,24 +254,24 @@ export default function CrashGame() {
                   <p
                     ref={multRef}
                     className={cn(
-                      'font-display text-5xl font-black tabular-nums transition-colors sm:text-7xl',
-                      phase === 'crashed' ? 'text-rose-400 [text-shadow:0_0_30px_rgba(255,77,109,0.7)]' : cashed ? 'text-emerald-300 text-glow-green' : 'text-white [text-shadow:0_0_30px_rgba(34,211,238,0.6)]',
+                      'num text-5xl font-bold transition-colors sm:text-7xl',
+                      phase === 'crashed' ? 'text-neon-red [text-shadow:0_0_30px_rgba(255,77,109,0.7)]' : cashed ? 'text-neon-emerald text-glow-green' : 'text-white [text-shadow:0_0_30px_rgba(34,225,255,0.6)]',
                     )}
                   >
                     1,00×
                   </p>
-                  <p className="mt-1 text-xs font-bold tracking-[0.25em] text-slate-400 uppercase">
-                    {phase === 'idle' && 'Ракета на стартовой площадке'}
-                    {phase === 'countdown' && 'Предстартовый отсчёт'}
-                    {phase === 'flying' && (cashed ? `Вы забрали на ${formatMultiplier(cashed)}` : 'Полёт…')}
-                    {phase === 'crashed' && lastCrash !== null && `Взрыв на ${formatMultiplier(lastCrash)}`}
+                  <p className="mt-1 px-4 text-[11px] font-bold tracking-[0.22em] text-slate-400 uppercase">
+                    {phase === 'idle' && 'Ракета на стартовому майданчику'}
+                    {phase === 'countdown' && 'Передстартовий відлік'}
+                    {phase === 'flying' && (cashed ? `Ви забрали на ${formatMultiplier(cashed)}` : 'Політ…')}
+                    {phase === 'crashed' && lastCrash !== null && `Вибух на ${formatMultiplier(lastCrash)}`}
                   </p>
                 </div>
               </div>
               <AnimatePresence>
                 {countdown > 0 && (
                   <motion.div key={countdown} initial={{ scale: 2, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }} className="absolute inset-0 grid place-items-center bg-ink-950/40">
-                    <span className="font-display text-8xl font-black text-gold-gradient">{countdown}</span>
+                    <span className="num text-8xl font-bold text-emerald-gradient">{countdown}</span>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -281,9 +281,9 @@ export default function CrashGame() {
         </Panel>
 
         <Panel className="flex items-center gap-3 overflow-hidden p-3">
-          <span className="shrink-0 text-[11px] font-semibold tracking-wider text-slate-400 uppercase">История</span>
+          <span className="eyebrow shrink-0">Історія</span>
           <div className="no-scrollbar flex gap-1.5 overflow-x-auto">
-            {points.length === 0 && <span className="text-xs text-slate-500">Здесь появятся последние взлёты</span>}
+            {points.length === 0 && <span className="text-xs text-slate-500">Тут з’являться останні зльоти</span>}
             <AnimatePresence initial={false}>
               {points.slice(0, 20).map((p, i) => (
                 <motion.span
@@ -291,7 +291,7 @@ export default function CrashGame() {
                   layout
                   initial={{ opacity: 0, scale: 0.6 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className={cn('shrink-0 rounded-lg px-2 py-1 text-xs font-bold tabular-nums ring-1', pillClass(p))}
+                  className={cn('num shrink-0 rounded-md px-2 py-1 text-xs font-bold ring-1', pillClass(p))}
                 >
                   {formatMultiplier(p)}
                 </motion.span>
@@ -301,21 +301,21 @@ export default function CrashGame() {
         </Panel>
       </div>
 
-      <Panel strong className="flex flex-col gap-4 p-4 lg:self-start">
+      <Panel strong className="flex flex-col gap-4 p-4 lg:sticky lg:top-24 lg:col-start-1 lg:row-start-1">
         <BetInput value={bet} onChange={setBet} min={1} disabled={phase === 'countdown' || flying} />
 
         <div className="space-y-2">
-          <label className="flex items-center justify-between text-xs font-medium text-slate-400">
-            <span>Автовывод</span>
+          <label className="flex items-center justify-between text-[11px] font-bold tracking-[0.12em] text-slate-500 uppercase">
+            <span>Автовивід</span>
             <button
               type="button"
               role="switch"
               aria-checked={autoOn}
               disabled={phase === 'countdown' || flying}
               onClick={() => (sfx.play('click'), setAutoOn((v) => !v))}
-              className={cn('relative h-6 w-11 rounded-full transition-colors disabled:opacity-50', autoOn ? 'bg-emerald-400' : 'bg-white/10')}
+              className={cn('relative h-6 w-11 rounded-full border transition-colors disabled:opacity-50', autoOn ? 'border-neon-emerald/50 bg-neon-emerald/25 shadow-[0_0_14px_-4px_rgba(25,245,163,0.7)]' : 'border-white/[0.08] bg-ink-950')}
             >
-              <motion.span className="absolute top-0.5 left-0.5 size-5 rounded-full bg-white" animate={{ x: autoOn ? 20 : 0 }} transition={{ type: 'spring', stiffness: 600, damping: 32 }} />
+              <motion.span className={cn('absolute top-px left-px size-5 rounded-full', autoOn ? 'bg-neon-emerald' : 'bg-slate-500')} animate={{ x: autoOn ? 20 : 0 }} transition={{ type: 'spring', stiffness: 600, damping: 32 }} />
             </button>
           </label>
           <div className={cn('flex items-center gap-2 transition-opacity', !autoOn && 'opacity-40')}>
@@ -326,8 +326,8 @@ export default function CrashGame() {
               value={autoValue}
               disabled={!autoOn || phase === 'countdown' || flying}
               onChange={(e) => setAutoValue(Math.max(1.01, Number(e.target.value) || 1.01))}
-              className="h-10 w-24 rounded-xl border border-white/10 bg-ink-950/60 px-3 text-sm font-bold text-white tabular-nums outline-none focus:border-gold-400/60"
-              aria-label="Множитель автовывода"
+              className="field num h-10 w-24 shrink-0 rounded-xl px-3 text-sm font-bold"
+              aria-label="Множник автовиводу"
             />
             <div className="flex flex-1 flex-wrap gap-1">
               {AUTO_PRESETS.map((p) => (
@@ -336,7 +336,8 @@ export default function CrashGame() {
                   type="button"
                   disabled={!autoOn || phase === 'countdown' || flying}
                   onClick={() => setAutoValue(p)}
-                  className={cn('h-8 rounded-lg px-2 text-xs font-bold transition', autoValue === p ? 'bg-emerald-400/20 text-emerald-300' : 'bg-white/[0.05] text-slate-300 hover:bg-white/10')}
+                  data-on={autoValue === p}
+                  className="preset num h-8 rounded-lg px-2 text-xs"
                 >
                   {formatDecimal(p, p % 1 ? 1 : 0)}×
                 </button>
@@ -347,14 +348,14 @@ export default function CrashGame() {
 
         {flying && !cashed ? (
           <Button variant="emerald" size="xl" icon={HandCoins} sound={false} onClick={() => cashOut()} className="animate-[pulse-glow_1.2s_ease-in-out_infinite]">
-            Забрать {formatChips(livePayout)}
+            Забрати {formatChips(livePayout)}
           </Button>
         ) : (
           <Button variant="gold" size="xl" icon={Rocket} sound={false} disabled={phase === 'countdown' || flying || bet > balance} onClick={() => void launch()}>
-            {phase === 'countdown' ? 'Старт…' : flying ? 'Выигрыш получен' : phase === 'crashed' ? 'Запустить снова' : 'Запустить ракету'}
+            {phase === 'countdown' ? 'Старт…' : flying ? 'Виграш отримано' : phase === 'crashed' ? 'Запустити знову' : 'Запустити ракету'}
           </Button>
         )}
-        <p className="text-center text-[11px] text-slate-500">Пробел — забрать выигрыш во время полёта</p>
+        <p className="text-center text-[11px] text-slate-500">Пробіл — забрати виграш під час польоту</p>
       </Panel>
     </div>
   )

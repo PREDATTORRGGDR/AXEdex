@@ -22,41 +22,54 @@ interface ChipTableControlsProps {
   busyLabel: string
   actionIcon: LucideIcon
   onAction: () => void
+  className?: string
 }
 
-/** Chip rack, stake read-out and the undo / clear / double / repeat / play row. */
+/**
+ * Chip rack, stake read-out and the undo / clear / double / repeat / play row.
+ * Compact on phones so the sticky panel never buries the table.
+ */
 export function ChipTableControls(p: ChipTableControlsProps) {
   const balance = useCasino((s) => s.balance)
+  const tools = '!h-10 !w-10 !px-0 sm:!h-11 sm:!w-auto sm:!px-4'
   return (
-    <Panel strong className="sticky bottom-[76px] z-20 space-y-3 p-3 sm:p-4 lg:bottom-4">
-      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
-        <ChipSelector value={p.chip} onChange={p.onChip} balance={balance} />
-        <div className="flex gap-5 text-right">
-          <div>
-            <p className="text-[11px] text-slate-400">Ставка</p>
-            <p className="text-lg font-bold text-white tabular-nums">{formatChips(p.total)}</p>
-          </div>
-          <div>
-            <p className="text-[11px] text-slate-400">Последний выигрыш</p>
-            <p className={cn('text-lg font-bold tabular-nums', p.lastWin > 0 ? 'text-emerald-300' : 'text-slate-400')}>{formatChips(p.lastWin)}</p>
-          </div>
+    <Panel strong className={cn('z-20 space-y-2.5 p-2.5 sm:space-y-3 sm:p-4 lg:sticky lg:bottom-4', p.className)}>
+      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between md:gap-3">
+        <ChipSelector value={p.chip} onChange={p.onChip} balance={balance} className="md:w-auto" />
+        <div className="flex items-center justify-between gap-4 px-1 text-xs md:justify-end md:gap-5 md:px-0 md:text-right">
+          <p className="flex items-baseline gap-1.5 md:flex-col md:items-end md:gap-0">
+            <span className="text-[10px] font-bold tracking-[0.14em] text-slate-500 uppercase">Ставка</span>
+            <span className="num text-sm font-bold text-white md:text-lg">{formatChips(p.total)}</span>
+          </p>
+          <p className="flex items-baseline gap-1.5 md:flex-col md:items-end md:gap-0">
+            <span className="text-[10px] font-bold tracking-[0.14em] text-slate-500 uppercase">Останній виграш</span>
+            <span className={cn('num text-sm font-bold md:text-lg', p.lastWin > 0 ? 'text-neon-emerald' : 'text-slate-500')}>{formatChips(p.lastWin)}</span>
+          </p>
         </div>
       </div>
-      <div className="grid grid-cols-[repeat(4,auto)_1fr] gap-2">
-        <Button variant="glass" icon={Undo2} aria-label="Отменить" disabled={p.busy || !p.canUndo} onClick={p.onUndo}>
-          <span className="hidden sm:inline">Отменить</span>
+      <div className="flex gap-1.5 sm:grid sm:grid-cols-[repeat(4,auto)_1fr] sm:gap-2">
+        <Button variant="glass" icon={Undo2} className={tools} aria-label="Скасувати" title="Скасувати" disabled={p.busy || !p.canUndo} onClick={p.onUndo}>
+          <span className="hidden xl:inline">Скасувати</span>
         </Button>
-        <Button variant="glass" icon={Trash2} aria-label="Очистить" disabled={p.busy || !p.total} onClick={p.onClear}>
-          <span className="hidden sm:inline">Очистить</span>
+        <Button variant="glass" icon={Trash2} className={tools} aria-label="Очистити" title="Очистити" disabled={p.busy || !p.total} onClick={p.onClear}>
+          <span className="hidden xl:inline">Очистити</span>
         </Button>
-        <Button variant="glass" icon={Layers2} aria-label="Удвоить" sound={false} disabled={p.busy || !p.total} onClick={p.onDouble}>
-          <span className="hidden sm:inline">Удвоить</span>
+        <Button variant="glass" icon={Layers2} className={tools} aria-label="Подвоїти" title="Подвоїти" sound={false} disabled={p.busy || !p.total} onClick={p.onDouble}>
+          <span className="hidden xl:inline">Подвоїти</span>
         </Button>
-        <Button variant="glass" icon={Repeat} aria-label="Повторить" sound={false} disabled={p.busy || !!p.total || !p.canRebet} onClick={p.onRebet}>
-          <span className="hidden sm:inline">Повторить</span>
+        <Button variant="glass" icon={Repeat} className={tools} aria-label="Повторити" title="Повторити" sound={false} disabled={p.busy || !!p.total || !p.canRebet} onClick={p.onRebet}>
+          <span className="hidden xl:inline">Повторити</span>
         </Button>
-        <Button variant="gold" size="lg" icon={p.actionIcon} sound={false} disabled={p.busy || p.total <= 0 || p.total > balance} onClick={p.onAction}>
-          {p.busy ? p.busyLabel : p.actionLabel}
+        <Button
+          variant="emerald"
+          size="lg"
+          icon={p.actionIcon}
+          sound={false}
+          className="!h-10 min-w-0 flex-1 overflow-hidden !px-3 sm:!h-12 sm:!px-5"
+          disabled={p.busy || p.total <= 0 || p.total > balance}
+          onClick={p.onAction}
+        >
+          <span className="truncate">{p.busy ? p.busyLabel : p.actionLabel}</span>
         </Button>
       </div>
     </Panel>

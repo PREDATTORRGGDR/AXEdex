@@ -30,7 +30,7 @@ function cashSettlement(bet: number, multiplier: number, correct: number): Settl
   return {
     payout: Math.floor(bet * multiplier),
     tags: correct >= 10 ? ['hilo-10'] : undefined,
-    detail: `${correct} угаданных · ${formatMultiplier(multiplier)}`,
+    detail: `${correct} вгаданих · ${formatMultiplier(multiplier)}`,
   }
 }
 
@@ -67,11 +67,11 @@ export default function HiLoGame() {
   const start = () => {
     if (bet > balance) {
       sfx.play('error')
-      toast({ kind: 'warning', title: 'Недостаточно фишек' })
+      toast({ kind: 'warning', title: 'Недостатньо фішок' })
       return
     }
     // Until the first correct call, leaving simply refunds the stake.
-    const id = useCasino.getState().startRound('hilo', bet, { payout: bet, detail: 'Возврат ставки' })
+    const id = useCasino.getState().startRound('hilo', bet, { payout: bet, detail: 'Повернення ставки' })
     if (!id) return
     round.current = { id, bet }
     setActiveBet(bet)
@@ -103,9 +103,9 @@ export default function HiLoGame() {
       haptic(10)
     } else {
       round.current = null
-      useCasino.getState().finishRound(r.id, { payout: 0, tags: correct >= 10 ? ['hilo-10'] : undefined, detail: `Ошибка после ${correct} угаданных` })
+      useCasino.getState().finishRound(r.id, { payout: 0, tags: correct >= 10 ? ['hilo-10'] : undefined, detail: `Помилка після ${correct} вгаданих` })
       setPhase('busted')
-      showBanner({ kind: 'lose', title: 'Не угадали', amount: -r.bet })
+      showBanner({ kind: 'lose', title: 'Не вгадали', amount: -r.bet })
     }
   }
 
@@ -123,28 +123,28 @@ export default function HiLoGame() {
     useCasino.getState().finishRound(r.id, s)
     setPhase('cashed')
     sfx.play('cashout')
-    showBanner({ kind: multiplier >= 10 ? 'bigwin' : 'win', title: 'Выигрыш забран', amount: s.payout - r.bet, multiplier }, { silent: multiplier < 10 })
+    showBanner({ kind: multiplier >= 10 ? 'bigwin' : 'win', title: 'Виграш забрано', amount: s.payout - r.bet, multiplier }, { silent: multiplier < 10 })
   }
 
   const playing = phase === 'playing'
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
-      <Panel strong className="felt relative overflow-hidden rounded-3xl border-2 border-orange-400/20 p-4 sm:p-8">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_50%_30%,rgba(251,146,60,0.14),transparent)]" />
+    <div className="grid gap-3 sm:gap-4 lg:grid-cols-[minmax(280px,340px)_minmax(0,1fr)] lg:items-start">
+      <Panel strong className="felt relative overflow-hidden rounded-2xl border border-white/[0.07] p-4 sm:p-8 lg:col-start-2 lg:row-start-1">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_50%_30%,rgba(255,145,71,0.1),transparent)]" />
         <div className="relative flex min-h-[340px] flex-col items-center justify-center gap-5">
-          <div className="grid grid-cols-3 gap-3 text-center">
-            <div className="rounded-xl bg-black/30 px-3 py-2 ring-1 ring-white/10">
-              <p className="text-[10px] text-emerald-100/60">Множитель</p>
-              <p className="font-display text-lg font-black text-gold-200 tabular-nums">{formatMultiplier(multiplier)}</p>
+          <div className="grid w-full max-w-md grid-cols-3 gap-2 text-center sm:gap-3">
+            <div className="well min-w-0 rounded-xl px-2 py-2 sm:px-3">
+              <p className="eyebrow truncate text-[10px]">Множник</p>
+              <p className="num text-lg font-bold text-gold-200">{formatMultiplier(multiplier)}</p>
             </div>
-            <div className="rounded-xl bg-black/30 px-3 py-2 ring-1 ring-white/10">
-              <p className="text-[10px] text-emerald-100/60">Серия</p>
-              <p className="font-display text-lg font-black text-white tabular-nums">{correct}</p>
+            <div className="well min-w-0 rounded-xl px-2 py-2 sm:px-3">
+              <p className="eyebrow truncate text-[10px]">Серія</p>
+              <p className="num text-lg font-bold text-white">{correct}</p>
             </div>
-            <div className="rounded-xl bg-black/30 px-3 py-2 ring-1 ring-white/10">
-              <p className="text-[10px] text-emerald-100/60">Выигрыш</p>
-              <p className="font-display text-lg font-black text-emerald-300 tabular-nums">{formatChips(phase === 'playing' ? Math.floor(activeBet * multiplier) : 0)}</p>
+            <div className="well min-w-0 rounded-xl px-2 py-2 sm:px-3">
+              <p className="eyebrow truncate text-[10px]">Виграш</p>
+              <p className="num text-lg font-bold text-neon-emerald">{formatChips(phase === 'playing' ? Math.floor(activeBet * multiplier) : 0)}</p>
             </div>
           </div>
 
@@ -155,7 +155,7 @@ export default function HiLoGame() {
                   <PlayingCard card={current} size="lg" highlight={phase === 'busted' ? 'red' : phase === 'cashed' ? 'green' : null} className="scale-110 sm:scale-[1.15]" />
                 </motion.div>
               ) : (
-                <div className="absolute inset-0 grid place-items-center rounded-xl border-2 border-dashed border-orange-200/20 text-xs text-emerald-100/50">Карта</div>
+                <div className="absolute inset-0 grid place-items-center rounded-xl border-2 border-dashed border-white/10 text-xs text-slate-500">Карта</div>
               )}
             </AnimatePresence>
           </div>
@@ -167,7 +167,7 @@ export default function HiLoGame() {
                 <span
                   className={cn(
                     'absolute -top-2 -right-2 grid size-5 place-items-center rounded-full text-[10px] font-black ring-2 ring-ink-950',
-                    s.skipped ? 'bg-slate-500 text-white' : s.correct ? 'bg-emerald-400 text-ink-950' : 'bg-rose-500 text-white',
+                    s.skipped ? 'bg-slate-500 text-white' : s.correct ? 'bg-neon-emerald text-[#03140d]' : 'bg-neon-red text-white',
                   )}
                 >
                   {s.skipped ? '»' : s.correct ? '✓' : '✗'}
@@ -179,19 +179,19 @@ export default function HiLoGame() {
         <ResultBanner result={banner} />
       </Panel>
 
-      <Panel strong className="flex flex-col gap-3 p-4 lg:self-start">
+      <Panel strong className="flex flex-col gap-3 p-4 lg:sticky lg:top-24 lg:col-start-1 lg:row-start-1">
         <BetInput value={bet} onChange={setBet} min={1} disabled={playing} />
         {playing ? (
           <>
             {options.map((o) => {
               const Icon = ICONS[o.id]
               return (
-                <Button key={o.id} variant={o.id.startsWith('higher') ? 'cyan' : o.id === 'same' ? 'violet' : 'danger'} size="lg" disabled={busy} onClick={() => void guess(o.id)} sound={false} className="justify-between">
-                  <span className="flex items-center gap-2">
-                    <Icon className="size-5" />
-                    {o.label}
+                <Button key={o.id} variant={o.id.startsWith('higher') ? 'cyan' : o.id === 'same' ? 'violet' : 'danger'} size="lg" disabled={busy} onClick={() => void guess(o.id)} sound={false} className="min-w-0 !justify-between">
+                  <span className="flex min-w-0 items-center gap-2">
+                    <Icon className="size-5 shrink-0" />
+                    <span className="truncate">{o.label}</span>
                   </span>
-                  <span className="text-xs font-semibold opacity-90 tabular-nums">
+                  <span className="num shrink-0 text-xs font-semibold opacity-90">
                     {formatMultiplier(o.multiplier)} · {formatPercent(o.chance)}
                   </span>
                 </Button>
@@ -199,19 +199,19 @@ export default function HiLoGame() {
             })}
             <div className="grid grid-cols-2 gap-2">
               <Button variant="glass" icon={SkipForward} disabled={busy} onClick={skip}>
-                Пропустить
+                Пропустити
               </Button>
               <Button variant="emerald" icon={HandCoins} disabled={busy || correct === 0} onClick={cashOut} sound={false}>
-                Забрать
+                Забрати
               </Button>
             </div>
           </>
         ) : (
-          <Button variant="gold" size="xl" icon={Play} sound={false} disabled={bet > balance} onClick={start}>
-            {phase === 'idle' ? 'Начать игру' : 'Играть снова'}
+          <Button variant="emerald" size="xl" icon={Play} sound={false} disabled={bet > balance} onClick={start}>
+            {phase === 'idle' ? 'Почати гру' : 'Грати знову'}
           </Button>
         )}
-        <p className="text-center text-[11px] leading-relaxed text-slate-500">Туз — старшая карта. Равная карта засчитывается в пользу «или равно».</p>
+        <p className="text-center text-[11px] leading-relaxed text-slate-500">Туз — старша карта. Рівна карта зараховується на користь «або рівно».</p>
       </Panel>
     </div>
   )

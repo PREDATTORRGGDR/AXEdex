@@ -1,5 +1,8 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import '@fontsource-variable/manrope'
+import '@fontsource-variable/exo-2'
+import '@fontsource-variable/jetbrains-mono'
 import './index.css'
 import App from './App'
 import { requestPersistentStorage } from './store/backup'

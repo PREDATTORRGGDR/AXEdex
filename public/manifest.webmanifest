@@ -1,13 +1,13 @@
 {
   "name": "AXEdex — симулятор казино",
   "short_name": "AXEdex",
-  "description": "Бесплатный симулятор казино на виртуальные фишки.",
-  "lang": "ru",
+  "description": "Безкоштовний симулятор казино на віртуальні фішки. Зроблено by kyrapyto.",
+  "lang": "uk",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#05070f",
-  "theme_color": "#05070f",
+  "background_color": "#0b0e14",
+  "theme_color": "#0b0e14",
   "icons": [
     { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" },
     { "src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },

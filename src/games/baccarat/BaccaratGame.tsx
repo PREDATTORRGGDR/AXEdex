@@ -28,30 +28,30 @@ const useRoad = create<{ road: BaccaratWinner[]; push: (w: BaccaratWinner) => vo
 )
 
 const ROAD_STYLE: Record<BaccaratWinner, string> = {
-  player: 'bg-sky-500 text-white',
-  banker: 'bg-rose-500 text-white',
-  tie: 'bg-emerald-500 text-ink-950',
+  player: 'bg-neon-cyan text-ink-950',
+  banker: 'bg-neon-red text-white',
+  tie: 'bg-neon-emerald text-[#03140d]',
 }
-const ROAD_LETTER: Record<BaccaratWinner, string> = { player: 'И', banker: 'Б', tie: 'Н' }
+const ROAD_LETTER: Record<BaccaratWinner, string> = { player: 'Г', banker: 'Б', tie: 'Н' }
 
 function HandArea({ title, cards, total, tone, winner }: { title: string; cards: Card[]; total: number | null; tone: 'blue' | 'red'; winner: boolean }) {
   return (
-    <div className={cn('flex flex-1 flex-col items-center gap-3 rounded-2xl p-3 transition-shadow', winner && (tone === 'blue' ? 'shadow-[0_0_0_2px_rgba(56,189,248,0.8),0_0_30px_rgba(56,189,248,0.35)]' : 'shadow-[0_0_0_2px_rgba(244,63,94,0.8),0_0_30px_rgba(244,63,94,0.35)]'))}>
+    <div className={cn('flex min-w-0 flex-1 flex-col items-center gap-3 rounded-2xl p-3 transition-shadow', winner && (tone === 'blue' ? 'shadow-[0_0_0_1px_rgba(34,225,255,0.85),0_0_30px_rgba(34,225,255,0.3)]' : 'shadow-[0_0_0_1px_rgba(255,77,109,0.85),0_0_30px_rgba(255,77,109,0.3)]'))}>
       <div className="flex items-center gap-2">
-        <span className={cn('text-xs font-black tracking-[0.2em] uppercase', tone === 'blue' ? 'text-sky-300' : 'text-rose-300')}>{title}</span>
+        <span className={cn('text-xs font-black tracking-[0.2em] uppercase', tone === 'blue' ? 'text-neon-cyan' : 'text-[#ff8da1]')}>{title}</span>
         {total !== null && (
-          <motion.span key={total} initial={{ scale: 0.6 }} animate={{ scale: 1 }} className={cn('grid size-8 place-items-center rounded-full text-sm font-black', tone === 'blue' ? 'bg-sky-500 text-white' : 'bg-rose-500 text-white')}>
+          <motion.span key={total} initial={{ scale: 0.6 }} animate={{ scale: 1 }} className={cn('num grid size-8 place-items-center rounded-md text-sm font-bold', tone === 'blue' ? 'bg-neon-cyan text-ink-950' : 'bg-neon-red text-white')}>
             {total}
           </motion.span>
         )}
       </div>
-      <div className="flex min-h-[92px] items-center sm:min-h-[130px]">
+      <div className="flex min-h-[80px] items-center min-[400px]:min-h-[92px] sm:min-h-[130px]">
         {cards.map((c, i) => (
           <div key={c.id} className={cn(i > 0 && '-ml-8 sm:-ml-10', i === 2 && 'ml-1 rotate-90 sm:ml-2')} style={{ zIndex: i }}>
             <PlayingCard card={c} size="lg" from={{ x: 0, y: -160 }} />
           </div>
         ))}
-        {cards.length === 0 && <div className="h-[92px] w-[64px] rounded-xl border-2 border-dashed border-white/15 sm:h-[130px] sm:w-[92px]" />}
+        {cards.length === 0 && <div className="h-[80px] w-[56px] rounded-lg border-2 border-dashed border-white/10 min-[400px]:h-[92px] min-[400px]:w-[64px] sm:h-[130px] sm:w-[92px] sm:rounded-xl" />}
       </div>
     </div>
   )
@@ -109,20 +109,20 @@ export default function BaccaratGame() {
     setLastWin(payout)
     chips.reset()
     setBusy(false)
-    const title = round.winner === 'tie' ? 'Ничья' : `Победа: ${BACCARAT_LABELS[round.winner]}`
+    const title = round.winner === 'tie' ? 'Нічия' : `Перемога: ${BACCARAT_LABELS[round.winner]}`
     showBanner({ kind: resultKind(stake, payout), title, amount: payout - stake, subtitle: `${score(round.player)} : ${score(round.banker)}` })
   }
 
   const spotState = (k: BaccaratBet) => (winner === null ? null : winner === k ? 'win' : winner === 'tie' && k !== 'tie' ? 'push' : 'lose')
 
   return (
-    <div className="space-y-4">
-      <Panel strong className="felt relative overflow-hidden rounded-3xl border-2 border-gold-400/25 p-3 sm:p-6">
-        <p className="pointer-events-none text-center font-display text-[11px] font-bold tracking-[0.35em] text-gold-200/60 uppercase sm:text-xs">Пунто Банко · Банкир платит 0,95 к 1</p>
+    <div className="space-y-3 sm:space-y-4">
+      <Panel strong className="felt relative overflow-hidden rounded-2xl border border-white/[0.07] p-3 sm:p-6">
+        <p className="pointer-events-none text-center font-display text-[10px] font-bold tracking-[0.3em] text-gold-200/60 uppercase sm:text-xs">Пунто Банко · Банкір платить 0,95 до 1</p>
         <div className="mt-3 flex flex-col gap-3 sm:flex-row">
-          <HandArea title="Игрок" cards={player} total={player.length ? score(player) : null} tone="blue" winner={winner === 'player'} />
+          <HandArea title="Гравець" cards={player} total={player.length ? score(player) : null} tone="blue" winner={winner === 'player'} />
           <div className="hidden w-px bg-white/10 sm:block" />
-          <HandArea title="Банкир" cards={banker} total={banker.length ? score(banker) : null} tone="red" winner={winner === 'banker'} />
+          <HandArea title="Банкір" cards={banker} total={banker.length ? score(banker) : null} tone="red" winner={winner === 'banker'} />
         </div>
 
         <div className="mt-4 grid grid-cols-3 gap-2 sm:gap-3">
@@ -145,14 +145,14 @@ export default function BaccaratGame() {
         </div>
 
         <div className="mt-4">
-          <p className="mb-1.5 text-[10px] font-bold tracking-[0.2em] text-emerald-100/60 uppercase">Дорожка результатов</p>
-          <div className="grid grid-flow-col grid-rows-6 justify-start gap-1 overflow-x-auto rounded-xl bg-black/25 p-2">
+          <p className="eyebrow mb-1.5 text-[10px]">Доріжка результатів</p>
+          <div className="well grid grid-flow-col grid-rows-6 justify-start gap-1 overflow-x-auto rounded-xl p-2">
             {road.map((w, i) => (
-              <span key={i} className={cn('grid size-5 place-items-center rounded-full text-[9px] font-black', ROAD_STYLE[w])}>
+              <span key={i} className={cn('grid size-5 place-items-center rounded-full text-[9px] font-extrabold', ROAD_STYLE[w])}>
                 {ROAD_LETTER[w]}
               </span>
             ))}
-            {road.length === 0 && <span className="row-span-6 text-xs text-slate-500">Пока нет раздач</span>}
+            {road.length === 0 && <span className="row-span-6 text-xs text-slate-500">Ще немає роздач</span>}
           </div>
         </div>
         <ResultBanner result={banner} />
@@ -170,8 +170,8 @@ export default function BaccaratGame() {
         onClear={chips.clear}
         onDouble={chips.double}
         onRebet={() => (setWinner(null), chips.rebet())}
-        actionLabel="Раздать"
-        busyLabel="Раздаём…"
+        actionLabel="Роздати"
+        busyLabel="Роздаємо…"
         actionIcon={Play}
         onAction={() => void deal()}
       />

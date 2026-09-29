@@ -25,15 +25,15 @@ function onClaimed(amount: number, title: string) {
   sfx.play('cashout')
   haptic([20, 30, 20])
   celebrate('coins', 1.2)
-  toast({ kind: 'bonus', title, message: 'Фишки зачислены на баланс.', amount, icon: 'money-bag' })
+  toast({ kind: 'bonus', title, message: 'Фішки зараховано на баланс.', amount, icon: 'money-bag' })
 }
 
-function CooldownBar({ remaining, total, className }: { remaining: number; total: number; className?: string }) {
+function CooldownBar({ remaining, total, tone = 'gold', className }: { remaining: number; total: number; tone?: 'gold' | 'cyan'; className?: string }) {
   const progress = 1 - Math.min(1, remaining / total)
   return (
-    <div className={cn('h-1.5 overflow-hidden rounded-full bg-white/[0.06]', className)}>
+    <div className={cn('h-1.5 overflow-hidden rounded-full bg-white/[0.05]', className)}>
       <motion.div
-        className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-gold-300"
+        className={cn('h-full rounded-full', tone === 'gold' ? 'bg-gradient-to-r from-gold-500 to-gold-200' : 'bg-gradient-to-r from-sky-500 to-neon-cyan')}
         initial={false}
         animate={{ width: `${progress * 100}%` }}
         transition={{ duration: 0.6 }}
@@ -51,22 +51,23 @@ export function DailyBonusCard({ compact }: { compact?: boolean }) {
   const doneDays = status.available ? status.nextStreakDay - 1 : daily.streak
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-gold-400/25 bg-[linear-gradient(135deg,rgba(245,197,66,0.14),rgba(7,11,24,0.6)_60%)] p-4">
-      <div className="absolute -top-10 -right-10 size-36 rounded-full bg-gold-400/20 blur-3xl" />
+    <div className="glass relative overflow-hidden rounded-2xl p-4">
+      <div className="absolute inset-0 bg-[radial-gradient(80%_90%_at_100%_0%,rgba(212,165,67,0.16),transparent_65%)]" aria-hidden />
+      <span className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold-300/60 to-transparent" aria-hidden />
       <div className="relative flex items-start gap-3">
-        <div className="grid size-12 shrink-0 place-items-center rounded-xl bg-gold-400/15">
-          <Icon name="spiral-calendar" size={32} />
+        <div className="grid size-12 shrink-0 place-items-center rounded-xl bg-gold-400/10 ring-1 ring-gold-300/25">
+          <Icon name="spiral-calendar" size={28} />
         </div>
         <div className="min-w-0 flex-1">
-          <h3 className="font-display text-sm font-bold text-white">Ежедневный бонус</h3>
-          <p className="text-xs text-slate-400">
-            Заходите каждый день: серия до {DAILY_MAX_STREAK} дней увеличивает награду.
+          <h3 className="font-display text-[15px] font-bold text-white">Щоденний бонус</h3>
+          <p className="text-xs leading-snug text-slate-400">
+            Серія до {DAILY_MAX_STREAK} днів поспіль збільшує нагороду — до {formatChips(dailyBonusAmount(DAILY_MAX_STREAK))} фішок.
           </p>
         </div>
       </div>
 
       {!compact && (
-        <ol className="relative mt-4 grid grid-cols-7 gap-1.5">
+        <ol className="relative mt-4 grid grid-cols-7 gap-1">
           {Array.from({ length: DAILY_MAX_STREAK }, (_, i) => {
             const day = i + 1
             const done = day <= doneDays
@@ -75,19 +76,17 @@ export function DailyBonusCard({ compact }: { compact?: boolean }) {
               <li
                 key={day}
                 className={cn(
-                  'flex flex-col items-center gap-1 rounded-xl border px-0.5 py-2 text-center transition',
-                  done && 'border-emerald-400/40 bg-emerald-400/10',
-                  next && 'border-gold-300/70 bg-gold-400/15 shadow-glow-gold',
-                  !done && !next && 'border-white/5 bg-white/[0.03]',
+                  'flex min-w-0 flex-col items-center gap-1 rounded-lg border px-0.5 py-2 text-center transition',
+                  done && 'border-neon-emerald/30 bg-neon-emerald/[0.07]',
+                  next && 'border-gold-300/70 bg-gold-400/10 shadow-[0_0_18px_-6px_rgba(230,194,106,0.8)]',
+                  !done && !next && 'border-white/[0.05] bg-white/[0.02]',
                 )}
               >
-                <span className="text-[9px] font-semibold text-slate-400 uppercase">День {day}</span>
+                <span className="text-[9px] font-bold tracking-wide text-slate-500 uppercase">Д{day}</span>
                 {done ? (
-                  <Check className="size-4 text-emerald-300" />
+                  <Check className="size-4 text-neon-emerald" />
                 ) : (
-                  <span className={cn('text-[11px] font-bold tabular-nums', next ? 'text-gold-200' : 'text-slate-300')}>
-                    {formatChips(dailyBonusAmount(day))}
-                  </span>
+                  <span className={cn('num text-[10.5px] font-bold', next ? 'text-gold-200' : 'text-slate-400')}>{formatChips(dailyBonusAmount(day))}</span>
                 )}
               </li>
             )
@@ -97,23 +96,16 @@ export function DailyBonusCard({ compact }: { compact?: boolean }) {
 
       <div className="relative mt-4">
         {status.available ? (
-          <Button
-            variant="gold"
-            size="lg"
-            icon={Gift}
-            sound={false}
-            className="w-full"
-            onClick={() => onClaimed(claim(), 'Ежедневный бонус получен')}
-          >
-            Забрать {formatChips(status.amount)}
+          <Button variant="gold" size="lg" icon={Gift} sound={false} className="w-full" onClick={() => onClaimed(claim(), 'Щоденний бонус отримано')}>
+            Забрати {formatChips(status.amount)}
           </Button>
         ) : (
           <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="flex items-center gap-1.5 text-slate-400">
-                <Lock className="size-3.5" /> Следующий бонус через
+            <div className="flex items-center justify-between gap-2 text-xs">
+              <span className="flex min-w-0 items-center gap-1.5 text-slate-400">
+                <Lock className="size-3.5 shrink-0" /> <span className="truncate">Наступний бонус через</span>
               </span>
-              <span className="font-bold text-gold-200 tabular-nums">{formatDuration(status.nextAt - now)}</span>
+              <span className="num shrink-0 font-bold text-gold-200">{formatDuration(status.nextAt - now)}</span>
             </div>
             <CooldownBar remaining={status.nextAt - now} total={DAILY_COOLDOWN_MS} />
           </div>
@@ -133,41 +125,35 @@ export function RefillCard() {
   const status = getRefillStatus({ balance, openRounds, refillLastAt }, now)
 
   return (
-    <div
-      className={cn(
-        'relative overflow-hidden rounded-2xl border p-4',
-        status.available
-          ? 'border-cyan-300/40 bg-[linear-gradient(135deg,rgba(34,211,238,0.16),rgba(7,11,24,0.6)_60%)]'
-          : 'border-white/5 bg-white/[0.02]',
-      )}
-    >
-      <div className="flex items-center gap-3">
-        <div className={cn('grid size-12 shrink-0 place-items-center rounded-xl', status.broke ? 'bg-cyan-400/15' : 'bg-white/5')}>
-          <Icon name="money-bag" size={32} className={cn(!status.broke && 'opacity-50 grayscale')} />
+    <div className={cn('glass relative overflow-hidden rounded-2xl p-4', status.available && 'shadow-[0_0_0_1px_rgba(34,225,255,0.35),0_0_32px_-10px_rgba(34,225,255,0.5)]')}>
+      {status.available && <div className="absolute inset-0 bg-[radial-gradient(80%_90%_at_100%_0%,rgba(34,225,255,0.14),transparent_65%)]" aria-hidden />}
+      <div className="relative flex items-center gap-3">
+        <div className={cn('grid size-12 shrink-0 place-items-center rounded-xl ring-1', status.broke ? 'bg-neon-cyan/10 ring-neon-cyan/25' : 'bg-white/[0.03] ring-white/[0.06]')}>
+          <Icon name="money-bag" size={28} glow={status.broke} className={cn(!status.broke && 'opacity-40 grayscale')} />
         </div>
         <div className="min-w-0 flex-1">
-          <h3 className="font-display text-sm font-bold text-white">Помощь при банкротстве</h3>
-          <p className="text-xs text-slate-400">
+          <h3 className="font-display text-[15px] font-bold text-white">Допомога банку</h3>
+          <p className="text-xs leading-snug text-slate-400">
             {status.broke
-              ? `Фишки закончились. Банк выдаёт ${formatChips(BANKRUPT_AID)} фишек не чаще раза в 8 часов.`
-              : `Только если на балансе меньше ${formatChips(BANKRUPT_THRESHOLD)} фишек: ${formatChips(BANKRUPT_AID)} фишек раз в 8 часов.`}
+              ? `Фішки закінчилися. Банк видає ${formatChips(BANKRUPT_AID)} фішок не частіше ніж раз на 8 годин.`
+              : `Лише якщо на балансі менше ${formatChips(BANKRUPT_THRESHOLD)} фішок: ${formatChips(BANKRUPT_AID)} фішок раз на 8 годин.`}
           </p>
         </div>
       </div>
       {status.available && (
-        <Button variant="cyan" size="lg" icon={LifeBuoy} sound={false} className="mt-4 w-full" onClick={() => onClaimed(claim(), 'Помощь получена')}>
-          Получить {formatChips(status.amount)}
+        <Button variant="cyan" size="lg" icon={LifeBuoy} sound={false} className="relative mt-4 w-full" onClick={() => onClaimed(claim(), 'Допомогу отримано')}>
+          Отримати {formatChips(status.amount)}
         </Button>
       )}
       {status.broke && !status.available && (
-        <div className="mt-4 space-y-2">
-          <div className="flex items-center justify-between text-xs">
-            <span className="flex items-center gap-1.5 text-slate-400">
-              <Lock className="size-3.5" /> Банк откроется через
+        <div className="relative mt-4 space-y-2">
+          <div className="flex items-center justify-between gap-2 text-xs">
+            <span className="flex min-w-0 items-center gap-1.5 text-slate-400">
+              <Lock className="size-3.5 shrink-0" /> <span className="truncate">Банк відкриється через</span>
             </span>
-            <span className="font-bold text-cyan-300 tabular-nums">{formatDuration(status.nextAt - now)}</span>
+            <span className="num shrink-0 font-bold text-neon-cyan">{formatDuration(status.nextAt - now)}</span>
           </div>
-          <CooldownBar remaining={status.nextAt - now} total={BANKRUPT_COOLDOWN_MS} />
+          <CooldownBar remaining={status.nextAt - now} total={BANKRUPT_COOLDOWN_MS} tone="cyan" />
         </div>
       )}
     </div>

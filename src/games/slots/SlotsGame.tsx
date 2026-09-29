@@ -37,7 +37,7 @@ import {
 import { SlotSymbol } from './SlotSymbol'
 
 const LINE_BETS = [1, 2, 5, 10, 20, 50, 100, 250, 500]
-const LINE_COLORS = ['#fcd96b', '#34f5a0', '#22d3ee', '#f472d0', '#a78bfa', '#fb923c', '#ff4d6d', '#fde047', '#60a5fa', '#4ade80']
+const LINE_COLORS = ['#f3cf6e', '#19f5a3', '#22e1ff', '#f472d0', '#a78bfa', '#fb923c', '#ff4d6d', '#fde047', '#60a5fa', '#4ade80']
 const GAP = 8
 
 interface ReelProps {
@@ -75,7 +75,7 @@ function Reel({ index, strip, spinId, cell, turbo, winning, onStopped }: ReelPro
 
   return (
     <div
-      className="relative overflow-hidden rounded-xl bg-[linear-gradient(180deg,#05070f,#0d1430_50%,#05070f)] shadow-[inset_0_10px_20px_rgba(0,0,0,0.8),inset_0_-10px_20px_rgba(0,0,0,0.8)] ring-1 ring-white/10"
+      className="relative overflow-hidden rounded-xl bg-[linear-gradient(180deg,#05070a,#0f151d_50%,#05070a)] shadow-[inset_0_10px_20px_rgba(0,0,0,0.8),inset_0_-10px_20px_rgba(0,0,0,0.8)] ring-1 ring-white/10"
       style={{ width: cell, height: cell * ROWS }}
     >
       <div ref={scope} className="will-change-transform">
@@ -85,7 +85,7 @@ function Reel({ index, strip, spinId, cell, turbo, winning, onStopped }: ReelPro
             <div key={i} className="relative grid place-items-center" style={{ height: cell }}>
               {isWin && (
                 <motion.div
-                  className="absolute inset-1 rounded-lg bg-white/10 ring-2 ring-gold-300/80"
+                  className="absolute inset-1 rounded-lg bg-white/[0.07] ring-2 ring-neon-emerald/80 shadow-[0_0_16px_-2px_rgba(25,245,163,0.6)]"
                   animate={{ opacity: [0.4, 1, 0.4] }}
                   transition={{ duration: 0.9, repeat: Infinity }}
                 />
@@ -108,10 +108,10 @@ function Bulbs({ active }: { active: boolean }) {
       {Array.from({ length: 18 }, (_, i) => (
         <span
           key={i}
-          className={cn('size-1.5 rounded-full sm:size-2', i % 2 ? 'bg-gold-300' : 'bg-fuchsia-400')}
+          className={cn('size-1.5 rounded-full sm:size-2', i % 2 ? 'bg-gold-300' : 'bg-neon-emerald')}
           style={{
             animation: `pulse-glow ${active ? 0.35 : 1.6}s ease-in-out ${i * (active ? 0.03 : 0.09)}s infinite`,
-            boxShadow: `0 0 8px ${i % 2 ? '#fcd96b' : '#e879f9'}`,
+            boxShadow: `0 0 8px ${i % 2 ? '#e6c26a' : '#19f5a3'}`,
           }}
         />
       ))}
@@ -122,32 +122,32 @@ function Bulbs({ active }: { active: boolean }) {
 function Paytable({ open, onClose }: { open: boolean; onClose: () => void }) {
   const order: Exclude<SymbolId, 'scatter'>[] = ['wild', 'seven', 'crown', 'gem', 'bell', 'clover', 'grape', 'lemon', 'cherry']
   return (
-    <Modal open={open} onClose={onClose} title="Таблица выплат">
-      <p className="mb-3 text-xs text-slate-400">Выплаты указаны в ставках на линию за 3, 4 и 5 символов подряд слева направо.</p>
+    <Modal open={open} onClose={onClose} title="Таблиця виплат">
+      <p className="mb-3 text-xs text-slate-400">Виплати вказано у ставках на лінію за 3, 4 і 5 символів поспіль зліва направо.</p>
       <ul className="space-y-1.5">
         {order.map((id) => (
-          <li key={id} className="flex items-center gap-3 rounded-xl bg-white/[0.03] px-3 py-1.5">
+          <li key={id} className="flex items-center gap-2 rounded-xl bg-white/[0.025] px-2 py-1.5 sm:gap-3 sm:px-3">
             <SlotSymbol id={id} size={40} />
-            <span className="flex-1 text-sm font-semibold text-white">{SYMBOL_NAMES[id]}</span>
+            <span className="min-w-0 flex-1 truncate text-sm font-semibold text-white">{SYMBOL_NAMES[id]}</span>
             {PAYTABLE[id].map((v, i) => (
-              <span key={i} className="w-14 text-right text-xs text-slate-300 tabular-nums">
+              <span key={i} className="num w-11 shrink-0 text-right text-xs text-slate-300 sm:w-14">
                 <span className="text-slate-500">{i + 3}× </span>
                 {v}
               </span>
             ))}
           </li>
         ))}
-        <li className="flex items-center gap-3 rounded-xl border border-fuchsia-400/30 bg-fuchsia-500/10 px-3 py-2">
+        <li className="flex items-center gap-3 rounded-xl border border-pink-400/25 bg-pink-500/[0.07] px-3 py-2">
           <SlotSymbol id="scatter" size={40} />
           <span className="flex-1 text-xs leading-snug text-slate-200">
-            {SYMBOL_NAMES.scatter}: 3 / 4 / 5 в любом месте — ×{SCATTER_PAYS[3]} / ×{SCATTER_PAYS[4]} / ×{SCATTER_PAYS[5]} от общей ставки и {FREE_SPINS_AWARD} фриспинов с множителем ×{FREE_SPINS_MULTIPLIER}.
+            {SYMBOL_NAMES.scatter}: 3 / 4 / 5 будь-де — ×{SCATTER_PAYS[3]} / ×{SCATTER_PAYS[4]} / ×{SCATTER_PAYS[5]} від загальної ставки та {FREE_SPINS_AWARD} фриспінів із множником ×{FREE_SPINS_MULTIPLIER}.
           </span>
         </li>
       </ul>
-      <p className="mt-4 mb-2 text-xs font-semibold text-slate-400">Линии выплат</p>
+      <p className="eyebrow mt-4 mb-2">Лінії виплат</p>
       <div className="grid grid-cols-5 gap-2">
         {PAYLINES.map((line, li) => (
-          <svg key={li} viewBox="0 0 50 30" className="rounded-md bg-white/[0.03]">
+          <svg key={li} viewBox="0 0 50 30" className="rounded-md bg-white/[0.025]">
             {line.map((row, reel) => (
               <rect key={reel} x={reel * 10 + 1} y={row * 10 + 1} width="8" height="8" rx="1.5" fill={LINE_COLORS[li]} opacity="0.9" />
             ))}
@@ -186,7 +186,8 @@ export default function SlotsGame() {
   }, [turbo])
 
   const totalBet = lineBet * LINES
-  const cell = Math.max(48, Math.min(112, Math.floor((Math.min(width, 640) - GAP * (REELS - 1)) / REELS)))
+  // The frame adds up to 48px of padding around the reels.
+  const cell = Math.max(44, Math.min(112, Math.floor((Math.min(width, 640) - 48 - GAP * (REELS - 1)) / REELS)))
 
   const onStopped = useCallback(() => {
     stopped.current++
@@ -234,14 +235,14 @@ export default function SlotsGame() {
     if (bet > useCasino.getState().balance) {
       sfx.play('error')
       setAutoLeft(0)
-      toast({ kind: 'warning', title: 'Недостаточно фишек', message: 'Уменьшите ставку или заберите бесплатные фишки.' })
+      toast({ kind: 'warning', title: 'Недостатньо фішок', message: 'Зменште ставку або заберіть бонус.' })
       return
     }
     const seq = playSpin(bet / LINES)
     const roundId = useCasino.getState().startRound('slots', bet, {
       payout: seq.totalWin,
       tags: seq.freeSpins.length ? ['slots-free-spins'] : undefined,
-      detail: seq.freeSpins.length ? `Фриспины: ${seq.freeSpins.length}` : seq.totalWin > 0 ? `Выигрыш ×${Math.round((seq.totalWin / bet) * 10) / 10}` : 'Без выигрыша',
+      detail: seq.freeSpins.length ? `Фриспіни: ${seq.freeSpins.length}` : seq.totalWin > 0 ? `Виграш ×${Math.round((seq.totalWin / bet) * 10) / 10}` : 'Без виграшу',
     })
     if (!roundId) return
     guard.track(roundId)
@@ -256,7 +257,7 @@ export default function SlotsGame() {
       sfx.play('bonus')
       celebrate('confetti', 1.5)
       setFreeSpins({ current: 0, total: seq.freeSpins.length, won: 0 })
-      showBanner({ kind: 'info', title: `${seq.base.freeSpinsAwarded} фриспинов!`, subtitle: `Все выигрыши ×${FREE_SPINS_MULTIPLIER}` }, { silent: true, ms: 1800 })
+      showBanner({ kind: 'info', title: `${seq.base.freeSpinsAwarded} фриспінів!`, subtitle: `Усі виграші ×${FREE_SPINS_MULTIPLIER}` }, { silent: true, ms: 1800 })
       await wait(2000)
       let won = 0
       for (let i = 0; i < seq.freeSpins.length; i++) {
@@ -280,9 +281,9 @@ export default function SlotsGame() {
     if (record && seq.totalWin > 0) {
       const mult = seq.totalWin / bet
       if (mult >= 10) {
-        showBanner({ kind: 'bigwin', title: mult >= 50 ? 'Мега-выигрыш!' : 'Крупный выигрыш!', amount: seq.totalWin, multiplier: mult })
+        showBanner({ kind: 'bigwin', title: mult >= 50 ? 'Мега-виграш!' : 'Великий виграш!', amount: seq.totalWin, multiplier: mult })
       } else if (seq.freeSpins.length) {
-        showBanner({ kind: 'win', title: 'Бонус завершён', amount: seq.totalWin, multiplier: mult })
+        showBanner({ kind: 'win', title: 'Бонус завершено', amount: seq.totalWin, multiplier: mult })
       }
     }
   }, [spinning, animateTo, present, guard, mounted, showBanner])
@@ -314,28 +315,28 @@ export default function SlotsGame() {
   const inBonus = freeSpins !== null
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
-      <div ref={wrapRef} className="min-w-0">
+    <div className="grid gap-3 sm:gap-4 lg:grid-cols-[minmax(270px,320px)_minmax(0,1fr)] lg:items-start">
+      <div ref={wrapRef} className="min-w-0 lg:col-start-2 lg:row-start-1">
         <div
           className={cn(
             'relative mx-auto rounded-[30px] p-[3px] transition-shadow duration-500',
             inBonus
-              ? 'bg-[linear-gradient(135deg,#f0abfc,#7c3aed,#22d3ee,#f0abfc)] shadow-[0_0_60px_-10px_rgba(232,121,249,0.7)]'
-              : 'bg-[linear-gradient(135deg,#fff4d1,#e2ab1c_35%,#6b4a0a_60%,#fcd96b)] shadow-[0_0_50px_-15px_rgba(245,197,66,0.6)]',
+              ? 'bg-[linear-gradient(135deg,#f0abfc,#7446f0,#22e1ff,#f0abfc)] shadow-[0_0_60px_-10px_rgba(232,121,249,0.7)]'
+              : 'bg-[linear-gradient(135deg,#fbf0cf,#d4a543_35%,#664710_60%,#f3cf6e)] shadow-[0_0_50px_-15px_rgba(230,194,106,0.6)]',
           )}
           style={{ maxWidth: reelsWidth + 48 }}
         >
-          <div className={cn('relative overflow-hidden rounded-[27px] px-3 pt-3 pb-4 sm:px-5 sm:pt-4', inBonus ? 'bg-[radial-gradient(120%_80%_at_50%_0%,#3b0764,#070b18_70%)]' : 'bg-[radial-gradient(120%_80%_at_50%_0%,#1c1440,#070b18_70%)]')}>
+          <div className={cn('relative overflow-hidden rounded-[27px] px-3 pt-3 pb-4 sm:px-5 sm:pt-4', inBonus ? 'bg-[radial-gradient(120%_80%_at_50%_0%,#3b0764,#07090d_70%)]' : 'bg-[radial-gradient(120%_80%_at_50%_0%,#14202a,#07090d_70%)]')}>
             <Bulbs active={spinning} />
             <div className="my-2 text-center sm:my-3">
-              <p className="font-display text-2xl font-black tracking-[0.2em] text-fuchsia-200 [text-shadow:0_0_10px_#e879f9,0_0_30px_#c026d3] sm:text-4xl">
-                НЕОН <span className="text-gold-200 [text-shadow:0_0_10px_#fcd96b,0_0_30px_#e2ab1c]">777</span>
+              <p className="font-display text-2xl font-black tracking-[0.2em] text-emerald-100 italic [text-shadow:0_0_10px_#19f5a3,0_0_30px_#0bbf7e] sm:text-4xl">
+                НЕОН <span className="text-gold-100 [text-shadow:0_0_10px_#f3cf6e,0_0_30px_#d4a543]">777</span>
               </p>
               <AnimatePresence>
                 {inBonus && (
                   <motion.p initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-1 text-xs font-bold tracking-wider text-fuchsia-200 uppercase sm:text-sm">
                     <Sparkles className="mr-1 inline size-4" />
-                    Фриспин {freeSpins.current} из {freeSpins.total} · ×{FREE_SPINS_MULTIPLIER} · бонус {formatChips(freeSpins.won)}
+                    Фриспін {freeSpins.current} з {freeSpins.total} · ×{FREE_SPINS_MULTIPLIER} · бонус {formatChips(freeSpins.won)}
                   </motion.p>
                 )}
               </AnimatePresence>
@@ -372,11 +373,11 @@ export default function SlotsGame() {
               )}
             </div>
 
-            <div className="mt-3 flex items-center justify-between gap-3 rounded-2xl bg-black/40 px-4 py-2 ring-1 ring-white/10">
-              <span className="text-[11px] font-semibold tracking-wider text-slate-400 uppercase">Выигрыш</span>
+            <div className="well mt-3 flex items-center justify-between gap-3 rounded-xl px-4 py-2">
+              <span className="eyebrow">Виграш</span>
               <AnimatedNumber
                 value={outcome?.win ?? (inBonus ? 0 : lastWin)}
-                className={cn('font-display text-xl font-black tabular-nums sm:text-2xl', (outcome?.win ?? 0) > 0 ? 'text-gold-gradient' : 'text-slate-300')}
+                className={cn('num text-xl font-bold sm:text-2xl', (outcome?.win ?? 0) > 0 ? 'text-gold-gradient' : 'text-slate-300')}
               />
             </div>
             <ResultBanner result={banner} />
@@ -385,26 +386,26 @@ export default function SlotsGame() {
         {outcome && outcome.lineWins.length > 0 && (
           <div className="mx-auto mt-3 flex max-w-2xl flex-wrap justify-center gap-1.5">
             {outcome.lineWins.map((w) => (
-              <span key={w.line} className="rounded-full bg-white/[0.05] px-2.5 py-1 text-[11px] text-slate-300 ring-1" style={{ ['--tw-ring-color' as string]: `${LINE_COLORS[w.line]}80` }}>
-                Линия {w.line + 1}: {SYMBOL_NAMES[w.symbol]} ×{w.count} — <b className="text-white">{formatChips(w.win)}</b>
+              <span key={w.line} className="rounded-md bg-white/[0.03] px-2.5 py-1 text-[11px] text-slate-300 ring-1" style={{ ['--tw-ring-color' as string]: `${LINE_COLORS[w.line]}80` }}>
+                Лінія {w.line + 1}: {SYMBOL_NAMES[w.symbol]} ×{w.count} — <b className="num text-white">{formatChips(w.win)}</b>
               </span>
             ))}
           </div>
         )}
       </div>
 
-      <Panel strong className="flex flex-col gap-4 p-4 lg:self-start">
+      <Panel strong className="flex flex-col gap-4 p-4 lg:sticky lg:top-24 lg:col-start-1 lg:row-start-1">
         <div>
-          <p className="mb-1.5 text-xs font-medium text-slate-400">Ставка на линию</p>
+          <p className="eyebrow mb-1.5">Ставка на лінію</p>
           <div className="flex items-center gap-2">
-            <Button variant="glass" size="md" icon={Minus} aria-label="Уменьшить ставку" sound={false} disabled={spinning || lineBet === LINE_BETS[0]} onClick={() => changeBet(-1)} />
-            <div className="flex-1 rounded-xl bg-ink-950/60 py-2 text-center ring-1 ring-white/10">
-              <p className="text-lg font-black text-white tabular-nums">{formatChips(lineBet)}</p>
-              <p className="text-[10px] text-slate-400">
-                {LINES} линий · всего {formatChips(totalBet)}
+            <Button variant="glass" size="md" icon={Minus} aria-label="Зменшити ставку" sound={false} disabled={spinning || lineBet === LINE_BETS[0]} onClick={() => changeBet(-1)} />
+            <div className="well min-w-0 flex-1 rounded-xl py-2 text-center">
+              <p className="num text-lg font-bold text-white">{formatChips(lineBet)}</p>
+              <p className="text-[10px] text-slate-500">
+                {LINES} ліній · разом <span className="num">{formatChips(totalBet)}</span>
               </p>
             </div>
-            <Button variant="glass" size="md" icon={Plus} aria-label="Увеличить ставку" sound={false} disabled={spinning || lineBet === LINE_BETS[LINE_BETS.length - 1]} onClick={() => changeBet(1)} />
+            <Button variant="glass" size="md" icon={Plus} aria-label="Збільшити ставку" sound={false} disabled={spinning || lineBet === LINE_BETS[LINE_BETS.length - 1]} onClick={() => changeBet(1)} />
           </div>
         </div>
 
@@ -413,16 +414,16 @@ export default function SlotsGame() {
           whileTap={{ scale: 0.94 }}
           disabled={spinning || totalBet > balance}
           onClick={() => void spin()}
-          className="group relative mx-auto grid size-28 place-items-center rounded-full bg-[radial-gradient(circle_at_35%_30%,#fff4d1,#fcd96b_35%,#e2ab1c_60%,#8a620d)] text-ink-950 shadow-[0_0_0_6px_rgba(7,11,24,0.9),0_0_0_8px_rgba(252,217,107,0.5),0_0_40px_rgba(245,197,66,0.6)] transition disabled:opacity-50 disabled:saturate-50 max-lg:hidden"
-          aria-label="Крутить"
+          className="group relative mx-auto grid size-28 place-items-center rounded-full bg-[radial-gradient(circle_at_35%_30%,#b6ffe4,#19f5a3_38%,#0bbf7e_62%,#05603f)] text-[#03140d] shadow-[inset_0_2px_0_rgba(255,255,255,0.5),0_6px_0_#04462e,0_0_0_6px_rgba(7,9,13,0.95),0_0_0_8px_rgba(25,245,163,0.45),0_0_44px_rgba(25,245,163,0.55)] transition active:translate-y-1 disabled:opacity-50 disabled:saturate-50 max-lg:hidden"
+          aria-label="Крутити"
         >
           <span className="flex flex-col items-center">
             <RotateCw className={cn('size-8', spinning && 'animate-spin')} strokeWidth={2.6} />
-            <span className="font-display text-xs font-black tracking-wider uppercase">{spinning ? 'Крутим' : 'Крутить'}</span>
+            <span className="font-display text-xs font-black tracking-wider uppercase">{spinning ? 'Крутимо' : 'Крутити'}</span>
           </span>
         </motion.button>
-        <Button variant="gold" size="xl" icon={RotateCw} sound={false} className="lg:hidden" disabled={spinning || totalBet > balance} onClick={() => void spin()}>
-          {spinning ? 'Крутим…' : `Крутить · ${formatChips(totalBet)}`}
+        <Button variant="emerald" size="xl" icon={RotateCw} sound={false} className="lg:hidden" disabled={spinning || totalBet > balance} onClick={() => void spin()}>
+          {spinning ? 'Крутимо…' : `Крутити · ${formatChips(totalBet)}`}
         </Button>
 
         <div className="grid grid-cols-3 gap-2">
@@ -439,18 +440,18 @@ export default function SlotsGame() {
             Турбо
           </Button>
           <Button variant="glass" size="sm" icon={Info} onClick={() => setPaytableOpen(true)}>
-            Выплаты
+            Виплати
           </Button>
         </div>
 
         <div className="grid grid-cols-2 gap-2 text-center max-lg:hidden">
-          <div className="rounded-xl bg-white/[0.03] p-2">
-            <p className="text-[10px] text-slate-500">Последний выигрыш</p>
-            <p className="font-bold text-white tabular-nums">{formatChips(lastWin)}</p>
+          <div className="well min-w-0 rounded-xl p-2">
+            <p className="truncate text-[10px] text-slate-500">Останній виграш</p>
+            <p className="num font-bold text-white">{formatChips(lastWin)}</p>
           </div>
-          <div className="rounded-xl bg-white/[0.03] p-2">
-            <p className="text-[10px] text-slate-500">Множитель</p>
-            <p className="font-bold text-white tabular-nums">{lastWin ? formatMultiplier(lastWin / totalBet, 1) : '—'}</p>
+          <div className="well min-w-0 rounded-xl p-2">
+            <p className="truncate text-[10px] text-slate-500">Множник</p>
+            <p className="num font-bold text-white">{lastWin ? formatMultiplier(lastWin / totalBet, 1) : '—'}</p>
           </div>
         </div>
       </Panel>

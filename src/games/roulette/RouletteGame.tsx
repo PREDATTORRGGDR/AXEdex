@@ -1,12 +1,11 @@
-import { Disc3, Layers2, Repeat, Trash2, Undo2 } from 'lucide-react'
+import { Disc3 } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useCallback, useRef, useState } from 'react'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { sfx } from '../../audio/sfx'
 import { ResultBanner } from '../../components/game/ResultBanner'
-import { Button } from '../../components/ui/Button'
-import { ChipSelector } from '../../components/ui/CasinoChip'
+import { ChipTableControls } from '../../components/game/ChipTableControls'
 import { Panel } from '../../components/ui/Panel'
 import { useMediaQuery } from '../../hooks/useMediaQuery'
 import { useResultBanner, resultKind } from '../../hooks/useResultBanner'
@@ -55,7 +54,11 @@ interface ActiveSpin extends WheelSpin {
   stake: number
 }
 
-const POCKET_BG = { red: 'bg-roulette-red', black: 'bg-roulette-black', green: 'bg-roulette-green' }
+const POCKET_BG = {
+  red: 'bg-[linear-gradient(180deg,#e0284a,#a8112f)]',
+  black: 'bg-[linear-gradient(180deg,#252c3b,#10141c)]',
+  green: 'bg-[linear-gradient(180deg,#12b877,#0a7a4f)]',
+}
 
 function HistoryStrip() {
   const numbers = useRouletteHistory((s) => s.numbers)
@@ -68,12 +71,12 @@ function HistoryStrip() {
   return (
     <Panel className="p-4">
       <div className="mb-3 flex items-center justify-between">
-        <p className="text-xs font-semibold tracking-wider text-slate-400 uppercase">Последние номера</p>
-        <p className="text-[11px] text-slate-500">за {numbers.length} спинов</p>
+        <p className="text-[11px] font-bold tracking-[0.16em] text-slate-500 uppercase">Останні номери</p>
+        <p className="num text-[11px] text-slate-500">{numbers.length} спінів</p>
       </div>
       <div className="no-scrollbar flex h-10 gap-1.5 overflow-x-auto">
         <AnimatePresence initial={false}>
-          {recent.length === 0 && <p className="text-sm text-slate-500">Пока ни одного спина</p>}
+          {recent.length === 0 && <p className="text-sm text-slate-500">Ще жодного спіну</p>}
           {recent.map((n, i) => (
             <motion.span
               key={numbers.length - i}
@@ -82,9 +85,9 @@ function HistoryStrip() {
               animate={{ scale: i === 0 ? 1.1 : 1, opacity: 1 - i * 0.04 }}
               transition={{ type: 'spring', stiffness: 500, damping: 25 }}
               className={cn(
-                'grid size-9 shrink-0 place-items-center rounded-full text-sm font-bold text-white ring-1 ring-white/15',
+                'num grid size-9 shrink-0 place-items-center rounded-lg text-sm font-bold text-white ring-1 ring-white/10',
                 POCKET_BG[colorOf(n)],
-                i === 0 && 'shadow-glow-gold ring-2 ring-gold-300',
+                i === 0 && 'shadow-[0_0_16px_-2px_rgba(255,207,90,0.7)] ring-2 ring-neon-gold',
               )}
             >
               {n}
@@ -96,13 +99,13 @@ function HistoryStrip() {
         <div className="mt-3 space-y-1.5">
           <div className="flex h-2 overflow-hidden rounded-full">
             <div className="bg-roulette-red" style={{ width: `${red * 100}%` }} />
-            <div className="bg-slate-600" style={{ width: `${black * 100}%` }} />
+            <div className="bg-slate-500" style={{ width: `${black * 100}%` }} />
             <div className="bg-roulette-green" style={{ width: `${zero * 100}%` }} />
           </div>
           <div className="flex justify-between text-[11px] text-slate-400">
-            <span>Красное {formatPercent(red)}</span>
-            <span>Зеро {formatPercent(zero)}</span>
-            <span>Чёрное {formatPercent(black)}</span>
+            <span>Червоне <b className="num text-slate-300">{formatPercent(red)}</b></span>
+            <span>Зеро <b className="num text-slate-300">{formatPercent(zero)}</b></span>
+            <span>Чорне <b className="num text-slate-300">{formatPercent(black)}</b></span>
           </div>
         </div>
       )}
@@ -135,7 +138,7 @@ export default function RouletteGame() {
     if (result) setResult(null)
     if (stake + chip > balance) {
       sfx.play('error')
-      toast({ kind: 'warning', title: 'Недостаточно фишек', message: 'Уменьшите номинал фишки или заберите бонус.' })
+      toast({ kind: 'warning', title: 'Недостатньо фішок', message: 'Зменште номінал фішки або заберіть бонус.' })
       return
     }
     sfx.play('chip', { pitch: 0.9 + Math.random() * 0.2 })
@@ -179,7 +182,7 @@ export default function RouletteGame() {
     const total = totalStake(lastBets)
     if (total > balance) {
       sfx.play('error')
-      toast({ kind: 'warning', title: 'Недостаточно фишек для повтора' })
+      toast({ kind: 'warning', title: 'Недостатньо фішок для повтору' })
       return
     }
     sfx.play('chip')
@@ -227,7 +230,7 @@ export default function RouletteGame() {
         kind: resultKind(current.stake, current.payout),
         title: describeNumber(current.number),
         amount: current.payout - current.stake,
-        subtitle: current.payout > 0 ? `Выплата ${formatChips(current.payout)}` : 'Ставки проиграли',
+        subtitle: current.payout > 0 ? `Виплата ${formatChips(current.payout)}` : 'Ставки програли',
       })
     },
     [guard, push, showBanner],
@@ -236,7 +239,7 @@ export default function RouletteGame() {
   return (
     <div className="grid gap-4 xl:grid-cols-[minmax(320px,440px)_1fr] xl:items-start">
       <div ref={wheelRef} className="xl:col-start-1 xl:row-start-1">
-        <Panel strong className="relative overflow-hidden p-4 sm:p-6">
+        <Panel strong className="relative overflow-hidden bg-[radial-gradient(60%_60%_at_50%_45%,rgba(25,245,163,0.08),transparent_70%)] p-4 sm:p-6">
           <div className="mx-auto max-w-[340px] sm:max-w-[420px]">
             <RouletteWheel spin={spin} onSettled={onSettled} highlight={result?.number ?? null} />
           </div>
@@ -247,44 +250,28 @@ export default function RouletteGame() {
       <Panel className="p-3 sm:p-4 xl:col-start-2 xl:row-start-1">
         <RouletteTable bets={bets} onBet={place} onRemove={remove} disabled={spinning} vertical={vertical} result={result} />
         <p className="mt-2 text-center text-[11px] text-slate-500">
-          Нажмите на поле, чтобы поставить фишку. Правый клик по ставке убирает её.
+          Натисніть на поле, щоб поставити фішку. Правий клік по ставці прибирає її.
         </p>
       </Panel>
 
-      <Panel strong className="sticky bottom-[76px] z-20 space-y-3 p-3 sm:p-4 lg:bottom-4 xl:col-start-2 xl:row-start-2">
-        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
-          <ChipSelector value={chip} onChange={(v) => (sfx.play('chip'), setChip(v))} balance={balance} />
-          <div className="flex gap-5 text-right">
-            <div>
-              <p className="text-[11px] text-slate-400">Ставка</p>
-              <p className="text-lg font-bold text-white tabular-nums">{formatChips(stake)}</p>
-            </div>
-            <div>
-              <p className="text-[11px] text-slate-400">Последний выигрыш</p>
-              <p className={cn('text-lg font-bold tabular-nums', lastWin > 0 ? 'text-emerald-300' : 'text-slate-400')}>
-                {formatChips(lastWin)}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="grid grid-cols-[repeat(4,auto)_1fr] gap-2">
-          <Button variant="glass" size="md" icon={Undo2} aria-label="Отменить" disabled={spinning || !history.length} onClick={undo}>
-            <span className="hidden sm:inline">Отменить</span>
-          </Button>
-          <Button variant="glass" size="md" icon={Trash2} aria-label="Очистить" disabled={spinning || !stake} onClick={clear}>
-            <span className="hidden sm:inline">Очистить</span>
-          </Button>
-          <Button variant="glass" size="md" icon={Layers2} aria-label="Удвоить" disabled={spinning || !stake} onClick={double} sound={false}>
-            <span className="hidden sm:inline">Удвоить</span>
-          </Button>
-          <Button variant="glass" size="md" icon={Repeat} aria-label="Повторить" disabled={spinning || !!stake || !totalStake(lastBets)} onClick={rebet} sound={false}>
-            <span className="hidden sm:inline">Повторить</span>
-          </Button>
-          <Button variant="gold" size="lg" icon={Disc3} sound={false} disabled={spinning || stake <= 0 || stake > balance} onClick={doSpin}>
-            {spinning ? 'Шарик в игре…' : 'Крутить'}
-          </Button>
-        </div>
-      </Panel>
+      <ChipTableControls
+        className="xl:col-start-2 xl:row-start-2"
+        chip={chip}
+        onChip={(v) => (sfx.play('chip'), setChip(v))}
+        total={stake}
+        lastWin={lastWin}
+        busy={spinning}
+        canUndo={history.length > 0}
+        canRebet={totalStake(lastBets) > 0}
+        onUndo={undo}
+        onClear={clear}
+        onDouble={double}
+        onRebet={rebet}
+        actionLabel="Крутити"
+        busyLabel="Кулька в грі…"
+        actionIcon={Disc3}
+        onAction={doSpin}
+      />
 
       <div className="xl:col-start-1 xl:row-start-2">
         <HistoryStrip />

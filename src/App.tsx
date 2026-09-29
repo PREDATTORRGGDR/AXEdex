@@ -34,7 +34,7 @@ function Page({ route }: { route: Route }) {
 function documentTitle(route: Route): string {
   const base = 'AXEdex'
   if (route.name === 'game') return `${GAMES[route.id].name} · ${base}`
-  if (route.name === 'profile') return `Профиль · ${base}`
+  if (route.name === 'profile') return `Профіль · ${base}`
   return `${base} · Симулятор казино`
 }
 
@@ -60,7 +60,7 @@ export default function App() {
         <Sidebar />
         <div className="flex min-w-0 flex-1 flex-col">
           <TopBar />
-          <main className="flex-1 px-4 pt-2 pb-28 sm:px-6 lg:px-8 lg:pb-10">
+          <main className="flex-1 px-3 pt-3 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:px-6 sm:pt-5 lg:px-8 lg:pb-10">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={key}
@@ -77,7 +77,7 @@ export default function App() {
       </div>
       <MobileNav />
       <GamesSheet />
-      <Modal open={rewardsOpen} onClose={() => setRewardsOpen(false)} title="Бонусы">
+      <Modal open={rewardsOpen} onClose={() => setRewardsOpen(false)} title="Бонуси">
         <RewardsPanel />
       </Modal>
       <Toaster />

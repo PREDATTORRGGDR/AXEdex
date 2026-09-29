@@ -2,7 +2,7 @@ import { secureRandom, type Rng } from '../../lib/rng'
 
 export type WheelRisk = 'low' | 'medium' | 'high'
 
-export const WHEEL_RISK_LABELS: Record<WheelRisk, string> = { low: 'Низкий', medium: 'Средний', high: 'Высокий' }
+export const WHEEL_RISK_LABELS: Record<WheelRisk, string> = { low: 'Низький', medium: 'Середній', high: 'Високий' }
 
 export interface Segment {
   multiplier: number

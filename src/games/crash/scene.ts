@@ -81,7 +81,7 @@ export function drawScene(ctx: CanvasRenderingContext2D, w: number, h: number, s
   }
 
   // Grid + labels
-  ctx.font = '600 10px Inter, system-ui, sans-serif'
+  ctx.font = '600 10px "JetBrains Mono Variable", ui-monospace, monospace'
   ctx.textBaseline = 'middle'
   const yStep = niceStep(g.yMax - 1)
   for (let v = 1; v <= g.yMax + 1e-9; v += yStep) {
@@ -113,11 +113,11 @@ export function drawScene(ctx: CanvasRenderingContext2D, w: number, h: number, s
     pts.push([g.x(tt), g.y(Math.min(s.m, Math.exp(GROWTH * tt)))])
   }
   const [tipX, tipY] = pts[pts.length - 1]
-  const color = s.crashed ? '#ff4d6d' : s.cashedAt ? '#34f5a0' : '#22d3ee'
+  const color = s.crashed ? '#ff4d6d' : s.cashedAt ? '#19f5a3' : '#22e1ff'
 
   const area = ctx.createLinearGradient(0, tipY, 0, h - PAD.bottom)
-  area.addColorStop(0, s.crashed ? 'rgba(255,77,109,0.35)' : 'rgba(34,211,238,0.3)')
-  area.addColorStop(1, 'rgba(34,211,238,0)')
+  area.addColorStop(0, s.crashed ? 'rgba(255,77,109,0.35)' : 'rgba(34,225,255,0.3)')
+  area.addColorStop(1, 'rgba(34,225,255,0)')
   ctx.beginPath()
   ctx.moveTo(pts[0][0], h - PAD.bottom)
   for (const [x, y] of pts) ctx.lineTo(x, y)
@@ -146,13 +146,13 @@ export function drawScene(ctx: CanvasRenderingContext2D, w: number, h: number, s
     const cy = g.y(s.cashedAt)
     ctx.beginPath()
     ctx.arc(cx, cy, 6, 0, Math.PI * 2)
-    ctx.fillStyle = '#34f5a0'
-    ctx.shadowColor = '#34f5a0'
+    ctx.fillStyle = '#19f5a3'
+    ctx.shadowColor = '#19f5a3'
     ctx.shadowBlur = 14
     ctx.fill()
     ctx.shadowBlur = 0
     ctx.fillStyle = '#a7ffd9'
-    ctx.font = '800 12px Inter, system-ui, sans-serif'
+    ctx.font = '800 12px "JetBrains Mono Variable", ui-monospace, monospace'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'bottom'
     ctx.fillText(`${formatDecimal(s.cashedAt)}×`, cx, cy - 10)

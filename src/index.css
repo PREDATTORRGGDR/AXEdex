@@ -1,45 +1,50 @@
 @import 'tailwindcss';
 
 /* ------------------------------------------------------------------ */
-/* Design tokens                                                        */
+/* Design tokens — «Dark Luxury» cyber terminal                        */
 /* ------------------------------------------------------------------ */
 @theme {
-  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-display: 'Unbounded', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Manrope Variable', 'Manrope', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Exo 2 Variable', 'Exo 2', 'Manrope Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 
-  --color-ink-950: #04060d;
-  --color-ink-900: #070b18;
-  --color-ink-850: #0a1022;
-  --color-ink-800: #0e162e;
-  --color-ink-700: #16213f;
-  --color-ink-600: #22305a;
+  /* Graphite surfaces, darkest to lightest */
+  --color-ink-950: #07090d;
+  --color-ink-900: #0b0e14;
+  --color-ink-850: #0e121a;
+  --color-ink-800: #121720;
+  --color-ink-700: #181e29;
+  --color-ink-600: #212936;
+  --color-ink-500: #2c3647;
 
-  --color-gold-100: #fff4d1;
-  --color-gold-200: #ffe7a3;
-  --color-gold-300: #fcd96b;
-  --color-gold-400: #f5c542;
-  --color-gold-500: #e2ab1c;
-  --color-gold-600: #b98511;
-  --color-gold-700: #8a620d;
+  /* Deep gold */
+  --color-gold-100: #fbf0cf;
+  --color-gold-200: #f3dc9a;
+  --color-gold-300: #e6c26a;
+  --color-gold-400: #d4a543;
+  --color-gold-500: #b8862a;
+  --color-gold-600: #8f651a;
+  --color-gold-700: #664710;
 
-  --color-neon-cyan: #22d3ee;
-  --color-neon-pink: #f472d0;
-  --color-neon-violet: #a78bfa;
-  --color-neon-green: #34f5a0;
+  /* Neon accents */
+  --color-neon-emerald: #19f5a3;
+  --color-neon-cyan: #22e1ff;
+  --color-neon-gold: #ffcf5a;
   --color-neon-red: #ff4d6d;
+  --color-neon-violet: #9d7bff;
 
-  --color-felt-900: #04241c;
-  --color-felt-800: #06322a;
-  --color-felt-700: #0a4638;
+  --color-felt-900: #06120f;
+  --color-felt-800: #0a1a16;
+  --color-felt-700: #0f261f;
 
-  --color-roulette-red: #d7263d;
-  --color-roulette-black: #161a26;
-  --color-roulette-green: #0f9d63;
+  --color-roulette-red: #d4193a;
+  --color-roulette-black: #141821;
+  --color-roulette-green: #0f9f67;
 
-  --shadow-glow-gold: 0 0 24px rgb(245 197 66 / 0.35), 0 0 2px rgb(245 197 66 / 0.8);
-  --shadow-glow-cyan: 0 0 24px rgb(34 211 238 / 0.35), 0 0 2px rgb(34 211 238 / 0.8);
-  --shadow-glow-pink: 0 0 24px rgb(244 114 208 / 0.35), 0 0 2px rgb(244 114 208 / 0.8);
-  --shadow-glow-green: 0 0 24px rgb(52 245 160 / 0.35), 0 0 2px rgb(52 245 160 / 0.8);
+  --shadow-glow-gold: 0 0 0 1px rgb(230 194 106 / 0.35), 0 0 24px -4px rgb(230 194 106 / 0.55);
+  --shadow-glow-cyan: 0 0 0 1px rgb(34 225 255 / 0.35), 0 0 24px -4px rgb(34 225 255 / 0.55);
+  --shadow-glow-pink: 0 0 0 1px rgb(244 114 208 / 0.35), 0 0 24px -4px rgb(244 114 208 / 0.55);
+  --shadow-glow-green: 0 0 0 1px rgb(25 245 163 / 0.35), 0 0 24px -4px rgb(25 245 163 / 0.55);
 
   --animate-shimmer: shimmer 3s linear infinite;
   --animate-float-slow: float-slow 18s ease-in-out infinite;
@@ -47,6 +52,7 @@
   --animate-marquee: marquee 60s linear infinite;
   --animate-wiggle: wiggle 1.8s ease-in-out infinite;
   --animate-spin-slow: spin 12s linear infinite;
+  --animate-sweep: sweep 6s ease-in-out infinite;
 
   @keyframes shimmer {
     from {
@@ -98,6 +104,15 @@
       opacity: 1;
     }
   }
+  @keyframes sweep {
+    0% {
+      transform: translate3d(-120%, 0, 0) skewX(-20deg);
+    }
+    55%,
+    100% {
+      transform: translate3d(220%, 0, 0) skewX(-20deg);
+    }
+  }
 }
 
 /* ------------------------------------------------------------------ */
@@ -115,7 +130,7 @@
   }
 
   body {
-    @apply bg-ink-950 font-sans text-slate-100 antialiased;
+    @apply bg-ink-900 font-sans text-slate-200 antialiased;
     -webkit-tap-highlight-color: transparent;
     overscroll-behavior-y: none;
   }
@@ -129,99 +144,115 @@
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-gold-300);
+    outline: 2px solid var(--color-neon-emerald);
     outline-offset: 2px;
   }
 
   ::selection {
-    background: rgb(245 197 66 / 0.35);
+    background: rgb(25 245 163 / 0.3);
   }
 }
 
 /* ------------------------------------------------------------------ */
-/* Custom utilities                                                     */
+/* Surfaces                                                             */
 /* ------------------------------------------------------------------ */
+
 /*
- * Frosted panels. They deliberately do NOT use backdrop-filter: blurring the
- * animated background behind dozens of panels every frame was the main source
- * of jank. A denser tinted gradient gives the same look for a fraction of the cost.
+ * Frosted glass. The page background is static, so the backdrop blur is
+ * computed once per scroll position rather than on every animation frame.
  */
 @utility glass {
-  background: linear-gradient(145deg, rgb(24 33 64 / 0.78), rgb(10 15 32 / 0.84));
-  border: 1px solid rgb(255 255 255 / 0.09);
+  background: linear-gradient(180deg, rgb(26 33 46 / 0.62), rgb(15 19 27 / 0.7));
+  border: 1px solid rgb(255 255 255 / 0.065);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.06),
-    0 20px 40px -24px rgb(0 0 0 / 0.8);
+    inset 0 1px 0 rgb(255 255 255 / 0.05),
+    inset 0 -1px 0 rgb(0 0 0 / 0.35),
+    0 24px 48px -28px rgb(0 0 0 / 0.95);
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
 }
 
 @utility glass-strong {
-  background: linear-gradient(145deg, rgb(20 28 56 / 0.94), rgb(8 12 26 / 0.96));
-  border: 1px solid rgb(255 255 255 / 0.1);
+  background: linear-gradient(180deg, rgb(24 30 42 / 0.82), rgb(12 16 23 / 0.9));
+  border: 1px solid rgb(255 255 255 / 0.075);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.08),
-    0 30px 60px -20px rgb(0 0 0 / 0.9);
+    inset 0 1px 0 rgb(255 255 255 / 0.06),
+    inset 0 -1px 0 rgb(0 0 0 / 0.4),
+    0 30px 60px -30px rgb(0 0 0 / 1);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+}
+
+/* Recessed game board / well. */
+@utility well {
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgb(25 245 163 / 0.05), transparent 55%),
+    linear-gradient(180deg, #0a0d13, #07090d);
+  border: 1px solid rgb(255 255 255 / 0.045);
+  box-shadow:
+    inset 0 2px 16px rgb(0 0 0 / 0.65),
+    inset 0 0 0 1px rgb(0 0 0 / 0.4);
+}
+
+/* Dark casino table surface with a faint emerald cast and fine weave. */
+@utility felt {
+  background:
+    radial-gradient(110% 80% at 50% -10%, rgb(25 245 163 / 0.09), transparent 60%),
+    radial-gradient(90% 90% at 50% 120%, rgb(0 0 0 / 0.7), transparent 70%),
+    repeating-linear-gradient(45deg, rgb(255 255 255 / 0.012) 0 2px, transparent 2px 6px),
+    linear-gradient(180deg, #0d1a17, #070c0b);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.04),
+    inset 0 30px 80px -40px rgb(0 0 0 / 0.9);
 }
 
 @utility text-gold-gradient {
-  background: linear-gradient(180deg, #fff4d1 0%, #fcd96b 45%, #e2ab1c 70%, #b98511 100%);
+  background: linear-gradient(180deg, #fbf0cf 0%, #f3dc9a 30%, #d4a543 70%, #8f651a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility text-emerald-gradient {
+  background: linear-gradient(180deg, #c9ffe9 0%, #19f5a3 55%, #06b877 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
 @utility text-glow-gold {
-  text-shadow:
-    0 0 12px rgb(245 197 66 / 0.55),
-    0 0 2px rgb(255 231 163 / 0.9);
+  text-shadow: 0 0 18px rgb(230 194 106 / 0.45);
 }
 
 @utility text-glow-cyan {
-  text-shadow:
-    0 0 12px rgb(34 211 238 / 0.6),
-    0 0 2px rgb(165 243 252 / 0.9);
+  text-shadow: 0 0 18px rgb(34 225 255 / 0.55);
 }
 
 @utility text-glow-pink {
-  text-shadow:
-    0 0 12px rgb(244 114 208 / 0.6),
-    0 0 2px rgb(251 207 232 / 0.9);
+  text-shadow: 0 0 18px rgb(244 114 208 / 0.55);
 }
 
 @utility text-glow-green {
-  text-shadow:
-    0 0 12px rgb(52 245 160 / 0.6),
-    0 0 2px rgb(187 247 208 / 0.9);
+  text-shadow: 0 0 18px rgb(25 245 163 / 0.5);
 }
 
 @utility gold-border {
   border: 1px solid transparent;
   background:
-    linear-gradient(var(--color-ink-850), var(--color-ink-850)) padding-box,
-    linear-gradient(135deg, #fff4d1, #e2ab1c 40%, #8a620d 60%, #fcd96b) border-box;
-}
-
-@utility felt {
-  background:
-    radial-gradient(120% 90% at 50% 0%, rgb(20 120 92 / 0.55), transparent 60%),
-    radial-gradient(80% 80% at 50% 110%, rgb(0 0 0 / 0.6), transparent 70%),
-    linear-gradient(180deg, var(--color-felt-700), var(--color-felt-900));
-  box-shadow:
-    inset 0 0 0 1px rgb(255 255 255 / 0.05),
-    inset 0 30px 80px -40px rgb(0 0 0 / 0.8);
+    linear-gradient(var(--color-ink-800), var(--color-ink-800)) padding-box,
+    linear-gradient(135deg, rgb(243 220 154 / 0.7), rgb(212 165 67 / 0.25) 45%, rgb(143 101 26 / 0.2) 60%, rgb(230 194 106 / 0.6)) border-box;
 }
 
 @utility shimmer-gold {
-  background-image: linear-gradient(
-    110deg,
-    #b98511 0%,
-    #fcd96b 25%,
-    #fff4d1 35%,
-    #fcd96b 45%,
-    #e2ab1c 60%,
-    #b98511 100%
-  );
+  background-image: linear-gradient(110deg, #8f651a 0%, #e6c26a 25%, #fbf0cf 35%, #e6c26a 45%, #d4a543 60%, #8f651a 100%);
   background-size: 200% 100%;
   animation: var(--animate-shimmer);
+}
+
+@utility num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
 }
 
 @utility no-scrollbar {
@@ -235,24 +266,94 @@
   padding-bottom: max(env(safe-area-inset-bottom), 0.5rem);
 }
 
-/* Visible, but calm, scrollbars on desktop */
-@media (pointer: fine) {
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: rgb(255 255 255 / 0.15) transparent;
+/* Small caps section label. */
+@utility eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(100 116 139);
+}
+
+/* Recessed input field. */
+@utility field {
+  background: linear-gradient(180deg, #07090d, #0a0d13);
+  border: 1px solid rgb(255 255 255 / 0.07);
+  box-shadow: inset 0 2px 10px rgb(0 0 0 / 0.6);
+  color: white;
+  outline: none;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+  &:focus {
+    border-color: rgb(25 245 163 / 0.5);
+    box-shadow:
+      inset 0 2px 10px rgb(0 0 0 / 0.6),
+      0 0 0 3px rgb(25 245 163 / 0.12);
   }
 }
 
-/* Real backdrop blur only for small overlays (modals, toasts, bars) and only in full-quality mode. */
+/* Small raised preset / option button; `data-on="true"` lights it up. */
+@utility preset {
+  border: 1px solid rgb(255 255 255 / 0.07);
+  background: linear-gradient(180deg, #1c2330, #151b25);
+  color: rgb(203 213 225);
+  font-weight: 700;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.05),
+    0 2px 0 #07090d;
+  transition:
+    color 0.15s,
+    border-color 0.15s,
+    box-shadow 0.15s,
+    background 0.15s,
+    transform 0.1s;
+  &:hover:not(:disabled) {
+    border-color: rgb(255 255 255 / 0.16);
+    color: white;
+  }
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  &[data-on='true'] {
+    border-color: rgb(25 245 163 / 0.55);
+    background: linear-gradient(180deg, rgb(25 245 163 / 0.2), rgb(25 245 163 / 0.07));
+    color: #19f5a3;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.06),
+      0 0 16px -6px rgb(25 245 163 / 0.8);
+  }
+}
+
+@media (pointer: fine) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(255 255 255 / 0.12) transparent;
+  }
+}
+
+/* Real backdrop blur for bars and overlays (disabled in economy mode). */
 .backdrop-glass {
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
 }
 
 /* Economy rendering mode (auto-detected on slow devices or chosen in settings). */
-[data-effects='low'] .backdrop-glass {
+[data-effects='low'] .backdrop-glass,
+[data-effects='low'] .glass,
+[data-effects='low'] .glass-strong {
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
+}
+[data-effects='low'] .glass {
+  background: linear-gradient(180deg, #161c27, #10141c);
+}
+[data-effects='low'] .glass-strong {
+  background: linear-gradient(180deg, #171d28, #0e1219);
 }
 [data-effects='low'] .fx-float {
   animation: none !important;

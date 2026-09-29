@@ -4,7 +4,7 @@ export type Risk = 'low' | 'medium' | 'high'
 export const ROW_OPTIONS = [8, 12, 16] as const
 export type Rows = (typeof ROW_OPTIONS)[number]
 
-export const RISK_LABELS: Record<Risk, string> = { low: 'Низкий', medium: 'Средний', high: 'Высокий' }
+export const RISK_LABELS: Record<Risk, string> = { low: 'Низький', medium: 'Середній', high: 'Високий' }
 
 /** Half tables from the edge slot to the centre slot; mirrored to build the full row. */
 const HALF: Record<Rows, Record<Risk, number[]>> = {

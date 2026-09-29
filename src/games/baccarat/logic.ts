@@ -4,7 +4,7 @@ import { secureRandom, type Rng } from '../../lib/rng'
 export type BaccaratBet = 'player' | 'tie' | 'banker'
 export type BaccaratWinner = 'player' | 'banker' | 'tie'
 
-export const BACCARAT_LABELS: Record<BaccaratBet, string> = { player: 'Игрок', tie: 'Ничья', banker: 'Банкир' }
+export const BACCARAT_LABELS: Record<BaccaratBet, string> = { player: 'Гравець', tie: 'Нічия', banker: 'Банкір' }
 export const BACCARAT_ODDS: Record<BaccaratBet, string> = { player: '1:1', tie: '8:1', banker: '0,95:1' }
 
 /** Tens and pictures count 0, aces 1. */

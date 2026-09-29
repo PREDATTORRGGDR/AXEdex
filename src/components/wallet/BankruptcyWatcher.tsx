@@ -15,10 +15,10 @@ export function BankruptcyWatcher() {
       const status = getRefillStatus(useCasino.getState())
       toast({
         kind: 'warning',
-        title: 'Фишки закончились',
+        title: 'Фішки закінчилися',
         message: status.available
-          ? 'Загляните в «Бонусы»: банк поможет, но только раз в 8 часов.'
-          : `Помощь банка будет доступна через ${formatDuration(status.nextAt - Date.now())}.`,
+          ? 'Загляньте в «Бонуси»: банк допоможе, але лише раз на 8 годин.'
+          : `Допомога банку буде доступна через ${formatDuration(status.nextAt - Date.now())}.`,
       })
     }
     wasBroke.current = broke

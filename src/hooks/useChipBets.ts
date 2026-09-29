@@ -23,7 +23,7 @@ export function useChipBets<K extends string>() {
     (key: K, amount: number) => {
       if (totalOf(bets) + amount > useCasino.getState().balance) {
         sfx.play('error')
-        toast({ kind: 'warning', title: 'Недостаточно фишек', message: 'Уменьшите номинал фишки или заберите бонус.' })
+        toast({ kind: 'warning', title: 'Недостатньо фішок', message: 'Зменште номінал фішки або заберіть бонус.' })
         return
       }
       sfx.play('chip', { pitch: 0.9 + Math.random() * 0.2 })
@@ -57,7 +57,7 @@ export function useChipBets<K extends string>() {
   const rebet = useCallback(() => {
     if (totalOf(last) > useCasino.getState().balance) {
       sfx.play('error')
-      toast({ kind: 'warning', title: 'Недостаточно фишек для повтора' })
+      toast({ kind: 'warning', title: 'Недостатньо фішок для повтору' })
       return
     }
     sfx.play('chip')

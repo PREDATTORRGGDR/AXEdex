@@ -13,6 +13,7 @@ interface SegmentedControlProps<T extends string | number> {
   label?: string
 }
 
+/** Recessed track with a raised emerald thumb that slides to the active option. */
 export function SegmentedControl<T extends string | number>({
   value,
   onChange,
@@ -27,11 +28,7 @@ export function SegmentedControl<T extends string | number>({
     <div
       role="radiogroup"
       aria-label={label}
-      className={cn(
-        'flex rounded-xl border border-white/10 bg-ink-950/60 p-1',
-        disabled && 'pointer-events-none opacity-50',
-        className,
-      )}
+      className={cn('well flex rounded-xl p-1', disabled && 'pointer-events-none opacity-50', className)}
     >
       {options.map((o) => {
         const active = o.value === value
@@ -47,15 +44,15 @@ export function SegmentedControl<T extends string | number>({
               onChange(o.value)
             }}
             className={cn(
-              'relative flex-1 rounded-lg font-semibold transition-colors',
-              size === 'sm' ? 'h-7 px-2 text-xs' : 'h-9 px-3 text-sm',
-              active ? 'text-ink-950' : 'text-slate-400 hover:text-slate-100',
+              'relative min-w-0 flex-1 rounded-lg font-bold whitespace-nowrap transition-colors',
+              size === 'sm' ? 'h-7 px-2 text-xs' : 'h-9 px-2.5 text-[13px]',
+              active ? 'text-[#03140d]' : 'text-slate-400 hover:text-slate-100',
             )}
           >
             {active && (
               <motion.span
                 layoutId={`seg-${id}`}
-                className="absolute inset-0 rounded-lg bg-[linear-gradient(180deg,#fff0bd,#fcd96b_40%,#e2ab1c)] shadow-glow-gold"
+                className="absolute inset-0 rounded-lg bg-[linear-gradient(180deg,#7dffd0,#19f5a3_45%,#0bb877)] shadow-[inset_0_1px_0_rgba(255,255,255,0.6),0_2px_0_#05603f,0_0_16px_-2px_rgba(25,245,163,0.6)]"
                 transition={{ type: 'spring', stiffness: 500, damping: 35 }}
               />
             )}

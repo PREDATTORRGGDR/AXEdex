@@ -1,8 +1,8 @@
 /**
- * Formatting helpers. The UI is Russian-only, so every formatter uses the
- * ru-RU locale (space-grouped thousands, decimal comma).
+ * Formatting helpers. The UI is Ukrainian-only, so every formatter uses the
+ * uk-UA locale (space-grouped thousands, decimal comma).
  */
-const LOCALE = 'ru-RU'
+const LOCALE = 'uk-UA'
 
 const whole = new Intl.NumberFormat(LOCALE, { maximumFractionDigits: 0 })
 const compactFmt = new Intl.NumberFormat(LOCALE, { notation: 'compact', maximumFractionDigits: 1 })
@@ -22,7 +22,7 @@ export function formatChips(value: number): string {
   return whole.format(Math.round(value))
 }
 
-/** 12345 -> "12,3 тыс." (values under 10 000 stay exact). */
+/** 12345 -> "12,3 тис." (values under 10 000 stay exact). */
 export function formatCompact(value: number): string {
   return Math.abs(value) < 10_000 ? formatChips(value) : compactFmt.format(value)
 }
@@ -57,7 +57,7 @@ export function formatDuration(ms: number): string {
   return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`
 }
 
-/** Russian plural form picker: plural(5, ['раунд', 'раунда', 'раундов']). */
+/** Ukrainian plural form picker: plural(5, ['раунд', 'раунди', 'раундів']). */
 export function plural(n: number, forms: readonly [one: string, few: string, many: string]): string {
   const abs = Math.abs(n) % 100
   const last = abs % 10
@@ -70,10 +70,10 @@ export function plural(n: number, forms: readonly [one: string, few: string, man
 export function timeAgo(timestamp: number, now = Date.now()): string {
   const diff = Math.max(0, now - timestamp)
   const s = Math.floor(diff / 1000)
-  if (s < 45) return 'только что'
+  if (s < 45) return 'щойно'
   const m = Math.floor(s / 60)
-  if (m < 60) return `${Math.max(1, m)} мин назад`
+  if (m < 60) return `${Math.max(1, m)} хв тому`
   const h = Math.floor(m / 60)
-  if (h < 24) return `${h} ч назад`
-  return `${Math.floor(h / 24)} д назад`
+  if (h < 24) return `${h} год тому`
+  return `${Math.floor(h / 24)} д тому`
 }

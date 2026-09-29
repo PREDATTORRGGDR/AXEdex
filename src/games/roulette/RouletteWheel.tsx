@@ -63,7 +63,7 @@ function renderRotor(size: number, dpr: number): HTMLCanvasElement {
     ctx.save()
     ctx.rotate(i * SEG)
     ctx.fillStyle = '#fdf6e3'
-    ctx.font = `800 ${Math.max(9, R * 0.085)}px Inter, system-ui, sans-serif`
+    ctx.font = `800 ${Math.max(9, R * 0.085)}px 'Exo 2 Variable', system-ui, sans-serif`
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.fillText(String(n), 0, -R * 0.705)
@@ -99,7 +99,7 @@ function renderRotor(size: number, dpr: number): HTMLCanvasElement {
   for (let i = 0; i < 8; i++) {
     ctx.save()
     ctx.rotate((i * Math.PI) / 4)
-    ctx.fillStyle = i % 2 ? 'rgba(252,217,107,0.08)' : 'rgba(52,245,160,0.06)'
+    ctx.fillStyle = i % 2 ? 'rgba(243,207,110,0.08)' : 'rgba(25,245,163,0.06)'
     ctx.beginPath()
     ctx.moveTo(0, 0)
     ctx.arc(0, 0, R * 0.46, -0.2, 0.2)
@@ -111,7 +111,7 @@ function renderRotor(size: number, dpr: number): HTMLCanvasElement {
   // Turret: four gold arms with knobs.
   const gold = ctx.createLinearGradient(-R * 0.2, -R * 0.2, R * 0.2, R * 0.2)
   gold.addColorStop(0, '#fff4d1')
-  gold.addColorStop(0.5, '#fcd96b')
+  gold.addColorStop(0.5, '#f3cf6e')
   gold.addColorStop(1, '#8a620d')
   ctx.strokeStyle = gold
   ctx.lineCap = 'round'
@@ -151,7 +151,7 @@ function renderBowl(size: number, dpr: number): HTMLCanvasElement {
   rim.addColorStop(0, '#fff4d1')
   rim.addColorStop(0.35, '#e2ab1c')
   rim.addColorStop(0.65, '#6b4a0a')
-  rim.addColorStop(1, '#fcd96b')
+  rim.addColorStop(1, '#f3cf6e')
   ctx.beginPath()
   ctx.arc(0, 0, R * 0.995, 0, Math.PI * 2)
   ctx.fillStyle = rim
@@ -185,7 +185,7 @@ function renderBowl(size: number, dpr: number): HTMLCanvasElement {
     ctx.lineTo(0, R * 0.03)
     ctx.lineTo(-R * 0.018, 0)
     ctx.closePath()
-    ctx.fillStyle = '#fcd96b'
+    ctx.fillStyle = '#f3cf6e'
     ctx.fill()
     ctx.restore()
   }
@@ -317,7 +317,7 @@ export function RouletteWheel({ spin, onSettled, highlight }: RouletteWheelProps
         ctx.arc(0, 0, R * 0.47, a0 + SEG, a0, true)
         ctx.closePath()
         ctx.fillStyle = `rgba(252, 217, 107, ${0.18 + 0.2 * pulse})`
-        ctx.shadowColor = '#fcd96b'
+        ctx.shadowColor = '#f3cf6e'
         ctx.shadowBlur = 18
         ctx.fill()
         ctx.shadowBlur = 0

@@ -26,16 +26,16 @@ export class GameErrorBoundary extends Component<Props, State> {
     return (
       <div className="glass grid min-h-[40vh] place-items-center rounded-3xl p-8 text-center">
         <div className="max-w-sm space-y-3">
-          <p className="font-display text-xl font-bold text-white">Стол временно закрыт</p>
+          <p className="font-display text-xl font-bold text-white">Стіл тимчасово закрито</p>
           <p className="text-sm text-slate-400">
-            В игре «{this.props.gameName}» произошла ошибка. Ваш баланс в безопасности.
+            У грі «{this.props.gameName}» сталася помилка. Ваш баланс у безпеці.
           </p>
           <button
             type="button"
             onClick={() => this.setState({ error: null })}
-            className="rounded-xl bg-gold-400 px-4 py-2 text-sm font-bold text-ink-950"
+            className="rounded-xl bg-neon-emerald px-4 py-2 text-sm font-bold text-[#03140d] shadow-[0_3px_0_#05603f]"
           >
-            Перезапустить игру
+            Перезапустити гру
           </button>
         </div>
       </div>

@@ -319,8 +319,8 @@ export const useCasino = create<CasinoState>()(
         if (after > before) {
           toast({
             kind: 'level',
-            title: `Уровень ${after}!`,
-            message: `Новое звание: ${levelFromXp(xp).title}.`,
+            title: `Рівень ${after}!`,
+            message: `Нове звання: ${levelFromXp(xp).title}.`,
             amount: reward,
             icon: 'glowing-star',
           })

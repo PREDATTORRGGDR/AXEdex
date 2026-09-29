@@ -14,11 +14,11 @@ export interface ScratchPrize {
 
 export const SCRATCH_PRIZES: ScratchPrize[] = [
   { symbol: 'crown', icon: 'crown', name: 'Корона', multiplier: 100, chance: 0.001 },
-  { symbol: 'gem', icon: 'gem-stone', name: 'Бриллиант', multiplier: 25, chance: 0.005 },
-  { symbol: 'star', icon: 'glowing-star', name: 'Звезда', multiplier: 10, chance: 0.015 },
-  { symbol: 'clover', icon: 'four-leaf-clover', name: 'Клевер', multiplier: 4, chance: 0.05 },
+  { symbol: 'gem', icon: 'gem-stone', name: 'Діамант', multiplier: 25, chance: 0.005 },
+  { symbol: 'star', icon: 'glowing-star', name: 'Зірка', multiplier: 10, chance: 0.015 },
+  { symbol: 'clover', icon: 'four-leaf-clover', name: 'Конюшина', multiplier: 4, chance: 0.05 },
   { symbol: 'cherries', icon: 'cherries', name: 'Вишня', multiplier: 2, chance: 0.1 },
-  { symbol: 'bell', icon: 'bell', name: 'Колокольчик', multiplier: 1, chance: 0.18 },
+  { symbol: 'bell', icon: 'bell', name: 'Дзвіночок', multiplier: 1, chance: 0.18 },
 ]
 
 export const PRIZE_BY_SYMBOL = Object.fromEntries(SCRATCH_PRIZES.map((p) => [p.symbol, p])) as Record<ScratchSymbol, ScratchPrize>

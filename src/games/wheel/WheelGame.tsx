@@ -23,7 +23,7 @@ const R = 176
 
 function colorFor(s: Segment): string {
   if (s.jackpot) return 'url(#JACKPOT)'
-  if (s.multiplier === 0) return '#1b2340'
+  if (s.multiplier === 0) return '#171c27'
   if (s.multiplier < 1.5) return '#0d9488'
   if (s.multiplier < 2) return '#10b981'
   if (s.multiplier < 3) return '#0891b2'
@@ -34,7 +34,7 @@ function colorFor(s: Segment): string {
 
 function chipColor(m: number, jackpot?: boolean) {
   if (jackpot) return 'bg-gold-300 text-ink-950'
-  if (m === 0) return 'bg-slate-700 text-slate-200'
+  if (m === 0) return 'bg-ink-600 text-slate-300'
   if (m < 1.5) return 'bg-teal-600 text-white'
   if (m < 2) return 'bg-emerald-500 text-ink-950'
   if (m < 3) return 'bg-cyan-600 text-white'
@@ -109,7 +109,7 @@ export default function WheelGame() {
     if (spinning) return
     if (bet > balance) {
       sfx.play('error')
-      toast({ kind: 'warning', title: 'Недостаточно фишек' })
+      toast({ kind: 'warning', title: 'Недостатньо фішок' })
       return
     }
     const idx = spinWheel(risk)
@@ -118,7 +118,7 @@ export default function WheelGame() {
     const roundId = useCasino.getState().startRound('wheel', bet, {
       payout,
       tags: seg.jackpot ? ['wheel-jackpot'] : undefined,
-      detail: `${WHEEL_RISK_LABELS[risk]} риск · ${seg.jackpot ? 'джекпот ' : ''}${multLabel(seg.multiplier)}`,
+      detail: `${WHEEL_RISK_LABELS[risk]} ризик · ${seg.jackpot ? 'джекпот ' : ''}${multLabel(seg.multiplier)}`,
     })
     if (!roundId) return
     guard.track(roundId)
@@ -140,17 +140,17 @@ export default function WheelGame() {
     setHistory((h) => [{ id: Date.now(), multiplier: seg.multiplier, jackpot: seg.jackpot }, ...h].slice(0, 16))
     showBanner({
       kind: seg.jackpot ? 'bigwin' : payout > bet ? 'win' : payout === bet ? 'push' : 'lose',
-      title: seg.jackpot ? 'Джекпот!' : seg.multiplier === 0 ? 'Мимо' : multLabel(seg.multiplier),
+      title: seg.jackpot ? 'Джекпот!' : seg.multiplier === 0 ? 'Повз' : multLabel(seg.multiplier),
       amount: payout - bet,
       multiplier: seg.multiplier || undefined,
     })
   }
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
-      <div className="min-w-0 space-y-4">
-        <Panel strong className="relative overflow-hidden p-4 sm:p-8">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_50%_45%,rgba(52,245,160,0.14),transparent)]" />
+    <div className="grid gap-3 sm:gap-4 lg:grid-cols-[minmax(280px,340px)_minmax(0,1fr)] lg:items-start">
+      <div className="min-w-0 space-y-3 sm:space-y-4 lg:col-start-2 lg:row-start-1">
+        <Panel strong className="relative overflow-hidden bg-[linear-gradient(180deg,#0b0f16,#07090d)] p-4 sm:p-8">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_50%_45%,rgba(25,245,163,0.12),transparent)]" />
           <div className="relative mx-auto w-full max-w-[420px]">
             {/* Pointer */}
             <div ref={pointerScope} className="absolute top-[-6px] left-1/2 z-20 -ml-4 origin-top">
@@ -159,23 +159,23 @@ export default function WheelGame() {
                 <circle cx="16" cy="10" r="4" fill="#fff" />
               </svg>
             </div>
-            <div className="absolute inset-[6%] rounded-full bg-emerald-400/10 blur-3xl" aria-hidden />
-            <motion.svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="relative w-full drop-shadow-[0_30px_40px_rgba(0,0,0,0.6)]" style={{ rotate: rotation }} role="img" aria-label="Колесо фортуны">
+            <div className="absolute inset-[6%] rounded-full bg-[radial-gradient(closest-side,rgba(25,245,163,0.14),transparent)]" aria-hidden />
+            <motion.svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="relative w-full drop-shadow-[0_30px_40px_rgba(0,0,0,0.6)]" style={{ rotate: rotation }} role="img" aria-label="Колесо фортуни">
               <defs>
                 <linearGradient id={jackpotId} x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0" stopColor="#fff4d1" />
-                  <stop offset="0.5" stopColor="#fcd96b" />
-                  <stop offset="1" stopColor="#b98511" />
+                  <stop offset="0" stopColor="#fbf0cf" />
+                  <stop offset="0.5" stopColor="#f3cf6e" />
+                  <stop offset="1" stopColor="#a8761d" />
                 </linearGradient>
                 <linearGradient id="wheel-rim" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0" stopColor="#fff4d1" />
-                  <stop offset="0.4" stopColor="#e2ab1c" />
-                  <stop offset="0.7" stopColor="#6b4a0a" />
-                  <stop offset="1" stopColor="#fcd96b" />
+                  <stop offset="0" stopColor="#fbf0cf" />
+                  <stop offset="0.4" stopColor="#d4a543" />
+                  <stop offset="0.7" stopColor="#664710" />
+                  <stop offset="1" stopColor="#f3cf6e" />
                 </linearGradient>
               </defs>
               <circle cx={C} cy={C} r={C - 2} fill="url(#wheel-rim)" />
-              <circle cx={C} cy={C} r={R + 4} fill="#070b18" />
+              <circle cx={C} cy={C} r={R + 4} fill="#07090d" />
               {segments.map((s, i) => {
                 const { start, end } = angles[i]
                 const mid = (start + end) / 2
@@ -186,7 +186,7 @@ export default function WheelGame() {
                     <path
                       d={arcPath(start, end, 58, R)}
                       fill={s.jackpot ? `url(#${jackpotId})` : colorFor(s)}
-                      stroke="#070b18"
+                      stroke="#07090d"
                       strokeWidth="1.5"
                       opacity={landed !== null && !isLanded ? 0.55 : 1}
                     />
@@ -199,7 +199,7 @@ export default function WheelGame() {
                         dominantBaseline="middle"
                         fontSize={s.jackpot ? 12 : 13}
                         fontWeight={900}
-                        fontFamily="Inter, system-ui, sans-serif"
+                        fontFamily="'JetBrains Mono Variable', ui-monospace, monospace"
                         fill={s.jackpot ? '#1a1206' : '#ffffff'}
                       >
                         {s.jackpot ? `★${multLabel(s.multiplier)}` : multLabel(s.multiplier)}
@@ -208,7 +208,7 @@ export default function WheelGame() {
                   </g>
                 )
               })}
-              <circle cx={C} cy={C} r={58} fill="#0a1022" stroke="url(#wheel-rim)" strokeWidth="5" />
+              <circle cx={C} cy={C} r={58} fill="#0b0e14" stroke="url(#wheel-rim)" strokeWidth="5" />
             </motion.svg>
             {/* Bulbs sit on a static ring so their blinking never repaints the spinning wheel. */}
             <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="pointer-events-none absolute inset-0 w-full" aria-hidden>
@@ -220,7 +220,7 @@ export default function WheelGame() {
                       cx={x}
                       cy={y}
                       r={4}
-                      fill={i % 2 ? '#fff4d1' : '#34f5a0'}
+                      fill={i % 2 ? '#fbf0cf' : '#19f5a3'}
                       style={{ animation: `pulse-glow ${spinning ? 0.3 : 1.6}s ease-in-out ${i * (spinning ? 0.02 : 0.07)}s infinite` }}
                     />
                   )
@@ -230,11 +230,11 @@ export default function WheelGame() {
             <div className="pointer-events-none absolute inset-0 grid place-items-center">
               <div className="text-center">
                 {landed !== null ? (
-                  <motion.p key={landed} initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className={cn('font-display text-2xl font-black sm:text-3xl', segments[landed].jackpot ? 'text-gold-gradient' : segments[landed].multiplier > 0 ? 'text-emerald-300' : 'text-slate-400')}>
+                  <motion.p key={landed} initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className={cn('num text-2xl font-bold sm:text-3xl', segments[landed].jackpot ? 'text-gold-gradient' : segments[landed].multiplier > 0 ? 'text-neon-emerald' : 'text-slate-400')}>
                     {multLabel(segments[landed].multiplier)}
                   </motion.p>
                 ) : (
-                  <Aperture className={cn('size-10 text-gold-300/70', spinning && 'animate-spin')} />
+                  <Aperture className={cn('size-10 text-neon-emerald/70', spinning && 'animate-spin')} />
                 )}
               </div>
             </div>
@@ -243,11 +243,11 @@ export default function WheelGame() {
         </Panel>
 
         <Panel className="flex items-center gap-3 overflow-hidden p-3">
-          <span className="shrink-0 text-[11px] font-semibold tracking-wider text-slate-400 uppercase">История</span>
+          <span className="eyebrow shrink-0">Історія</span>
           <div className="no-scrollbar flex gap-1.5 overflow-x-auto">
-            {history.length === 0 && <span className="text-xs text-slate-500">Пока пусто</span>}
+            {history.length === 0 && <span className="text-xs text-slate-500">Поки порожньо</span>}
             {history.map((h) => (
-              <motion.span key={h.id} initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} className={cn('shrink-0 rounded-lg px-2 py-1 text-xs font-bold tabular-nums', chipColor(h.multiplier, h.jackpot))}>
+              <motion.span key={h.id} initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} className={cn('num shrink-0 rounded-md px-2 py-1 text-xs font-bold', chipColor(h.multiplier, h.jackpot))}>
                 {multLabel(h.multiplier)}
               </motion.span>
             ))}
@@ -255,10 +255,10 @@ export default function WheelGame() {
         </Panel>
       </div>
 
-      <Panel strong className="flex flex-col gap-4 p-4 lg:self-start">
+      <Panel strong className="flex flex-col gap-4 p-4 lg:sticky lg:top-24 lg:col-start-1 lg:row-start-1">
         <BetInput value={bet} onChange={setBet} min={1} disabled={spinning} />
         <div className="space-y-1.5">
-          <p className="text-xs font-medium text-slate-400">Риск</p>
+          <p className="eyebrow">Ризик</p>
           <SegmentedControl
             value={risk}
             onChange={(r) => {
@@ -267,21 +267,21 @@ export default function WheelGame() {
             }}
             disabled={spinning}
             options={(['low', 'medium', 'high'] as const).map((r) => ({ value: r, label: WHEEL_RISK_LABELS[r] }))}
-            label="Уровень риска"
+            label="Рівень ризику"
           />
         </div>
         <div className="grid grid-cols-2 gap-1.5">
           {legend.map((l) => (
-            <div key={`${l.m}-${l.jackpot}`} className="flex items-center justify-between gap-2 rounded-lg bg-white/[0.03] px-2.5 py-1.5">
-              <span className={cn('rounded-md px-1.5 py-0.5 text-xs font-black tabular-nums', chipColor(l.m, l.jackpot))}>
+            <div key={`${l.m}-${l.jackpot}`} className="well flex min-w-0 items-center justify-between gap-2 rounded-lg px-2.5 py-1.5">
+              <span className={cn('num rounded-md px-1.5 py-0.5 text-xs font-bold', chipColor(l.m, l.jackpot))}>
                 {l.jackpot ? `★ ${multLabel(l.m)}` : multLabel(l.m)}
               </span>
-              <span className="text-[11px] text-slate-400 tabular-nums">{formatPercent(l.w / totalWeight, 1)}</span>
+              <span className="num text-[11px] text-slate-500">{formatPercent(l.w / totalWeight, 1)}</span>
             </div>
           ))}
         </div>
-        <Button variant="gold" size="xl" icon={Aperture} sound={false} disabled={spinning || bet > balance} onClick={() => void spin()}>
-          {spinning ? 'Крутится…' : 'Крутить колесо'}
+        <Button variant="emerald" size="xl" icon={Aperture} sound={false} disabled={spinning || bet > balance} onClick={() => void spin()}>
+          {spinning ? 'Крутиться…' : 'Крутити колесо'}
         </Button>
       </Panel>
     </div>

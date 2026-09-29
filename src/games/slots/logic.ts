@@ -11,13 +11,13 @@ export const SYMBOL_NAMES: Record<SymbolId, string> = {
   cherry: 'Вишня',
   lemon: 'Лимон',
   grape: 'Виноград',
-  clover: 'Клевер',
-  bell: 'Колокол',
-  gem: 'Бриллиант',
+  clover: 'Конюшина',
+  bell: 'Дзвін',
+  gem: 'Діамант',
   crown: 'Корона',
-  seven: 'Семёрка',
-  wild: 'Звезда (вайлд)',
-  scatter: 'Бонус (скаттер)',
+  seven: 'Сімка',
+  wild: 'Зірка (вайлд)',
+  scatter: 'Бонус (скатер)',
 }
 
 /** Relative frequency of each symbol per cell. */

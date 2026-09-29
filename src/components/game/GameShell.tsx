@@ -1,4 +1,4 @@
-import { ArrowLeft, BookOpen, Heart, Percent, Trophy, Waves } from 'lucide-react'
+import { ArrowLeft, BookOpen, Heart, Percent, ShieldCheck, Waves } from 'lucide-react'
 import { motion } from 'motion/react'
 import { Suspense, useState } from 'react'
 import { sfx } from '../../audio/sfx'
@@ -17,12 +17,15 @@ function GameLoading() {
   return (
     <div className="grid min-h-[50vh] place-items-center">
       <div className="flex flex-col items-center gap-4">
-        <div className="size-12 animate-spin rounded-full border-4 border-gold-400/20 border-t-gold-300" />
-        <p className="text-sm text-slate-400">Готовим стол…</p>
+        <div className="size-11 animate-spin rounded-full border-[3px] border-neon-emerald/15 border-t-neon-emerald shadow-[0_0_24px_-6px_rgba(25,245,163,0.7)]" />
+        <p className="text-sm text-slate-500">Готуємо стіл…</p>
       </div>
     </div>
   )
 }
+
+const chromeBtn =
+  'grid size-10 shrink-0 place-items-center rounded-xl border border-white/[0.07] bg-[linear-gradient(180deg,#1c2330,#141a24)] text-slate-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_2px_0_#07090d] transition hover:border-white/15 hover:text-white'
 
 /** Page chrome shared by every game: header, rules, favorite toggle, per-game stats. */
 export function GameShell({ id }: { id: GameId }) {
@@ -34,59 +37,59 @@ export function GameShell({ id }: { id: GameId }) {
   const [rulesOpen, setRulesOpen] = useState(false)
 
   return (
-    <div className="mx-auto w-full max-w-7xl">
-      <div className="mb-4 flex flex-wrap items-center gap-3 sm:mb-6">
+    <div className="mx-auto w-full max-w-[1320px]">
+      <div className="mb-3 flex items-center gap-2.5 sm:mb-5 sm:gap-3">
         <button
           type="button"
           onClick={() => {
             sfx.play('click')
             navigate(paths.lobby)
           }}
-          className="grid size-10 place-items-center rounded-xl border border-white/10 bg-white/[0.03] text-slate-300 transition hover:bg-white/10 hover:text-white"
-          aria-label="Назад в лобби"
+          className={chromeBtn}
+          aria-label="Назад до лобі"
         >
           <ArrowLeft className="size-5" />
         </button>
         <div
-          className="grid size-12 place-items-center rounded-2xl ring-1 ring-white/15"
-          style={{ background: `linear-gradient(135deg, ${game.colors[0]}, ${game.colors[1]})` }}
+          className="relative grid size-11 shrink-0 place-items-center overflow-hidden rounded-xl ring-1 ring-white/10 sm:size-12"
+          style={{ background: `radial-gradient(circle at 50% 40%, ${game.colors[0]}40, transparent 70%), linear-gradient(160deg, ${game.colors[1]}, #07090d)` }}
         >
-          <Icon name={game.emoji} size={34} className="drop-shadow-[0_4px_6px_rgba(0,0,0,0.5)]" />
+          <Icon name={game.emoji} size={30} />
         </div>
         <div className="min-w-0 flex-1">
-          <h1 className="truncate font-display text-lg font-bold text-white sm:text-2xl">{game.name}</h1>
-          <p className="truncate text-xs text-slate-400 sm:text-sm">{game.tagline}</p>
+          <h1 className="truncate font-display text-[17px] leading-tight font-bold text-white sm:text-2xl">{game.name}</h1>
+          <p className="flex min-w-0 items-center gap-2 text-[11.5px] text-slate-500 sm:text-sm">
+            <span className="num shrink-0 font-semibold text-neon-emerald/90">RTP {formatDecimal(game.rtp, 1)}%</span>
+            <span className="hidden size-1 shrink-0 rounded-full bg-slate-600 min-[420px]:block" />
+            <span className="hidden truncate min-[420px]:block">{game.tagline}</span>
+          </p>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => {
-              sfx.play(favorite ? 'click' : 'ping')
-              toggleFavorite(id)
-            }}
-            className={cn(
-              'grid size-10 place-items-center rounded-xl border transition',
-              favorite ? 'border-rose-400/40 bg-rose-500/10 text-rose-300' : 'border-white/10 bg-white/[0.03] text-slate-400 hover:text-white',
-            )}
-            aria-label={favorite ? 'Убрать из избранного' : 'Добавить в избранное'}
-            aria-pressed={favorite}
-          >
-            <motion.span key={String(favorite)} initial={{ scale: 0.6 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 600, damping: 15 }}>
-              <Heart className={cn('size-5', favorite && 'fill-rose-400')} />
-            </motion.span>
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              sfx.play('click')
-              setRulesOpen(true)
-            }}
-            className="flex h-10 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
-          >
-            <BookOpen className="size-4" />
-            <span className="hidden sm:inline">Правила</span>
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => {
+            sfx.play(favorite ? 'click' : 'ping')
+            toggleFavorite(id)
+          }}
+          className={cn(chromeBtn, favorite && 'border-neon-red/40 text-neon-red')}
+          aria-label={favorite ? 'Прибрати з обраного' : 'Додати до обраного'}
+          aria-pressed={favorite}
+        >
+          <motion.span key={String(favorite)} initial={{ scale: 0.6 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 600, damping: 15 }}>
+            <Heart className={cn('size-5', favorite && 'fill-neon-red drop-shadow-[0_0_6px_rgba(255,77,109,0.8)]')} />
+          </motion.span>
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            sfx.play('click')
+            setRulesOpen(true)
+          }}
+          className={cn(chromeBtn, 'sm:flex sm:w-auto sm:gap-2 sm:px-3.5 sm:text-sm sm:font-bold')}
+          aria-label="Правила"
+        >
+          <BookOpen className="size-[18px]" />
+          <span className="hidden sm:inline">Правила</span>
+        </button>
       </div>
 
       <GameErrorBoundary gameName={game.name}>
@@ -95,43 +98,43 @@ export function GameShell({ id }: { id: GameId }) {
         </Suspense>
       </GameErrorBoundary>
 
-      <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
+      <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-6 sm:grid-cols-4 sm:gap-3">
         {[
-          { label: 'Сыграно раундов', value: formatChips(stats?.rounds ?? 0) },
-          { label: 'Доля побед', value: hasDecided(stats) ? formatPercent(winRate(stats!)) : '—' },
-          { label: 'Лучший выигрыш', value: stats?.biggestWin ? `+${formatChips(stats.biggestWin)}` : '—' },
-          { label: 'Лучший множитель', value: stats?.bestMultiplier ? formatMultiplier(stats.bestMultiplier) : '—' },
+          { label: 'Зіграно раундів', value: formatChips(stats?.rounds ?? 0) },
+          { label: 'Частка перемог', value: hasDecided(stats) ? formatPercent(winRate(stats!)) : '—' },
+          { label: 'Кращий виграш', value: stats?.biggestWin ? `+${formatChips(stats.biggestWin)}` : '—' },
+          { label: 'Кращий множник', value: stats?.bestMultiplier ? formatMultiplier(stats.bestMultiplier) : '—' },
         ].map((s) => (
-          <div key={s.label} className="glass rounded-xl px-3 py-2.5">
-            <p className="text-[10px] font-semibold tracking-wider text-slate-500 uppercase">{s.label}</p>
-            <p className="mt-0.5 text-base font-bold text-white">{s.value}</p>
+          <div key={s.label} className="glass min-w-0 rounded-xl px-3 py-2.5">
+            <p className="truncate text-[10px] font-bold tracking-[0.12em] text-slate-500 uppercase">{s.label}</p>
+            <p className="num mt-0.5 truncate text-base font-bold text-white">{s.value}</p>
           </div>
         ))}
       </div>
 
       <Modal open={rulesOpen} onClose={() => setRulesOpen(false)} title={`Правила: ${game.name}`}>
         <div className="mb-4 flex flex-wrap gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-400/10 px-2.5 py-1 text-xs font-semibold text-emerald-300">
-            <Percent className="size-3.5" /> Теоретическая отдача {formatDecimal(game.rtp, 1)}%
+          <span className="inline-flex items-center gap-1.5 rounded-lg bg-neon-emerald/10 px-2.5 py-1 text-xs font-semibold text-neon-emerald ring-1 ring-neon-emerald/20">
+            <Percent className="size-3.5" /> Теоретична віддача {formatDecimal(game.rtp, 1)}%
           </span>
-          <span className="inline-flex items-center gap-1.5 rounded-lg bg-violet-400/10 px-2.5 py-1 text-xs font-semibold text-violet-300">
-            <Waves className="size-3.5" /> Волатильность: {game.volatility}
+          <span className="inline-flex items-center gap-1.5 rounded-lg bg-neon-violet/10 px-2.5 py-1 text-xs font-semibold text-violet-200 ring-1 ring-neon-violet/20">
+            <Waves className="size-3.5" /> Волатильність: {game.volatility}
           </span>
         </div>
         <ol className="space-y-3">
           {game.rules.map((rule, i) => (
             <li key={i} className="flex gap-3 text-sm leading-relaxed text-slate-200">
-              <span className="grid size-6 shrink-0 place-items-center rounded-full bg-gold-400/15 text-xs font-bold text-gold-300">
+              <span className="num grid size-6 shrink-0 place-items-center rounded-md bg-white/[0.04] text-xs font-bold text-neon-emerald ring-1 ring-white/[0.08]">
                 {i + 1}
               </span>
               {rule}
             </li>
           ))}
         </ol>
-        <div className="mt-5 flex items-start gap-2 rounded-xl border border-white/5 bg-white/[0.03] p-3 text-xs leading-relaxed text-slate-400">
-          <Trophy className="mt-0.5 size-4 shrink-0 text-gold-300" />
-          Все исходы определяются криптографически стойким генератором случайных чисел браузера. Игра ведётся только на
-          виртуальные фишки, которые не имеют денежной ценности.
+        <div className="well mt-5 flex items-start gap-2.5 rounded-xl p-3 text-xs leading-relaxed text-slate-400">
+          <ShieldCheck className="mt-0.5 size-4 shrink-0 text-neon-emerald" />
+          Усі результати визначає криптографічно стійкий генератор випадкових чисел браузера. Гра ведеться лише на віртуальні
+          фішки, які не мають грошової цінності й не купуються.
         </div>
       </Modal>
     </div>

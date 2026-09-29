@@ -67,7 +67,7 @@ export const useMines = create<MinesState>()(
         if (s.minePositions.includes(index)) {
           useCasino.getState().finishRound(s.roundId, {
             payout: 0,
-            detail: `Мина после ${s.revealed.length} ${s.revealed.length === 1 ? 'кристалла' : 'кристаллов'}`,
+            detail: `Міна після ${s.revealed.length} ${s.revealed.length === 1 ? 'кристала' : 'кристалів'}`,
           })
           set({ phase: 'busted', hitIndex: index, roundId: null, payout: 0 })
           return 'mine'
@@ -94,7 +94,7 @@ export const useMines = create<MinesState>()(
         useCasino.getState().finishRound(s.roundId, {
           payout,
           tags: s.revealed.length >= 15 ? ['mines-15'] : undefined,
-          detail: `${s.revealed.length} ${plural(s.revealed.length, ['кристалл', 'кристалла', 'кристаллов'])} · ${formatMultiplier(mult)}`,
+          detail: `${s.revealed.length} ${plural(s.revealed.length, ['кристал', 'кристали', 'кристалів'])} · ${formatMultiplier(mult)}`,
         })
         set({ phase: 'cashed', roundId: null, payout })
         return payout

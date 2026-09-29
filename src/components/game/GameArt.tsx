@@ -3,9 +3,8 @@ import { cn } from '../../lib/cn'
 import { Icon } from '../ui/Icon'
 import type { ArtMotif, GameMeta } from '../../games/meta'
 
-/** Decorative vector motif per game family, drawn in white at low opacity. */
-function Motif({ motif }: { motif: ArtMotif }): ReactNode {
-  const stroke = 'rgba(255,255,255,0.22)'
+/** Decorative vector motif per game family, drawn as thin neon line-work. */
+function Motif({ motif, stroke }: { motif: ArtMotif; stroke: string }): ReactNode {
   switch (motif) {
     case 'rings':
     case 'wheel':
@@ -99,28 +98,50 @@ interface GameArtProps {
   className?: string
   /** Pixel size of the illustration. */
   iconSize?: number
-  iconPosition?: 'left' | 'right'
+  iconPosition?: 'left' | 'right' | 'center'
 }
 
-/** Procedural cover art: gradient, motif, glow and the game's icon. */
-export function GameArt({ game, className, iconSize = 64, iconPosition = 'left' }: GameArtProps) {
+/**
+ * Procedural cover art on a graphite base: a neon haze in the game's colours,
+ * fine grid, line-work motif and the glowing glyph.
+ */
+export function GameArt({ game, className, iconSize = 64, iconPosition = 'center' }: GameArtProps) {
   const [from, to] = game.colors
+  const center = iconPosition === 'center'
   return (
     <div
       className={cn('relative overflow-hidden', className)}
-      style={{ background: `radial-gradient(120% 120% at 0% 0%, ${from} 0%, ${to} 55%, #060914 100%)` }}
+      style={{
+        background: `radial-gradient(75% 60% at ${center ? '50% 42%' : iconPosition === 'right' ? '82% 50%' : '18% 80%'}, ${from}3d 0%, transparent 70%), radial-gradient(120% 90% at 100% 0%, ${to}d9 0%, transparent 62%), linear-gradient(180deg, #121722, #07090d)`,
+      }}
     >
-      <svg viewBox="0 0 340 140" preserveAspectRatio="xMaxYMid slice" className="absolute inset-0 size-full" aria-hidden>
-        <Motif motif={game.motif} />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:18px_18px] [mask-image:radial-gradient(ellipse_at_50%_40%,black_20%,transparent_75%)]" />
+      <svg
+        viewBox="0 0 340 140"
+        preserveAspectRatio={center ? 'xMidYMid slice' : 'xMaxYMid slice'}
+        className="absolute inset-0 size-full"
+        aria-hidden
+      >
+        <g transform={center ? 'translate(-80 0)' : undefined} opacity={center ? 0.8 : 1}>
+          <Motif motif={game.motif} stroke={`${from}59`} />
+        </g>
       </svg>
-      <div className="absolute inset-0 bg-[radial-gradient(60%_80%_at_20%_100%,rgba(255,255,255,0.18),transparent_60%)]" />
-      <div className="absolute inset-0 bg-gradient-to-t from-ink-950/70 via-transparent to-transparent" />
-      <div className={cn('absolute', iconPosition === 'left' ? 'bottom-3 left-3' : 'top-1/2 right-5 -translate-y-1/2')}>
-        <div className="absolute inset-0 scale-110 rounded-full bg-white/25 blur-xl" />
+      <div className="absolute inset-0 bg-gradient-to-t from-ink-950/85 via-ink-950/10 to-transparent" />
+      <div
+        className={cn(
+          'absolute',
+          center ? 'top-[42%] left-1/2 -translate-x-1/2 -translate-y-1/2' : iconPosition === 'left' ? 'bottom-3 left-3' : 'top-1/2 right-5 -translate-y-1/2',
+        )}
+      >
+        <div
+          className="absolute -inset-1/2 rounded-full"
+          style={{ background: `radial-gradient(closest-side, ${from}59, transparent)` }}
+          aria-hidden
+        />
         <Icon
           name={game.emoji}
           size={iconSize}
-          className="relative drop-shadow-[0_10px_14px_rgba(0,0,0,0.55)] transition-transform duration-500 group-hover:-translate-y-1 group-hover:-rotate-6 group-hover:scale-110"
+          className="relative transition-transform duration-500 ease-out group-hover:-translate-y-1 group-hover:scale-110"
         />
       </div>
     </div>

@@ -1,21 +1,25 @@
-/** Chip denominations and their colors, shared by every table game. */
+/** Chip denominations and their colours, shared by every table game. */
 export const CHIP_VALUES = [1, 5, 10, 25, 100, 500] as const
 
-interface ChipStyle {
+export interface ChipStyle {
+  /** Face colour. */
   base: string
+  /** Darker rim that reads as the chip's thickness. */
+  side: string
+  /** Edge inserts and inlay ring. */
   edge: string
   ink: string
 }
 
 const CHIP_STYLES: Record<number, ChipStyle> = {
-  1: { base: '#e5e7eb', edge: '#3b82f6', ink: '#1e293b' },
-  5: { base: '#dc2626', edge: '#fee2e2', ink: '#ffffff' },
-  10: { base: '#2563eb', edge: '#dbeafe', ink: '#ffffff' },
-  25: { base: '#059669', edge: '#d1fae5', ink: '#ffffff' },
-  100: { base: '#111827', edge: '#fcd96b', ink: '#fcd96b' },
-  500: { base: '#7c3aed', edge: '#ede9fe', ink: '#ffffff' },
-  1000: { base: '#d4a017', edge: '#fff4d1', ink: '#1f1400' },
-  5000: { base: '#db2777', edge: '#fce7f3', ink: '#ffffff' },
+  1: { base: '#c7cfda', side: '#5d6776', edge: '#1b2230', ink: '#0b0e14' },
+  5: { base: '#d61f43', side: '#6e0a1e', edge: '#ffe3e9', ink: '#ffffff' },
+  10: { base: '#1591d6', side: '#083f63', edge: '#dcf6ff', ink: '#ffffff' },
+  25: { base: '#0cbf7e', side: '#04583a', edge: '#e2fff3', ink: '#ffffff' },
+  100: { base: '#161b25', side: '#030406', edge: '#e6c26a', ink: '#f3dc9a' },
+  500: { base: '#7446f0', side: '#321680', edge: '#efe9ff', ink: '#ffffff' },
+  1000: { base: '#dcaa41', side: '#6a470c', edge: '#fff4d1', ink: '#1b1204' },
+  5000: { base: '#e0307f', side: '#6f0f3b', edge: '#ffe4f1', ink: '#ffffff' },
 }
 
 const STYLE_STEPS = [1, 5, 10, 25, 100, 500, 1000, 5000]

@@ -18,19 +18,19 @@ export function LevelBadge({ size = 44, className }: { size?: number; className?
       type="button"
       onClick={() => navigate(paths.profile)}
       className={cn('group relative shrink-0 rounded-full', className)}
-      style={{ width: size, height: size }}
-      aria-label={`Уровень ${info.level}, ${info.title}. Опыт ${formatChips(info.into)} из ${formatChips(info.span)}`}
+      style={{ width: size, height: size, filter: 'drop-shadow(0 0 8px rgba(25,245,163,0.25))' }}
+      aria-label={`Рівень ${info.level}, ${info.title}. Досвід ${formatChips(info.into)} з ${formatChips(info.span)}`}
       title={`${info.title} · ${formatChips(info.into)} / ${formatChips(info.span)} XP`}
     >
       <svg width={size} height={size} className="-rotate-90">
-        <circle cx={size / 2} cy={size / 2} r={r} fill="rgb(7 11 24 / 0.8)" stroke="rgba(255,255,255,0.08)" strokeWidth="4" />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="#07090d" stroke="rgba(255,255,255,0.07)" strokeWidth="3.5" />
         <motion.circle
           cx={size / 2}
           cy={size / 2}
           r={r}
           fill="none"
           stroke={`url(#${gradId})`}
-          strokeWidth="4"
+          strokeWidth="3.5"
           strokeLinecap="round"
           strokeDasharray={c}
           initial={false}
@@ -39,12 +39,12 @@ export function LevelBadge({ size = 44, className }: { size?: number; className?
         />
         <defs>
           <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#a78bfa" />
-            <stop offset="1" stopColor="#34f5a0" />
+            <stop offset="0" stopColor="#22e1ff" />
+            <stop offset="1" stopColor="#19f5a3" />
           </linearGradient>
         </defs>
       </svg>
-      <span className="absolute inset-0 grid place-items-center text-sm font-black text-white transition group-hover:scale-110">
+      <span className="num absolute inset-0 grid place-items-center text-[13px] font-bold text-white transition group-hover:scale-110">
         {info.level}
       </span>
     </button>

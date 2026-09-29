@@ -81,7 +81,7 @@ export const useBlackjack = create<BlackjackState>()(
         const natural = results.some((r) => r.outcome === 'blackjack')
         const detail =
           results.length === 1
-            ? `${OUTCOME_LABEL[results[0].outcome]} · ${handTotal(s.hands[0].cards).total} против ${handTotal(s.dealer).total}`
+            ? `${OUTCOME_LABEL[results[0].outcome]} · ${handTotal(s.hands[0].cards).total} проти ${handTotal(s.dealer).total}`
             : `${results.length} руки · дилер ${handTotal(s.dealer).total}`
         if (s.roundId) {
           useCasino.getState().finishRound(s.roundId, { payout, tags: natural ? ['bj-natural'] : undefined, detail })

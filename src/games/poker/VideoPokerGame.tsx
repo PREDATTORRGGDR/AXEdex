@@ -27,7 +27,7 @@ function settlement(hand: Card[], coins: number, coinValue: number) {
     rank,
     payout,
     tags: rank === 'royal' ? (['royal-flush'] as const) : undefined,
-    detail: rank ? HAND_NAMES[rank] : 'Без комбинации',
+    detail: rank ? HAND_NAMES[rank] : 'Без комбінації',
   }
 }
 
@@ -63,7 +63,7 @@ export default function VideoPokerGame() {
     if (phase === 'dealing' || phase === 'drawing') return
     if (bet > balance) {
       sfx.play('error')
-      toast({ kind: 'warning', title: 'Недостаточно фишек', message: 'Уменьшите ставку или заберите бонус.' })
+      toast({ kind: 'warning', title: 'Недостатньо фішок', message: 'Зменште ставку або заберіть бонус.' })
       return
     }
     const d = deal()
@@ -117,7 +117,7 @@ export default function VideoPokerGame() {
     setPhase('result')
     showBanner({
       kind: s.rank === 'royal' || s.payout >= round.bet * 20 ? 'bigwin' : s.payout > round.bet ? 'win' : s.payout === round.bet ? 'push' : 'lose',
-      title: s.rank ? HAND_NAMES[s.rank] : 'Без комбинации',
+      title: s.rank ? HAND_NAMES[s.rank] : 'Без комбінації',
       amount: s.payout - round.bet,
     })
   }
@@ -148,16 +148,16 @@ export default function VideoPokerGame() {
   const highlight = result ?? current
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       {/* Paytable */}
       <Panel strong className="overflow-x-auto p-2 sm:p-3">
-        <table className="w-full min-w-[520px] border-separate border-spacing-0 text-xs sm:text-sm">
+        <table className="w-full border-separate border-spacing-0 text-xs sm:min-w-[520px] sm:text-sm">
           <tbody>
             {HAND_ORDER.map((rank) => {
               const active = highlight === rank
               return (
-                <tr key={rank} className={cn('transition-colors', active && 'bg-gold-400/20')}>
-                  <td className={cn('rounded-l-lg px-3 py-1 font-bold tracking-wide uppercase', active ? 'text-gold-100' : 'text-gold-300/80')}>{HAND_NAMES[rank]}</td>
+                <tr key={rank} className={cn('transition-colors', active && 'bg-gold-400/15')}>
+                  <td className={cn('rounded-l-lg px-3 py-1 font-display font-bold tracking-wide whitespace-nowrap uppercase', active ? 'text-gold-100' : 'text-slate-300')}>{HAND_NAMES[rank]}</td>
                   {Array.from({ length: MAX_COINS }, (_, c) => {
                     const col = c + 1
                     const isCol = col === coins
@@ -165,8 +165,9 @@ export default function VideoPokerGame() {
                       <td
                         key={c}
                         className={cn(
-                          'px-2 py-1 text-right font-bold tabular-nums last:rounded-r-lg',
-                          isCol ? 'bg-rose-500/25 text-white' : 'text-slate-300',
+                          'num px-2 py-1 text-right font-bold last:rounded-r-lg max-sm:rounded-r-lg',
+                          !isCol && 'max-sm:hidden',
+                          isCol ? 'bg-neon-emerald/10 text-neon-emerald' : 'text-slate-500',
                           active && isCol && 'animate-pulse bg-gold-300 text-ink-950',
                         )}
                       >
@@ -181,14 +182,14 @@ export default function VideoPokerGame() {
         </table>
       </Panel>
 
-      <Panel strong className="relative overflow-hidden rounded-3xl border-2 border-indigo-400/25 bg-[radial-gradient(90%_80%_at_50%_0%,rgba(96,165,250,0.18),transparent),linear-gradient(180deg,#0c1438,#060a1c)] p-4 sm:p-8">
-        <div className="flex min-h-[230px] items-center justify-center gap-2 sm:min-h-[260px] sm:gap-4">
+      <Panel strong className="relative overflow-hidden border border-white/[0.07] bg-[radial-gradient(90%_80%_at_50%_0%,rgba(34,225,255,0.12),transparent),linear-gradient(180deg,#0d121b,#07090d)] p-3 sm:p-8">
+        <div className="flex min-h-[200px] items-center justify-center gap-1.5 sm:min-h-[260px] sm:gap-4">
           {(hand.length ? hand : Array.from({ length: 5 }, () => null)).map((card, i) => (
             <div key={i} className="flex flex-col items-center gap-2">
               <AnimatePresence>
                 {held[i] && phase !== 'idle' && (
-                  <motion.span initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="rounded-md bg-gold-300 px-2 py-0.5 text-[10px] font-black tracking-wider text-ink-950 uppercase shadow-glow-gold">
-                    Держать
+                  <motion.span initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="rounded-md bg-neon-emerald px-1.5 py-0.5 text-[9px] font-extrabold tracking-wider text-[#03140d] uppercase shadow-[0_0_14px_-2px_rgba(25,245,163,0.8)] sm:px-2 sm:text-[10px]">
+                    Тримати
                   </motion.span>
                 )}
               </AnimatePresence>
@@ -198,7 +199,7 @@ export default function VideoPokerGame() {
                 onClick={() => toggleHold(i)}
                 disabled={phase !== 'hold'}
                 className={cn('rounded-xl transition-transform', phase === 'hold' && 'hover:-translate-y-1', held[i] && phase !== 'idle' && '-translate-y-2')}
-                aria-label={`Карта ${i + 1}${held[i] ? ', удерживается' : ''}`}
+                aria-label={`Карта ${i + 1}${held[i] ? ', утримується' : ''}`}
                 aria-pressed={held[i]}
               >
                 <PlayingCard
@@ -209,29 +210,29 @@ export default function VideoPokerGame() {
                   highlight={held[i] && phase !== 'idle' ? 'gold' : null}
                 />
               </button>
-              <span className="text-[10px] font-semibold text-slate-500">{i + 1}</span>
+              <span className="num text-[10px] font-semibold text-slate-600">{i + 1}</span>
             </div>
           ))}
         </div>
-        <p className="mt-2 h-5 text-center text-sm font-semibold text-gold-200">
-          {phase === 'hold' && (current ? `На руках: ${HAND_NAMES[current]}` : 'Отметьте карты, которые оставите')}
-          {phase === 'idle' && 'Нажмите «Раздать», чтобы начать'}
+        <p className="mt-2 min-h-5 text-center text-sm font-semibold text-gold-200">
+          {phase === 'hold' && (current ? `На руках: ${HAND_NAMES[current]}` : 'Позначте карти, які залишите')}
+          {phase === 'idle' && 'Натисніть «Роздати», щоб почати'}
         </p>
         <ResultBanner result={banner} />
       </Panel>
 
-      <Panel strong className="flex flex-col gap-3 p-3 sm:flex-row sm:items-center sm:p-4">
-        <div className="flex flex-wrap items-center gap-3">
+      <Panel strong className="flex flex-col gap-3 p-3 md:flex-row md:items-center md:p-4">
+        <div className="flex flex-wrap items-end gap-x-4 gap-y-3">
           <div>
-            <p className="mb-1 text-[11px] text-slate-400">Кредиты</p>
+            <p className="eyebrow mb-1">Кредити</p>
             <div className="flex items-center gap-1.5">
-              <Button variant="glass" size="sm" icon={Minus} aria-label="Меньше кредитов" disabled={!canChangeBet || coins <= 1} onClick={() => setCoins((c) => c - 1)} />
-              <span className="w-8 text-center text-lg font-black text-white tabular-nums">{coins}</span>
-              <Button variant="glass" size="sm" icon={Plus} aria-label="Больше кредитов" disabled={!canChangeBet || coins >= MAX_COINS} onClick={() => setCoins((c) => c + 1)} />
+              <Button variant="glass" size="sm" icon={Minus} aria-label="Менше кредитів" disabled={!canChangeBet || coins <= 1} onClick={() => setCoins((c) => c - 1)} />
+              <span className="num w-8 text-center text-lg font-bold text-white">{coins}</span>
+              <Button variant="glass" size="sm" icon={Plus} aria-label="Більше кредитів" disabled={!canChangeBet || coins >= MAX_COINS} onClick={() => setCoins((c) => c + 1)} />
             </div>
           </div>
           <div>
-            <p className="mb-1 text-[11px] text-slate-400">Стоимость кредита</p>
+            <p className="eyebrow mb-1">Ціна кредиту</p>
             <div className="flex flex-wrap gap-1">
               {COIN_VALUES.map((v) => (
                 <button
@@ -239,7 +240,8 @@ export default function VideoPokerGame() {
                   type="button"
                   disabled={!canChangeBet}
                   onClick={() => (sfx.play('chip'), setCoinValue(v))}
-                  className={cn('h-8 min-w-10 rounded-lg px-2 text-xs font-bold transition disabled:opacity-50', coinValue === v ? 'bg-gold-300 text-ink-950' : 'bg-white/[0.05] text-slate-300 hover:bg-white/10')}
+                  data-on={coinValue === v}
+                  className="preset num h-8 min-w-9 rounded-lg px-2 text-xs"
                 >
                   {v}
                 </button>
@@ -247,21 +249,21 @@ export default function VideoPokerGame() {
             </div>
           </div>
           <div>
-            <p className="mb-1 text-[11px] text-slate-400">Ставка</p>
-            <p className="text-lg font-black text-white tabular-nums">{formatChips(bet)}</p>
+            <p className="eyebrow mb-1">Ставка</p>
+            <p className="num text-lg leading-8 font-bold text-white">{formatChips(bet)}</p>
           </div>
         </div>
-        <div className="flex gap-2 sm:ml-auto">
-          <Button variant="glass" icon={Lightbulb} disabled={phase !== 'hold'} onClick={() => setHeld(suggestHolds(hand))}>
-            Подсказка
+        <div className="flex gap-2 md:ml-auto">
+          <Button variant="glass" icon={Lightbulb} aria-label="Підказка" disabled={phase !== 'hold'} onClick={() => setHeld(suggestHolds(hand))}>
+            <span className="hidden min-[400px]:inline">Підказка</span>
           </Button>
           {phase === 'hold' || phase === 'drawing' ? (
-            <Button variant="emerald" size="lg" icon={RefreshCw} sound={false} disabled={busy} className="min-w-40 flex-1" onClick={() => void onDraw()}>
-              Обмен
+            <Button variant="cyan" size="lg" icon={RefreshCw} sound={false} disabled={busy} className="min-w-0 flex-1 md:min-w-40" onClick={() => void onDraw()}>
+              Обмін
             </Button>
           ) : (
-            <Button variant="gold" size="lg" sound={false} disabled={busy || bet > balance} className="min-w-40 flex-1" onClick={() => void onDeal()}>
-              Раздать
+            <Button variant="emerald" size="lg" sound={false} disabled={busy || bet > balance} className="min-w-0 flex-1 md:min-w-40" onClick={() => void onDeal()}>
+              Роздати
             </Button>
           )}
         </div>

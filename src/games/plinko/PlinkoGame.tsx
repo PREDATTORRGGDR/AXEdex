@@ -150,7 +150,7 @@ export default function PlinkoGame() {
           ctx.arc(pegX(r, i), pegY(r), L.pegR * (1 + glow * 0.6), 0, Math.PI * 2)
           ctx.fillStyle = glow > 0 ? `rgba(252, 217, 107, ${0.6 + glow * 0.4})` : 'rgba(226, 232, 240, 0.85)'
           if (glow > 0) {
-            ctx.shadowColor = '#fcd96b'
+            ctx.shadowColor = '#f3cf6e'
             ctx.shadowBlur = 14 * glow
           }
           ctx.fill()
@@ -182,7 +182,7 @@ export default function PlinkoGame() {
         ctx.fill()
         ctx.shadowBlur = 0
         const label = formatMult(tbl[k])
-        ctx.font = `800 ${label.length >= 3 ? baseFont * 0.85 : baseFont}px Inter, system-ui, sans-serif`
+        ctx.font = `800 ${label.length >= 3 ? baseFont * 0.85 : baseFont}px 'Exo 2 Variable', system-ui, sans-serif`
         ctx.fillStyle = '#1a1206'
         ctx.fillText(label, x, y + L.slotH / 2 + 0.5, slotW - 2)
       }
@@ -247,7 +247,7 @@ export default function PlinkoGame() {
     if (bet > state.balance) {
       sfx.play('error')
       setAutoLeft(0)
-      toast({ kind: 'warning', title: 'Недостаточно фишек' })
+      toast({ kind: 'warning', title: 'Недостатньо фішок' })
       return
     }
     const path = dropPath(rows)
@@ -257,7 +257,7 @@ export default function PlinkoGame() {
     const roundId = state.startRound('plinko', bet, {
       payout: Math.floor(bet * multiplier),
       tags: edge ? ['plinko-edge'] : undefined,
-      detail: `${rows} рядов · ×${formatMult(multiplier)}`,
+      detail: `${rows} рядів · ×${formatMult(multiplier)}`,
     })
     if (!roundId) return
     guard.track(roundId)
@@ -278,44 +278,44 @@ export default function PlinkoGame() {
   const locked = inFlight > 0
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
-      <Panel strong className="relative overflow-hidden p-3 sm:p-5">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(167,139,250,0.2),transparent)]" />
+    <div className="grid gap-3 sm:gap-4 lg:grid-cols-[minmax(280px,330px)_minmax(0,1fr)] lg:items-start">
+      <Panel strong className="relative overflow-hidden bg-[linear-gradient(180deg,#0b0f16,#07090d)] p-3 sm:p-5 lg:col-start-2 lg:row-start-1">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(157,123,255,0.18),transparent)]" />
         <div ref={wrapRef} className="relative w-full" style={{ height }}>
-          <canvas ref={canvasRef} className="absolute inset-0" role="img" aria-label="Доска Плинко" />
+          <canvas ref={canvasRef} className="absolute inset-0" role="img" aria-label="Дошка Плінко" />
         </div>
       </Panel>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3 sm:gap-4 lg:sticky lg:top-24 lg:col-start-1 lg:row-start-1">
         <Panel strong className="flex flex-col gap-4 p-4">
           <BetInput value={bet} onChange={setBet} min={1} />
           <div className="space-y-1.5">
-            <p className="text-xs font-medium text-slate-400">Риск</p>
+            <p className="eyebrow">Ризик</p>
             <SegmentedControl
               value={risk}
               onChange={setRisk}
               disabled={locked}
               options={(['low', 'medium', 'high'] as const).map((r) => ({ value: r, label: RISK_LABELS[r] }))}
-              label="Уровень риска"
+              label="Рівень ризику"
             />
           </div>
           <div className="space-y-1.5">
-            <p className="text-xs font-medium text-slate-400">Ряды</p>
-            <SegmentedControl value={rows} onChange={setRows} disabled={locked} options={ROW_OPTIONS.map((r) => ({ value: r, label: String(r) }))} label="Количество рядов" />
+            <p className="eyebrow">Ряди</p>
+            <SegmentedControl value={rows} onChange={setRows} disabled={locked} options={ROW_OPTIONS.map((r) => ({ value: r, label: String(r) }))} label="Кількість рядів" />
           </div>
-          <Button variant="gold" size="xl" icon={CircleDot} sound={false} disabled={bet > balance} onClick={drop}>
-            Бросить шарик
+          <Button variant="emerald" size="xl" icon={CircleDot} sound={false} disabled={bet > balance} onClick={drop}>
+            Кинути кульку
           </Button>
           <Button variant={autoLeft > 0 ? 'violet' : 'glass'} icon={Repeat} onClick={() => setAutoLeft((n) => (n > 0 ? 0 : 10))} aria-pressed={autoLeft > 0}>
-            {autoLeft > 0 ? `Остановить (${autoLeft})` : 'Авто: 10 шариков'}
+            {autoLeft > 0 ? `Зупинити (${autoLeft})` : 'Авто: 10 кульок'}
           </Button>
-          {locked && <p className="text-center text-[11px] text-slate-500">Риск и ряды можно менять, когда все шарики упадут.</p>}
+          {locked && <p className="text-center text-[11px] text-slate-500">Ризик і ряди можна змінити, коли всі кульки впадуть.</p>}
         </Panel>
 
         <Panel className="p-4">
-          <p className="mb-2 text-xs font-semibold tracking-wider text-slate-400 uppercase">Последние шарики</p>
+          <p className="eyebrow mb-2">Останні кульки</p>
           {results.length === 0 ? (
-            <p className="text-sm text-slate-500">Бросьте первый шарик!</p>
+            <p className="text-sm text-slate-500">Киньте першу кульку!</p>
           ) : (
             <ul className="grid grid-cols-3 gap-1.5">
               <AnimatePresence initial={false}>
@@ -327,11 +327,11 @@ export default function PlinkoGame() {
                     animate={{ opacity: 1, scale: 1 }}
                     className={cn(
                       'rounded-lg px-2 py-1.5 text-center ring-1',
-                      r.multiplier >= 2 ? 'bg-gold-400/15 ring-gold-300/30' : r.multiplier >= 1 ? 'bg-emerald-400/10 ring-emerald-300/20' : 'bg-white/[0.03] ring-white/10',
+                      r.multiplier >= 2 ? 'bg-gold-400/10 ring-gold-300/30' : r.multiplier >= 1 ? 'bg-neon-emerald/[0.07] ring-neon-emerald/20' : 'bg-white/[0.02] ring-white/[0.07]',
                     )}
                   >
-                    <p className="text-sm font-black text-white tabular-nums">×{formatMult(r.multiplier)}</p>
-                    <p className={cn('text-[10px] tabular-nums', r.net > 0 ? 'text-emerald-300' : r.net < 0 ? 'text-rose-300' : 'text-slate-400')}>{formatSigned(r.net)}</p>
+                    <p className="num text-sm font-bold text-white">×{formatMult(r.multiplier)}</p>
+                    <p className={cn('num text-[10px]', r.net > 0 ? 'text-neon-emerald' : r.net < 0 ? 'text-slate-500' : 'text-slate-400')}>{formatSigned(r.net)}</p>
                   </motion.li>
                 ))}
               </AnimatePresence>

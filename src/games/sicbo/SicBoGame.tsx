@@ -49,7 +49,7 @@ export default function SicBoGame() {
     const roundId = useCasino.getState().startRound('sicbo', stake, {
       payout,
       tags: specificTriple ? ['sicbo-triple'] : undefined,
-      detail: `${r.join('-')} · сумма ${sumOf3(r)}`,
+      detail: `${r.join('-')} · сума ${sumOf3(r)}`,
     })
     if (!roundId) return
     guard.track(roundId)
@@ -70,7 +70,7 @@ export default function SicBoGame() {
     setBusy(false)
     showBanner({
       kind: resultKind(stake, payout),
-      title: isTriple(r) ? `Тройка ${r[0]}!` : `Сумма ${sumOf3(r)}`,
+      title: isTriple(r) ? `Трійка ${r[0]}!` : `Сума ${sumOf3(r)}`,
       amount: payout - stake,
       subtitle: r.join(' · '),
     })
@@ -98,8 +98,8 @@ export default function SicBoGame() {
   )
 
   return (
-    <div className="space-y-4">
-      <Panel strong className="relative overflow-hidden rounded-3xl border-2 border-yellow-400/25 bg-[radial-gradient(90%_70%_at_50%_0%,rgba(250,204,21,0.16),transparent),linear-gradient(180deg,#3b0a0a,#12060a)] p-3 sm:p-6">
+    <div className="space-y-3 sm:space-y-4">
+      <Panel strong className="relative overflow-hidden rounded-2xl border border-white/[0.07] bg-[radial-gradient(90%_70%_at_50%_0%,rgba(255,207,90,0.12),transparent),linear-gradient(180deg,#1c0b10,#07090d)] p-3 sm:p-6">
         <div className="flex flex-col items-center gap-4 pb-4">
           <div className="flex items-center gap-5 sm:gap-10">
             {roll.map((v, i) => (
@@ -110,12 +110,12 @@ export default function SicBoGame() {
             <AnimatePresence mode="wait">
               {result ? (
                 <motion.p key={rollId} initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} className="font-display text-xl font-black text-gold-gradient">
-                  Сумма {sumOf3(result)}
-                  {isTriple(result) && ' · тройка!'}
+                  Сума {sumOf3(result)}
+                  {isTriple(result) && ' · трійка!'}
                 </motion.p>
               ) : (
-                <motion.p key="w" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-rose-100/60">
-                  {busy ? 'Кости в чаше…' : 'Разложите фишки и бросайте'}
+                <motion.p key="w" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-slate-400">
+                  {busy ? 'Кістки в чаші…' : 'Розкладіть фішки й кидайте'}
                 </motion.p>
               )}
             </AnimatePresence>
@@ -123,12 +123,12 @@ export default function SicBoGame() {
         </div>
 
         <div className="space-y-2">
-          <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
-            {spot('small', 'Малое', '4–10 · 1:1', { tone: 'blue', compact: false })}
-            {spot('odd', 'Нечет', '1:1', { compact: false })}
-            {spot('anyTriple', 'Любая тройка', '30:1', { tone: 'gold', compact: false })}
-            {spot('even', 'Чёт', '1:1', { compact: false })}
-            {spot('big', 'Большое', '11–17 · 1:1', { tone: 'red', compact: false })}
+          <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-5 sm:gap-2">
+            {spot('small', 'Мале', '4–10 · 1:1', { tone: 'blue', compact: false, className: 'order-1 max-sm:min-h-16' })}
+            {spot('odd', 'Непарне', '1:1', { compact: false, className: 'order-3 sm:order-2 max-sm:min-h-16' })}
+            {spot('anyTriple', 'Будь-яка трійка', '30:1', { tone: 'gold', compact: false, className: 'order-5 col-span-2 sm:order-3 sm:col-span-1 max-sm:min-h-14' })}
+            {spot('even', 'Парне', '1:1', { compact: false, className: 'order-4 max-sm:min-h-16' })}
+            {spot('big', 'Велике', '11–17 · 1:1', { tone: 'red', compact: false, className: 'order-2 sm:order-5 max-sm:min-h-16' })}
           </div>
           <div className="grid grid-cols-6 gap-1.5 sm:gap-2">
             {SIX.map((n) =>
@@ -144,7 +144,7 @@ export default function SicBoGame() {
               ),
             )}
           </div>
-          <div className="grid grid-cols-7 gap-1.5 sm:grid-cols-14 sm:gap-2">
+          <div className="grid grid-cols-7 gap-1.5 sm:gap-2 xl:grid-cols-14">
             {TOTALS.map((t) => spot(`total${t}`, t, `${TOTAL_ODDS[t]}:1`))}
           </div>
           <div className="grid grid-cols-6 gap-1.5 sm:gap-2">
@@ -153,11 +153,11 @@ export default function SicBoGame() {
         </div>
 
         <div className="mt-4 flex items-center gap-2 overflow-hidden">
-          <span className="shrink-0 text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase">Броски</span>
+          <span className="eyebrow shrink-0 text-[10px]">Кидки</span>
           <div className="no-scrollbar flex gap-1.5 overflow-x-auto">
-            {history.length === 0 && <span className="text-xs text-slate-500">Пока пусто</span>}
+            {history.length === 0 && <span className="text-xs text-slate-500">Поки порожньо</span>}
             {history.map((h) => (
-              <span key={h.id} className={cn('shrink-0 rounded-lg px-2 py-1 text-xs font-bold tabular-nums ring-1', isTriple(h.roll) ? 'bg-gold-400/20 text-gold-200 ring-gold-300/40' : sumOf3(h.roll) <= 10 ? 'bg-sky-500/15 text-sky-200 ring-sky-300/30' : 'bg-rose-500/15 text-rose-200 ring-rose-300/30')}>
+              <span key={h.id} className={cn('num shrink-0 rounded-md px-2 py-1 text-xs font-bold ring-1', isTriple(h.roll) ? 'bg-gold-400/15 text-gold-200 ring-gold-300/40' : sumOf3(h.roll) <= 10 ? 'bg-neon-cyan/10 text-cyan-100 ring-neon-cyan/30' : 'bg-neon-red/10 text-rose-100 ring-neon-red/30')}>
                 {h.roll.join('·')} = {sumOf3(h.roll)}
               </span>
             ))}
@@ -178,8 +178,8 @@ export default function SicBoGame() {
         onClear={chips.clear}
         onDouble={chips.double}
         onRebet={() => (setResult(null), chips.rebet())}
-        actionLabel="Бросить кости"
-        busyLabel="Бросаем…"
+        actionLabel="Кинути"
+        busyLabel="Кидаємо…"
         actionIcon={Dices}
         onAction={() => void play()}
       />

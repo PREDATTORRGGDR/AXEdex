@@ -36,26 +36,26 @@ function Foil({ onProgress, cleared, ticketId }: { onProgress: (p: number) => vo
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     ctx.globalCompositeOperation = 'source-over'
     const g = ctx.createLinearGradient(0, 0, width, height)
-    g.addColorStop(0, '#d9dee7')
-    g.addColorStop(0.35, '#9aa3b2')
-    g.addColorStop(0.5, '#eef1f5')
-    g.addColorStop(0.7, '#8d97a8')
-    g.addColorStop(1, '#c9d0db')
+    g.addColorStop(0, '#5d6776')
+    g.addColorStop(0.35, '#2c3444')
+    g.addColorStop(0.5, '#8a93a3')
+    g.addColorStop(0.7, '#262d3a')
+    g.addColorStop(1, '#4b5464')
     ctx.fillStyle = g
     ctx.fillRect(0, 0, width, height)
     // Glitter + repeating label
     for (let i = 0; i < 600; i++) {
-      ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.5})`
+      ctx.fillStyle = Math.random() < 0.35 ? `rgba(243,207,110,${Math.random() * 0.7})` : `rgba(255,255,255,${Math.random() * 0.45})`
       ctx.fillRect(Math.random() * width, Math.random() * height, 1.2, 1.2)
     }
     ctx.save()
     ctx.translate(width / 2, height / 2)
     ctx.rotate(-0.35)
-    ctx.fillStyle = 'rgba(71, 85, 105, 0.35)'
-    ctx.font = '900 18px Unbounded, Inter, sans-serif'
+    ctx.fillStyle = 'rgba(243, 207, 110, 0.28)'
+    ctx.font = '900 18px "Exo 2 Variable", system-ui, sans-serif'
     ctx.textAlign = 'center'
     for (let y = -height; y < height; y += 46) {
-      for (let x = -width; x < width; x += 150) ctx.fillText('СОТРИ', x + ((y / 46) % 2) * 75, y)
+      for (let x = -width; x < width; x += 150) ctx.fillText('ЗІТРИ', x + ((y / 46) % 2) * 75, y)
     }
     ctx.restore()
     strokes.current = 0
@@ -126,7 +126,7 @@ function Foil({ onProgress, cleared, ticketId }: { onProgress: (p: number) => vo
           last.current = null
           measure()
         }}
-        aria-label="Защитный слой билета — сотрите его"
+        aria-label="Захисний шар квитка — зітріть його"
       />
     </div>
   )
@@ -152,7 +152,7 @@ export default function ScratchGame() {
     const payout = record?.payout ?? 0
     showBanner({
       kind: r.ticket.prize ? (r.ticket.prize.multiplier >= 10 ? 'bigwin' : resultKind(r.bet, payout)) : 'lose',
-      title: r.ticket.prize ? `Три: ${r.ticket.prize.name.toLowerCase()}` : 'Без выигрыша',
+      title: r.ticket.prize ? `Три: ${r.ticket.prize.name.toLowerCase()}` : 'Без виграшу',
       amount: payout - r.bet,
       multiplier: r.ticket.prize?.multiplier,
     })
@@ -173,7 +173,7 @@ export default function ScratchGame() {
     if (round.current) return
     if (bet > balance) {
       sfx.play('error')
-      toast({ kind: 'warning', title: 'Недостаточно фишек' })
+      toast({ kind: 'warning', title: 'Недостатньо фішок' })
       return
     }
     const t = buyTicket()
@@ -181,7 +181,7 @@ export default function ScratchGame() {
     const id = useCasino.getState().startRound('scratch', bet, {
       payout,
       tags: t.prize?.symbol === 'crown' ? ['scratch-top'] : undefined,
-      detail: t.prize ? `${t.prize.name} ×${t.prize.multiplier}` : 'Без выигрыша',
+      detail: t.prize ? `${t.prize.name} ×${t.prize.multiplier}` : 'Без виграшу',
     })
     if (!id) return
     guard.track(id)
@@ -204,14 +204,14 @@ export default function ScratchGame() {
   const winning = cleared && ticket?.prize ? ticket.prize.symbol : null
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
-      <Panel strong className="relative overflow-hidden p-4 sm:p-8">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_50%_30%,rgba(163,230,53,0.14),transparent)]" />
+    <div className="grid gap-3 sm:gap-4 lg:grid-cols-[minmax(280px,340px)_minmax(0,1fr)] lg:items-start">
+      <Panel strong className="relative overflow-hidden bg-[linear-gradient(180deg,#0b0f16,#07090d)] p-3 sm:p-8 lg:col-start-2 lg:row-start-1">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_50%_30%,rgba(181,242,61,0.1),transparent)]" />
         <div className="relative mx-auto max-w-md">
-          <div className="rounded-3xl bg-[linear-gradient(135deg,#bef264,#16a34a_45%,#14532d)] p-[3px] shadow-[0_30px_60px_-20px_rgba(0,0,0,0.8)]">
-            <div className="rounded-[22px] bg-[radial-gradient(120%_80%_at_50%_0%,#1a3a1f,#0a1a10)] p-4 sm:p-5">
+          <div className="rounded-3xl bg-[linear-gradient(135deg,#fbf0cf,#d4a543_30%,#19f5a3_70%,#0a7a4f)] p-[2px] shadow-[0_30px_60px_-20px_rgba(0,0,0,0.9),0_0_40px_-14px_rgba(25,245,163,0.5)]">
+            <div className="rounded-[22px] bg-[radial-gradient(120%_80%_at_50%_0%,#12241c,#07090d)] p-3 sm:p-5">
               <div className="mb-3 flex items-center justify-between">
-                <p className="font-display text-lg font-black tracking-wide text-lime-200">Счастливый билет</p>
+                <p className="font-display text-lg font-black tracking-wide text-gold-gradient">Щасливий квиток</p>
                 <Icon name="four-leaf-clover" size={30} />
               </div>
               <div className="relative aspect-square">
@@ -222,24 +222,24 @@ export default function ScratchGame() {
                       animate={winning && s === winning ? { scale: [1, 1.12, 1] } : { scale: 1 }}
                       transition={winning && s === winning ? { duration: 0.8, repeat: Infinity } : undefined}
                       className={cn(
-                        'grid place-items-center rounded-2xl bg-[radial-gradient(circle,#fefce8,#e7e5c8)] shadow-inner',
+                        'grid place-items-center rounded-2xl border border-white/[0.06] bg-[radial-gradient(circle,#1b2620,#0a0f0c)] shadow-[inset_0_2px_10px_rgba(0,0,0,0.6)]',
                         winning && s === winning && 'ring-4 ring-gold-300 shadow-glow-gold',
                         winning && s !== winning && 'opacity-50',
                       )}
                     >
-                      {s && <Icon name={PRIZE_BY_SYMBOL[s].icon} size={52} className="drop-shadow-[0_3px_4px_rgba(0,0,0,0.3)]" />}
+                      {s && <Icon name={PRIZE_BY_SYMBOL[s].icon} size={52} className="size-[60%]" />}
                     </motion.div>
                   ))}
                 </div>
                 {ticket && <Foil key={ticketId} ticketId={ticketId} cleared={cleared} onProgress={onProgress} />}
                 {!ticket && (
-                  <div className="absolute inset-0 grid place-items-center rounded-2xl bg-[linear-gradient(135deg,#d9dee7,#8d97a8)]">
-                    <p className="font-display text-sm font-black tracking-widest text-slate-600 uppercase">Купите билет</p>
+                  <div className="absolute inset-0 grid place-items-center rounded-2xl bg-[linear-gradient(135deg,#5d6776,#2c3444_40%,#8a93a3_55%,#262d3a)]">
+                    <p className="font-display text-sm font-black tracking-widest text-gold-200/80 uppercase">Купіть квиток</p>
                   </div>
                 )}
               </div>
-              <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-black/40">
-                <motion.div className="h-full bg-lime-300" animate={{ width: `${Math.min(1, cleared ? 1 : progress / REVEAL_AT) * 100}%` }} />
+              <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-black/50">
+                <motion.div className="h-full bg-gradient-to-r from-neon-emerald to-gold-200" animate={{ width: `${Math.min(1, cleared ? 1 : progress / REVEAL_AT) * 100}%` }} />
               </div>
             </div>
           </div>
@@ -247,30 +247,30 @@ export default function ScratchGame() {
         <ResultBanner result={banner} />
       </Panel>
 
-      <Panel strong className="flex flex-col gap-4 p-4 lg:self-start">
-        <BetInput value={bet} onChange={setBet} min={1} disabled={active} label="Цена билета" />
+      <Panel strong className="flex flex-col gap-4 p-4 lg:sticky lg:top-24 lg:col-start-1 lg:row-start-1">
+        <BetInput value={bet} onChange={setBet} min={1} disabled={active} label="Ціна квитка" />
         {active ? (
           <Button variant="glass" size="lg" icon={Eye} onClick={revealAll}>
-            Открыть всё
+            Відкрити все
           </Button>
         ) : (
-          <Button variant="gold" size="xl" icon={TicketIcon} sound={false} disabled={bet > balance} onClick={buy}>
-            Купить билет · {formatChips(bet)}
+          <Button variant="emerald" size="xl" icon={TicketIcon} sound={false} disabled={bet > balance} onClick={buy}>
+            Купити · {formatChips(bet)}
           </Button>
         )}
         <div>
-          <p className="mb-2 text-xs font-medium text-slate-400">Три одинаковых символа</p>
+          <p className="eyebrow mb-2">Три однакові символи</p>
           <ul className="space-y-1">
             {SCRATCH_PRIZES.map((p) => (
-              <li key={p.symbol} className={cn('flex items-center gap-2 rounded-lg px-2 py-1.5', winning === p.symbol ? 'bg-gold-400/20 ring-1 ring-gold-300/50' : 'bg-white/[0.03]')}>
+              <li key={p.symbol} className={cn('flex items-center gap-2 rounded-lg px-2 py-1.5', winning === p.symbol ? 'bg-gold-400/15 ring-1 ring-gold-300/50' : 'bg-white/[0.025]')}>
                 <span className="flex">
                   {[0, 1, 2].map((i) => (
                     <Icon key={i} name={p.icon} size={18} className={cn(i > 0 && '-ml-1.5')} />
                   ))}
                 </span>
                 <span className="flex-1 text-xs text-slate-300">{p.name}</span>
-                <span className="text-[10px] text-slate-500 tabular-nums">{formatPercent(p.chance, p.chance < 0.01 ? 1 : 0)}</span>
-                <b className="w-12 text-right text-xs text-gold-200 tabular-nums">×{p.multiplier}</b>
+                <span className="num text-[10px] text-slate-500">{formatPercent(p.chance, p.chance < 0.01 ? 1 : 0)}</span>
+                <b className="num w-12 text-right text-xs text-gold-200">×{p.multiplier}</b>
               </li>
             ))}
           </ul>
@@ -278,7 +278,7 @@ export default function ScratchGame() {
         <AnimatePresence>
           {active && (
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center text-[11px] text-slate-500">
-              Сотрите слой пальцем или мышью
+              Зітріть шар пальцем або мишею
             </motion.p>
           )}
         </AnimatePresence>

@@ -13,7 +13,7 @@ export interface Card {
 export const SUITS: readonly Suit[] = ['spades', 'hearts', 'diamonds', 'clubs']
 export const RANKS: readonly Rank[] = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 
-/** Russian card indices: В (валет), Д (дама), К (король), Т (туз). */
+/** Ukrainian card indices: В (валет), Д (дама), К (король), Т (туз). */
 export const RANK_LABEL: Record<Rank, string> = {
   2: '2',
   3: '3',
@@ -31,14 +31,14 @@ export const RANK_LABEL: Record<Rank, string> = {
 }
 
 export const RANK_NAME: Record<Rank, string> = {
-  2: 'двойка',
-  3: 'тройка',
-  4: 'четвёрка',
-  5: 'пятёрка',
-  6: 'шестёрка',
-  7: 'семёрка',
-  8: 'восьмёрка',
-  9: 'девятка',
+  2: 'двійка',
+  3: 'трійка',
+  4: 'четвірка',
+  5: 'п’ятірка',
+  6: 'шістка',
+  7: 'сімка',
+  8: 'вісімка',
+  9: 'дев’ятка',
   10: 'десятка',
   11: 'валет',
   12: 'дама',
@@ -47,7 +47,7 @@ export const RANK_NAME: Record<Rank, string> = {
 }
 
 export const SUIT_SYMBOL: Record<Suit, string> = { spades: '♠', hearts: '♥', diamonds: '♦', clubs: '♣' }
-export const SUIT_NAME: Record<Suit, string> = { spades: 'пик', hearts: 'червей', diamonds: 'бубен', clubs: 'треф' }
+export const SUIT_NAME: Record<Suit, string> = { spades: 'пік', hearts: 'чирв', diamonds: 'бубон', clubs: 'треф' }
 
 export const isRed = (suit: Suit) => suit === 'hearts' || suit === 'diamonds'
 
