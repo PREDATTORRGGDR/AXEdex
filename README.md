@@ -1,5 +1,5 @@
 # AXEdex
 
-Симулятор казино на віртуальні фішки: 19 ігор, без реальних грошей.
+A casino simulator with virtual chips: 19 games, no real money.
 
-Зроблено by **kyrapyto**.
+Made by **kyrapyto**.
