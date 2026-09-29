@@ -1,0 +1,87 @@
+import { Radio } from 'lucide-react'
+import { GAMES } from '../../games/meta'
+import { cn } from '../../lib/cn'
+import { formatChips, formatMultiplier, formatSigned, plural } from '../../lib/format'
+import { ACHIEVEMENTS } from '../../store/achievements'
+import { useCasino } from '../../store/casino'
+import { levelFromXp } from '../../store/progression'
+
+interface TickerItem {
+  key: string
+  text: string
+  tone: 'win' | 'loss' | 'neutral' | 'gold'
+}
+
+const TIPS: TickerItem[] = [
+  { key: 't1', text: 'Ежедневный бонус растёт 7 дней подряд — до 4000 фишек', tone: 'gold' },
+  { key: 't2', text: 'Кран выдаёт бесплатные фишки каждый час', tone: 'neutral' },
+  { key: 't3', text: 'Отмечайте любимые игры сердечком — они всегда будут первыми', tone: 'neutral' },
+  { key: 't4', text: 'Каждый раунд приносит опыт, а новый уровень — фишки в подарок', tone: 'gold' },
+  {
+    key: 't5',
+    text: `${ACHIEVEMENTS.length} ${plural(ACHIEVEMENTS.length, ['достижение ждёт', 'достижения ждут', 'достижений ждут'])} вас в профиле`,
+    tone: 'neutral',
+  },
+]
+
+/** Scrolling marquee built from the player's real activity and records. */
+export function LiveTicker({ className }: { className?: string }) {
+  const recent = useCasino((s) => s.recent)
+  const lifetime = useCasino((s) => s.lifetime)
+  const xp = useCasino((s) => s.xp)
+
+  const items: TickerItem[] = recent.slice(0, 12).map((r) => ({
+    key: r.id,
+    text: `${GAMES[r.game].name}: ${formatSigned(r.net)}${r.net > 0 ? ` (${formatMultiplier(r.multiplier)})` : ''}`,
+    tone: r.net > 0 ? 'win' : r.net < 0 ? 'loss' : 'neutral',
+  }))
+  const level = levelFromXp(xp)
+  items.push({ key: 'lvl', text: `Уровень ${level.level} · ${level.title}`, tone: 'gold' })
+  if (lifetime.bestMultiplier > 0) {
+    items.push({ key: 'bm', text: `Рекорд множителя: ${formatMultiplier(lifetime.bestMultiplier)}`, tone: 'gold' })
+  }
+  if (lifetime.biggestWin > 0) {
+    items.push({ key: 'bw', text: `Крупнейший выигрыш: +${formatChips(lifetime.biggestWin)}`, tone: 'win' })
+  }
+  if (lifetime.bestStreak > 1) {
+    items.push({
+      key: 'bs',
+      text: `Лучшая серия: ${lifetime.bestStreak} ${plural(lifetime.bestStreak, ['победа', 'победы', 'побед'])} подряд`,
+      tone: 'win',
+    })
+  }
+  items.push(...TIPS)
+
+  const row = (suffix: string) =>
+    items.map((it) => (
+      <li key={it.key + suffix} className="flex shrink-0 items-center gap-2 px-5 text-xs font-medium whitespace-nowrap">
+        <span
+          className={cn(
+            'size-1.5 rounded-full',
+            it.tone === 'win' && 'bg-emerald-400 shadow-glow-green',
+            it.tone === 'loss' && 'bg-rose-400',
+            it.tone === 'gold' && 'bg-gold-300 shadow-glow-gold',
+            it.tone === 'neutral' && 'bg-slate-500',
+          )}
+        />
+        <span className={cn(it.tone === 'win' ? 'text-emerald-200' : it.tone === 'gold' ? 'text-gold-100' : 'text-slate-300')}>
+          {it.text}
+        </span>
+      </li>
+    ))
+
+  return (
+    <div className={cn('glass flex h-11 items-center overflow-hidden rounded-2xl', className)}>
+      <div className="z-10 flex h-full shrink-0 items-center gap-2 border-r border-white/10 bg-ink-900/90 px-4">
+        <Radio className="size-4 animate-pulse text-rose-400" />
+        <span className="text-[10px] font-black tracking-[0.2em] text-white uppercase">Лента</span>
+      </div>
+      <div className="relative flex-1 overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_4%,black_96%,transparent)]">
+        <ul className="flex w-max animate-marquee hover:[animation-play-state:paused]" aria-label="Лента событий">
+          {row('a')}
+          {row('b')}
+        </ul>
+      </div>
+    </div>
+  )
+}
