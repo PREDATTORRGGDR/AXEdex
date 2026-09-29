@@ -1,4 +1,5 @@
 import { Heart, Play } from 'lucide-react'
+import { memo } from 'react'
 import { motion, useMotionValue, useSpring, useTransform } from 'motion/react'
 import { sfx } from '../../audio/sfx'
 import type { GameMeta } from '../../games/meta'
@@ -15,7 +16,7 @@ const BADGE_STYLES: Record<NonNullable<GameMeta['badge']>, string> = {
 }
 
 /** Lobby tile with a pointer-driven 3D tilt and glare. */
-export function GameCard({ game, index = 0 }: { game: GameMeta; index?: number }) {
+export const GameCard = memo(function GameCard({ game, index = 0 }: { game: GameMeta; index?: number }) {
   const favorite = useCasino((s) => s.favorites.includes(game.id))
   const rounds = useCasino((s) => s.games[game.id]?.rounds ?? 0)
   const toggleFavorite = useCasino((s) => s.toggleFavorite)
@@ -41,7 +42,7 @@ export function GameCard({ game, index = 0 }: { game: GameMeta; index?: number }
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: Math.min(index * 0.04, 0.4), duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-      style={{ perspective: 900 }}
+      style={{ perspective: 900, contentVisibility: 'auto', containIntrinsicSize: '320px 300px' }}
     >
       <motion.div
         role="link"
@@ -122,4 +123,4 @@ export function GameCard({ game, index = 0 }: { game: GameMeta; index?: number }
       </motion.div>
     </motion.div>
   )
-}
+})

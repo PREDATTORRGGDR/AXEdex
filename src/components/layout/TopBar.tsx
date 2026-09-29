@@ -49,7 +49,7 @@ export function TopBar() {
     <header
       className={cn(
         'sticky top-0 z-40 transition-[background-color,border-color,backdrop-filter] duration-300',
-        scrolled ? 'border-b border-white/5 bg-ink-950/70 backdrop-blur-xl' : 'border-b border-transparent',
+        scrolled ? 'backdrop-glass border-b border-white/5 bg-ink-950/85' : 'border-b border-transparent',
       )}
       style={{ paddingTop: 'env(safe-area-inset-top)' }}
     >

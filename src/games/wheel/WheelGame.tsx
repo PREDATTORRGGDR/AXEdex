@@ -208,21 +208,24 @@ export default function WheelGame() {
                   </g>
                 )
               })}
-              {Array.from({ length: 24 }, (_, i) => {
-                const [x, y] = polar(i * 15, C - 12)
-                return (
-                  <circle
-                    key={i}
-                    cx={x}
-                    cy={y}
-                    r={4}
-                    fill={i % 2 ? '#fff4d1' : '#34f5a0'}
-                    style={{ animation: `pulse-glow ${spinning ? 0.3 : 1.6}s ease-in-out ${i * (spinning ? 0.02 : 0.07)}s infinite` }}
-                  />
-                )
-              })}
               <circle cx={C} cy={C} r={58} fill="#0a1022" stroke="url(#wheel-rim)" strokeWidth="5" />
             </motion.svg>
+            {/* Bulbs sit on a static ring so their blinking never repaints the spinning wheel. */}
+            <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="pointer-events-none absolute inset-0 w-full" aria-hidden>
+                {Array.from({ length: 24 }, (_, i) => {
+                  const [x, y] = polar(i * 15, C - 12)
+                  return (
+                    <circle
+                      key={i}
+                      cx={x}
+                      cy={y}
+                      r={4}
+                      fill={i % 2 ? '#fff4d1' : '#34f5a0'}
+                      style={{ animation: `pulse-glow ${spinning ? 0.3 : 1.6}s ease-in-out ${i * (spinning ? 0.02 : 0.07)}s infinite` }}
+                    />
+                  )
+                })}
+            </svg>
             {/* Static hub label (does not rotate) */}
             <div className="pointer-events-none absolute inset-0 grid place-items-center">
               <div className="text-center">

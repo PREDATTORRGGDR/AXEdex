@@ -9,6 +9,7 @@ import { BetInput } from '../../components/ui/BetInput'
 import { Button } from '../../components/ui/Button'
 import { Panel } from '../../components/ui/Panel'
 import { useElementSize } from '../../hooks/useElementSize'
+import { useInViewRef } from '../../hooks/useInViewRef'
 import { useResultBanner } from '../../hooks/useResultBanner'
 import { wait } from '../../lib/async'
 import { cn } from '../../lib/cn'
@@ -57,6 +58,7 @@ export default function CrashGame() {
   const { points, push } = useCrashHistory()
   const [wrapRef, { width }] = useElementSize<HTMLDivElement>()
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const inView = useInViewRef(canvasRef)
   const rocketRef = useRef<HTMLDivElement>(null)
   const multRef = useRef<HTMLParagraphElement>(null)
   const [shakeScope, shake] = useAnimate<HTMLDivElement>()
@@ -117,10 +119,14 @@ export default function CrashGame() {
     let lastWhole = 1
 
     const frame = (now: number) => {
-      const dt = Math.min(3, (now - last) / 16.67)
-      last = now
+      raf = requestAnimationFrame(frame)
       const f = flight.current
       const s = scene.current
+      const live = (f && phaseRef.current === 'flying') || s.sparks.length > 0 || s.trail.length > 0
+      // Between rounds only the stars drift: 30 fps is enough, and nothing draws off screen.
+      if (!live && (!inView.current || now - last < 33)) return
+      const dt = Math.min(3, (now - last) / 16.67)
+      last = now
 
       if (f && phaseRef.current === 'flying') {
         const elapsed = now - f.startAt
@@ -172,11 +178,10 @@ export default function CrashGame() {
         rocketRef.current.style.opacity = s.crashed ? '0' : '1'
       }
       if (multRef.current) multRef.current.textContent = `${formatDecimal(s.m)}×`
-      raf = requestAnimationFrame(frame)
     }
     raf = requestAnimationFrame(frame)
     return () => cancelAnimationFrame(raf)
-  }, [width, height, cashOut, push, shake, shakeScope, showBanner])
+  }, [width, height, cashOut, push, shake, shakeScope, showBanner, inView])
 
   // Leaving mid-flight cashes out at the current multiplier (if still alive).
   useEffect(

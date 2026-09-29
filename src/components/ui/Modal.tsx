@@ -36,7 +36,7 @@ export function Modal({ open, onClose, title, children, className, sheet = true 
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          <div className="absolute inset-0 bg-ink-950/75 backdrop-blur-sm" onClick={onClose} aria-hidden />
+          <div className="backdrop-glass absolute inset-0 bg-ink-950/80" onClick={onClose} aria-hidden />
           <motion.div
             role="dialog"
             aria-modal="true"

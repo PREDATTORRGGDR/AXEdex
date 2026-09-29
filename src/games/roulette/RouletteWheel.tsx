@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { sfx } from '../../audio/sfx'
 import { useElementSize } from '../../hooks/useElementSize'
+import { useInViewRef } from '../../hooks/useInViewRef'
 import { easeOutCubic } from '../../lib/async'
 import { colorOf, POCKETS, WHEEL_ORDER } from './logic'
 
@@ -205,6 +206,7 @@ function shade(hex: string, amount: number): string {
 export function RouletteWheel({ spin, onSettled, highlight }: RouletteWheelProps) {
   const [wrapRef, { width }] = useElementSize<HTMLDivElement>()
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const inView = useInViewRef(canvasRef)
 
   // Animation state lives in refs so the render loop never re-renders React.
   const wheel = useRef(0)
@@ -253,9 +255,12 @@ export function RouletteWheel({ spin, onSettled, highlight }: RouletteWheelProps
     let last = performance.now()
 
     const frame = (now: number) => {
+      raf = requestAnimationFrame(frame)
+      const a = active.current
+      // Idle drift is gentle: 30 fps is plenty, and nothing is drawn while off screen.
+      if (!a && (!inView.current || now - last < 33)) return
       const dt = Math.min(0.05, (now - last) / 1000)
       last = now
-      const a = active.current
 
       if (a) {
         const p = Math.min(1, (now - a.start) / SPIN_MS)
@@ -336,12 +341,10 @@ export function RouletteWheel({ spin, onSettled, highlight }: RouletteWheelProps
       ctx.arc(bx, by, br, 0, Math.PI * 2)
       ctx.fillStyle = ball
       ctx.fill()
-
-      raf = requestAnimationFrame(frame)
     }
     raf = requestAnimationFrame(frame)
     return () => cancelAnimationFrame(raf)
-  }, [width])
+  }, [width, inView])
 
   return (
     <div ref={wrapRef} className="relative grid w-full place-items-center">

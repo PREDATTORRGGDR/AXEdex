@@ -41,8 +41,8 @@ function Hero() {
   return (
     <section className="grid gap-4 lg:grid-cols-[1.35fr_1fr]">
       <Panel strong className="relative overflow-hidden p-5 sm:p-7">
-        <div className="absolute -top-24 -right-24 size-72 animate-[spin_40s_linear_infinite] rounded-full border border-dashed border-gold-400/20" />
-        <div className="absolute -top-12 -right-12 size-48 animate-[spin_28s_linear_infinite_reverse] rounded-full border border-emerald-400/15" />
+        <div className="fx-float absolute -top-24 -right-24 size-72 animate-[spin_40s_linear_infinite] rounded-full border border-dashed border-gold-400/20 will-change-transform" />
+        <div className="fx-float absolute -top-12 -right-12 size-48 animate-[spin_28s_linear_infinite_reverse] rounded-full border border-emerald-400/15 will-change-transform" />
         <div className="absolute -bottom-20 -left-10 size-64 rounded-full bg-gold-500/10 blur-3xl" />
 
         <div className="relative">

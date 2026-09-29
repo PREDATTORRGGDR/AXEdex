@@ -94,6 +94,8 @@ export interface Settings {
   sound: boolean
   volume: number
   haptics: boolean
+  /** Rendering quality: automatic detection, full effects, or economy mode. */
+  quality: 'auto' | 'high' | 'low'
 }
 
 export interface DailyState {
@@ -177,7 +179,7 @@ const initialData = (): CasinoData => ({
   balanceHistory: [{ at: Date.now(), balance: STARTING_BALANCE }],
   daily: { lastClaimAt: null, streak: 0 },
   achievements: {},
-  settings: { sound: true, volume: 0.7, haptics: true },
+  settings: { sound: true, volume: 0.7, haptics: true, quality: 'auto' },
 })
 
 function applyRound(stats: GameStats, rec: RoundRecord): GameStats {

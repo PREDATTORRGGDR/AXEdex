@@ -15,6 +15,7 @@ import { Lobby } from './pages/Lobby'
 import { NotFound } from './pages/NotFound'
 import { Profile } from './pages/Profile'
 import { routeKey, useRoute, type Route } from './router/router'
+import { useEffectsLow } from './store/perf'
 import { useUi } from './store/ui'
 
 function Page({ route }: { route: Route }) {
@@ -41,6 +42,11 @@ export default function App() {
   const route = useRoute()
   const key = routeKey(route)
   const { rewardsOpen, setRewardsOpen } = useUi()
+  const low = useEffectsLow()
+
+  useEffect(() => {
+    document.documentElement.dataset.effects = low ? 'low' : 'high'
+  }, [low])
 
   useEffect(() => {
     window.scrollTo({ top: 0 })
@@ -58,9 +64,9 @@ export default function App() {
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={key}
-                initial={{ opacity: 0, y: 14, filter: 'blur(4px)' }}
-                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                exit={{ opacity: 0, y: -8, filter: 'blur(4px)' }}
+                initial={{ opacity: 0, y: 14, scale: 0.995 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
               >
                 <Page route={route} />

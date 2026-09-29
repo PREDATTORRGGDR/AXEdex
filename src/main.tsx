@@ -3,9 +3,11 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App'
 import { requestPersistentStorage } from './store/backup'
+import { startFpsProbe } from './store/perf'
 import { useCasino } from './store/casino'
 
 requestPersistentStorage()
+startFpsProbe()
 
 // Keep several open tabs in sync: another tab's wallet change reloads ours.
 window.addEventListener('storage', (e) => {

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useReducedMotion } from 'motion/react'
 import { useFx } from '../../store/fx'
+import { effectsLowNow } from '../../store/perf'
 
 interface Particle {
   x: number
@@ -29,14 +30,14 @@ export function CelebrationLayer() {
     const ctx = canvas?.getContext('2d')
     if (!canvas || !ctx) return
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5)
     const w = window.innerWidth
     const h = window.innerHeight
     canvas.width = w * dpr
     canvas.height = h * dpr
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
-    const count = Math.round(40 + celebration.intensity * 50)
+    const count = Math.round((40 + celebration.intensity * 50) * (effectsLowNow() ? 0.4 : 1))
     const particles: Particle[] = Array.from({ length: count }, () => {
       const fromLeft = Math.random() < 0.5
       const coin = celebration.kind === 'coins' ? Math.random() < 0.75 : Math.random() < 0.15

@@ -87,10 +87,14 @@ export default function PlinkoGame() {
   const seq = useRef(0)
   const table = multipliers(rows, risk)
   const tableRef = useRef(table)
+  /** Forces one redraw (e.g. after the risk table changed) even when the board is idle. */
+  const dirty = useRef(true)
+  const lastActive = useRef(0)
   const height = Math.round(Math.min(560, Math.max(320, width * 0.85)))
 
   useEffect(() => {
     tableRef.current = table
+    dirty.current = true
   })
 
   const land = useCallback(
@@ -125,7 +129,13 @@ export default function PlinkoGame() {
     const pegX = (r: number, i: number) => L.cx + (i - (r + 2) / 2) * L.sx
     const pegY = (r: number) => L.top + r * L.sy
 
+    dirty.current = true
     const frame = (now: number) => {
+      raf = requestAnimationFrame(frame)
+      // Nothing moves, nothing glows: keep the last frame and skip all drawing.
+      if (balls.current.length === 0 && now - lastActive.current > 450 && !dirty.current) return
+      dirty.current = false
+      if (balls.current.length > 0) lastActive.current = now
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       ctx.clearRect(0, 0, width, height)
       const tbl = tableRef.current
@@ -227,7 +237,6 @@ export default function PlinkoGame() {
         ctx.shadowBlur = 0
       }
       balls.current = balls.current.filter((b) => !b.landed)
-      raf = requestAnimationFrame(frame)
     }
     raf = requestAnimationFrame(frame)
     return () => cancelAnimationFrame(raf)
