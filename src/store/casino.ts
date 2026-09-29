@@ -15,6 +15,8 @@ export const STARTING_BALANCE = 1_000
 export const BANKRUPT_THRESHOLD = 10
 /** One-off aid for a broke player; deliberately small and rate-limited. */
 export const BANKRUPT_AID = 250
+/** Chips granted by the secret button in the «by kyrapyto» credit. */
+export const SECRET_BONUS = 1_000
 export const BANKRUPT_COOLDOWN_MS = 8 * 60 * 60 * 1000
 export const DAILY_COOLDOWN_MS = 24 * 60 * 60 * 1000
 /** Claiming within this window of the previous claim keeps the streak alive. */
@@ -134,6 +136,8 @@ interface CasinoActions {
   recoverRounds: () => void
   claimDailyBonus: (now?: number) => number
   claimRefill: (now?: number) => number
+  /** Easter egg hidden in the author credit. */
+  claimSecretBonus: () => number
   toggleFavorite: (game: GameId) => void
   updateSettings: (patch: Partial<Settings>) => void
   resetProgress: () => void
@@ -428,6 +432,15 @@ export const useCasino = create<CasinoState>()(
           })
           unlockAchievements()
           return status.amount
+        },
+
+        claimSecretBonus: () => {
+          set((s) => {
+            const { peakBalance, ...credit } = creditFree(s, SECRET_BONUS)
+            return { ...credit, lifetime: { ...s.lifetime, peakBalance } }
+          })
+          unlockAchievements()
+          return SECRET_BONUS
         },
 
         toggleFavorite: (game) =>

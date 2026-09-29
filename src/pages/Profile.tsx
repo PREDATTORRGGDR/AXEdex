@@ -2,6 +2,7 @@ import { Award, Download, Gauge, HardDriveDownload, RotateCcw, Settings2, Upload
 import { motion } from 'motion/react'
 import { useRef, useState } from 'react'
 import { sfx } from '../audio/sfx'
+import { SecretCredit } from '../components/brand/SecretCredit'
 import { AchievementGrid } from '../components/profile/AchievementGrid'
 import { BalanceChart } from '../components/profile/BalanceChart'
 import { Button } from '../components/ui/Button'
@@ -292,7 +293,7 @@ export function Profile() {
       </Panel>
 
       <p className="pb-2 text-center text-[11px] leading-relaxed text-slate-600">
-        AXEdex · Зроблено by <span className="font-display font-bold text-gold-gradient">kyrapyto</span>
+        AXEdex · <SecretCredit />
         <br />
         Іконки: game-icons.net (CC BY 3.0) — Lorc, Delapouite та інші автори. Емблема AXEdex створена на основі «Crossed axes».
       </p>

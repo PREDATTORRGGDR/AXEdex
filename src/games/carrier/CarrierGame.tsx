@@ -18,7 +18,7 @@ import { useCasino, type Settlement } from '../../store/casino'
 import { persistStorage, STORAGE_PREFIX } from '../../store/storage'
 import { toast } from '../../store/toasts'
 import { altitudeAt, BONUS_TABLE, bonusLabel, LAND_CHANCE, payoutFor, planFlight, START_ALTITUDE, type FlightPlan } from './logic'
-import { burst, createScene, drawScene, geometry, puff, splash, tokenColors, type CarrierScene, type Token } from './scene'
+import { burst, createScene, drawScene, geometry, puff, shipLength, splash, tokenColors, type CarrierScene, type Ship, type Token } from './scene'
 
 type Phase = 'idle' | 'flying' | 'done'
 type Tempo = 'normal' | 'fast' | 'turbo'
@@ -40,8 +40,15 @@ interface Flight {
   /** Index of the next bonus the jet will fly into. */
   next: number
   settled: boolean
-  /** Scene x of the jet when it lost contact with the flight path (for the splash). */
-  fall: { vy: number; x: number; y: number; angle: number; splashed: boolean } | null
+  /** Where the jet left the flight path, for the drop into the sea. */
+  fall: { y: number; angle: number; splashed: boolean } | null
+  /** The flotilla in world coordinates (stern x before any travel). */
+  ships: Ship[]
+  /** Index of the ship the jet takes off from and of the one it lands on (or misses). */
+  home: number
+  final: number
+  /** Carrier travel per step, px. */
+  vc: number
 }
 
 interface HistoryItem {
@@ -67,6 +74,85 @@ function settlementFor(bet: number, plan: FlightPlan): Settlement {
 
 const easeInOut = (u: number) => (u < 0.5 ? 2 * u * u : 1 - (-2 * u + 2) ** 2 / 2)
 
+/** How far the flotilla has drifted left (px) at step-time `st`. */
+function travel(st: number, touchdown: number, vc: number): number {
+  if (st <= -PRE_STEPS) return 0
+  if (st < 0) return (vc * (st + PRE_STEPS) ** 2) / (2 * PRE_STEPS)
+  const base = (vc * PRE_STEPS) / 2
+  if (st <= touchdown) return base + vc * st
+  const u = Math.min(st - touchdown, 0.8)
+  return base + vc * (touchdown + u - (u * u) / 1.6)
+}
+
+/**
+ * An endless-looking flotilla of ships of every size along the route: the
+ * jet launches from one, flies over the rest and at touchdown is either over
+ * the deck of the last one or over open water between two of them.
+ */
+const baseVc = (w: number) => w * 0.3 * 0.8
+
+/** The ship the jet waits on before take-off, placed exactly where the next flight starts. */
+function idleHome(w: number, h: number, len: number): Ship {
+  const g = geometry(w, h)
+  const vc = baseVc(w)
+  return { x: g.planeX - len + travel(LIFTOFF - PRE_STEPS, 1, vc) - travel(-PRE_STEPS, 1, vc), len }
+}
+
+function planFleet(plan: FlightPlan, w: number, h: number, homeLen: number): Pick<Flight, 'ships' | 'home' | 'final' | 'vc'> {
+  const g = geometry(w, h)
+  let vc = baseVc(w)
+  let result: Pick<Flight, 'ships' | 'home' | 'final' | 'vc'> | null = null
+  for (let attempt = 0; attempt < 8 && !result; attempt++, vc *= 1.2) {
+    const home: Ship = { x: 0, len: homeLen }
+    home.x = g.planeX - home.len + travel(LIFTOFF - PRE_STEPS, plan.touchdown, vc)
+    const reach = travel(plan.touchdown, plan.touchdown, vc)
+    const fin: Ship = { x: 0, len: shipLength(g.length) }
+    const fixed: Ship[] = []
+    if (plan.landed) {
+      fin.x = g.planeX - g.zoneCenter(fin.len) + reach
+      fixed.push(fin)
+    } else {
+      const gap = g.minGap * (1.15 + Math.random() * 0.5)
+      fin.x = g.planeX + gap * 0.62 + reach
+      const prev: Ship = { x: 0, len: shipLength(g.length) }
+      prev.x = fin.x - gap - prev.len
+      fixed.push(prev, fin)
+    }
+    const firstStern = fixed[0].x
+    const fillers: Ship[] = []
+    let cursor = home.x + home.len
+    for (;;) {
+      const gap = g.minGap * (1 + Math.random() * 0.7)
+      const len = shipLength(g.length)
+      if (cursor + gap + len + g.minGap * 1.2 > firstStern) break
+      fillers.push({ x: cursor + gap, len })
+      cursor += gap + len
+    }
+    if (firstStern - cursor < g.minGap) continue
+    // Share the spare water between the gaps so none is oddly wide.
+    const spare = firstStern - cursor - g.minGap * 1.3
+    if (spare > 0) fillers.forEach((f, i) => (f.x += (spare * (i + 1)) / (fillers.length + 1)))
+    const before: Ship[] = []
+    let left = home.x
+    for (let i = 0; i < 3; i++) {
+      const len = shipLength(g.length)
+      left -= g.minGap * (1 + Math.random() * 0.7) + len
+      before.unshift({ x: left, len })
+    }
+    const after: Ship[] = []
+    let right = fin.x + fin.len
+    for (let i = 0; i < 5; i++) {
+      right += g.minGap * (1 + Math.random() * 0.7)
+      const len = shipLength(g.length)
+      after.push({ x: right, len })
+      right += len
+    }
+    const ships = [...before, home, ...fillers, ...fixed, ...after]
+    result = { ships, home: before.length, final: ships.indexOf(fin), vc }
+  }
+  return result!
+}
+
 /** Unique bonus kinds for the legend, in table order. */
 const LEGEND = BONUS_TABLE.map((b) => ({ b, label: bonusLabel(b) }))
 
@@ -91,6 +177,8 @@ export default function CarrierGame() {
   const phaseRef = useRef<Phase>('idle')
   const height = width < 640 ? 300 : 400
   const scene = useRef<CarrierScene | null>(null)
+  /** Length of the ship the next flight launches from (so the idle scene matches it). */
+  const nextHome = useRef(0)
 
   const setPhaseBoth = (p: Phase) => {
     phaseRef.current = p
@@ -130,7 +218,7 @@ export default function CarrierGame() {
           showBanner(
             {
               kind: win >= f.bet * 10 ? 'bigwin' : win > f.bet ? 'win' : win === f.bet ? 'push' : 'lose',
-              title: 'Посадка вдала!',
+              title: win >= f.bet ? 'Посадка вдала!' : 'Посадка з втратою',
               amount: win - f.bet,
               multiplier: f.plan.counter,
             },
@@ -163,7 +251,10 @@ export default function CarrierGame() {
     canvas.style.width = `${width}px`
     canvas.style.height = `${height}px`
     const ctx = canvas.getContext('2d')!
-    if (!scene.current || scene.current.w !== width || scene.current.h !== height) scene.current = createScene(width, height)
+    if (!scene.current || scene.current.w !== width || scene.current.h !== height) {
+      if (!nextHome.current) nextHome.current = shipLength(geometry(width, height).length)
+      scene.current = createScene(width, height, idleHome(width, height, nextHome.current))
+    }
     const g = geometry(width, height)
     const V = width * 0.3
     let raf = 0
@@ -207,20 +298,13 @@ export default function CarrierGame() {
         if (after > 0) speedFactor = Math.max(0, 1 - after / 0.8)
         s.speed = (V / stepS) * speedFactor
 
-        // Launch carrier falls behind during the catapult run.
-        if (s.launch !== null) {
-          const tau = st + PRE_STEPS
-          const run = g.length * 0.66
-          s.launch = tau <= LIFTOFF ? g.planeX - g.length * 0.34 - run * (tau / LIFTOFF) ** 2 : g.planeX - g.length - (tau - LIFTOFF) * ((2 * run) / LIFTOFF)
-          if (s.launch + g.length < -20) s.launch = null
-        }
-
-        // Landing carrier: timed so its deck (or its stern, on a miss) meets the jet at touchdown.
-        const Vc = V * 0.8
-        const target = plan.landed ? g.planeX - g.zoneCenter : g.planeX + width * 0.09 + 30 * g.scale
-        const travelled = after <= 0 ? after : Math.min(after, 0.8) - Math.min(after, 0.8) ** 2 / 1.6
-        s.carrier = target - travelled * Vc
-        if (s.carrier > width + 10) s.carrier = null
+        // The flotilla drifts past; the target ship's deck lights up on approach.
+        const drift = travel(st, plan.touchdown, f.vc)
+        s.fleet = f.ships.map((sh) => ({ x: sh.x - drift, len: sh.len }))
+        s.focus = f.final
+        s.zoneGlow = Math.max(0, Math.min(1, 1 - (plan.touchdown - st) / 1.5))
+        const home = s.fleet[f.home]
+        const fin = s.fleet[f.final]
 
         // Jet pose.
         let alt: number
@@ -229,45 +313,45 @@ export default function CarrierGame() {
           alt = tau < LIFTOFF ? 0 : START_ALTITUDE * easeInOut(Math.min(1, (tau - LIFTOFF) / (PRE_STEPS - LIFTOFF)))
           s.plane.flame = 0.3 + 0.7 * Math.min(1, tau / LIFTOFF)
           if (tau < LIFTOFF && Math.random() < 0.5) {
-            s.particles.push({ x: g.planeX - 20 * g.scale, y: g.deckY - 4, vx: -60 - Math.random() * 60, vy: -Math.random() * 20, life: 0.5, max: 0.5, size: 2.5 * g.scale, color: 'rgba(220,240,255,0.5)' })
+            s.particles.push({ x: s.plane.x - 20 * g.scale, y: g.deckY - 4, vx: -60 - Math.random() * 60, vy: -Math.random() * 20, life: 0.5, max: 0.5, size: 2.5 * g.scale, color: 'rgba(220,240,255,0.5)' })
           }
           setS('takeoff')
         } else {
           alt = altitudeAt(plan, Math.min(st, plan.touchdown))
           s.plane.flame = after > 0 ? Math.max(0, s.plane.flame - dt * 2) : 0.55
-          if (after <= 0) setS(s.carrier !== null && s.carrier < width ? 'carrier' : 'flight')
+          if (after <= 0) setS(plan.touchdown - st < 1.3 ? 'carrier' : 'flight')
         }
         const y = altY(alt, visible)
         const ahead = altY(st < 0 ? alt : altitudeAt(plan, Math.min(st + 0.05, plan.touchdown)), visible)
         const wobble = after > 0 || st < 0 ? 0 : Math.sin(s.t * 2.3) * 1.2 + Math.sin(s.t * 5.1 + 1) * 0.6
         s.plane.hook = st > plan.touchdown - 0.6
 
+        const rolling = st < 0 && st + PRE_STEPS < LIFTOFF
         if (after <= 0) {
-          s.plane.x = g.planeX
+          // Catapult run along the home ship's deck, then the flight path.
+          const tau = st + PRE_STEPS
+          s.plane.x = rolling ? home.x + home.len * (0.3 + 0.7 * (tau / LIFTOFF) ** 2) : g.planeX
           s.plane.y = y + wobble
-          s.plane.angle = st < 0 && st + PRE_STEPS < LIFTOFF ? 0 : Math.atan2(ahead - y, V * 0.05) * 0.8
+          s.plane.angle = rolling ? 0 : Math.atan2(ahead - y, V * 0.05) * 0.8
         } else if (plan.landed) {
           // Rolls out on the deck and stops on the wires.
-          const roll = g.length * 0.08 * (1 - Math.exp(-after * 3))
-          s.plane.x = (s.carrier ?? g.planeX - g.zoneCenter) + g.zoneCenter + roll
+          const roll = fin.len * 0.1 * (1 - Math.exp(-after * 3))
+          s.plane.x = fin.x + g.zoneCenter(fin.len) + roll
           s.plane.y = g.deckY - g.rideHeight
           s.plane.angle *= 0.85
         } else {
-          // Misses the stern and drops into the sea.
-          if (!f.fall) f.fall = { vy: 30 * g.scale, x: g.planeX, y: s.plane.y, angle: s.plane.angle, splashed: false }
+          // Drops into open water between two ships.
+          if (!f.fall) f.fall = { y: s.plane.y, angle: s.plane.angle, splashed: false }
           const fall = f.fall
           if (!fall.splashed) {
-            fall.vy += 520 * g.scale * dt
-            fall.y += fall.vy * dt
-            fall.x += (V / stepS) * 0.25 * dt
-            fall.angle = Math.min(1.1, fall.angle + dt * 2.6)
-            s.plane.x = fall.x
-            s.plane.y = fall.y
-            s.plane.angle = fall.angle
-            if (fall.y >= g.seaY - 2) {
+            const p = Math.min(1, after / 0.3)
+            s.plane.x = g.planeX + width * 0.04 * p
+            s.plane.y = fall.y + (g.seaY - fall.y) * p * p
+            s.plane.angle = fall.angle + p * 1
+            if (p >= 1) {
               fall.splashed = true
               s.plane.visible = false
-              splash(s, fall.x)
+              splash(s, s.plane.x)
             }
           }
         }
@@ -344,8 +428,10 @@ export default function CarrierGame() {
     }
     const w = scene.current?.w ?? width
     const h = scene.current?.h ?? height
-    scene.current = createScene(w, h)
-    flight.current = { roundId, bet: b, plan, stepMs: STEP_MS[tempo], startAt: performance.now(), next: 0, settled: false, fall: null }
+    const homeLen = nextHome.current || shipLength(geometry(w, h).length)
+    scene.current = createScene(w, h, idleHome(w, h, homeLen))
+    flight.current = { roundId, bet: b, plan, stepMs: STEP_MS[tempo], startAt: performance.now(), next: 0, settled: false, fall: null, ...planFleet(plan, w, h, homeLen) }
+    nextHome.current = shipLength(geometry(w, h).length)
     setCounter(1)
     setFlightBet(b)
     setStatus('takeoff')
@@ -381,7 +467,7 @@ export default function CarrierGame() {
     idle: { text: 'На палубі', tone: 'text-slate-400 ring-white/10' },
     takeoff: { text: 'Зліт', tone: 'text-neon-cyan ring-neon-cyan/30' },
     flight: { text: 'Політ', tone: 'text-neon-emerald ring-neon-emerald/30' },
-    carrier: { text: 'Крейсер на горизонті', tone: 'text-gold-200 ring-gold-300/40' },
+    carrier: { text: 'Захід на посадку', tone: 'text-gold-200 ring-gold-300/40' },
     landed: { text: 'Посадка', tone: 'text-neon-emerald ring-neon-emerald/40' },
     sea: { text: 'У морі', tone: 'text-neon-red ring-neon-red/40' },
   }

@@ -2,6 +2,7 @@ import { Flame, Gift, Heart, History, LayoutGrid, Search, Shuffle, Sparkles, Tro
 import { AnimatePresence, motion } from 'motion/react'
 import { useMemo, useState } from 'react'
 import { sfx } from '../audio/sfx'
+import { SecretCredit } from '../components/brand/SecretCredit'
 import { GameArt } from '../components/game/GameArt'
 import { ParticleField } from '../components/layout/Background'
 import { GameCard } from '../components/lobby/GameCard'
@@ -383,7 +384,7 @@ export function Lobby() {
       <footer className="flex flex-col items-center gap-1 pt-2 pb-1 text-center">
         <span className="h-px w-24 bg-gradient-to-r from-transparent via-white/15 to-transparent" aria-hidden />
         <p className="mt-2 text-xs text-slate-500">
-          AXEdex · Зроблено by <span className="font-display font-bold text-gold-gradient">kyrapyto</span>
+          AXEdex · <SecretCredit />
         </p>
       </footer>
     </div>

@@ -53,6 +53,11 @@ export interface Token {
   bonus: BonusType
 }
 
+export interface Ship {
+  x: number
+  len: number
+}
+
 export interface CarrierScene {
   w: number
   h: number
@@ -62,11 +67,11 @@ export interface CarrierScene {
   speed: number
   scroll: number
   plane: PlanePose
-  /** Stern x of the carrier the plane launched from (null once off screen). */
-  launch: number | null
-  /** Stern x of the landing carrier. */
-  carrier: number | null
-  /** Touchdown zone highlight, 0..1. */
+  /** Every carrier in view: stern x and hull length. */
+  fleet: Ship[]
+  /** Index of the carrier the jet is heading for (its deck glows), or -1. */
+  focus: number
+  /** Touchdown zone highlight of the focused carrier, 0..1. */
   zoneGlow: number
   particles: Particle[]
   popups: Popup[]
@@ -75,9 +80,10 @@ export interface CarrierScene {
 
 export function geometry(w: number, h: number) {
   const seaY = Math.round(h * 0.8)
-  const deckY = Math.round(seaY - h * 0.075)
-  const length = Math.max(w * 1.25, 560)
+  const deckY = Math.round(seaY - h * 0.05)
   const scale = h / 320
+  /** Typical carrier length; each ship in the flotilla is 0.6–1.35× this. */
+  const length = Math.round(Math.max(150, Math.min(w * 0.3, 340)))
   return {
     seaY,
     deckY,
@@ -86,14 +92,17 @@ export function geometry(w: number, h: number) {
     planeX: Math.round(w * 0.3),
     /** Vertical offset of the jet's centre above the deck when it sits on it. */
     rideHeight: 9 * scale,
-    /** Touchdown zone centre, measured from the stern. */
-    zoneCenter: length * 0.19,
-    zoneHalf: length * 0.07,
+    /** Touchdown zone centre of a ship `len` long, measured from its stern. */
+    zoneCenter: (len: number) => len * 0.26,
+    zoneHalf: (len: number) => len * 0.11,
+    /** Smallest stretch of open water between two carriers. */
+    minGap: Math.max(w * 0.22, 130 * scale),
   }
 }
 
-export function createScene(w: number, h: number): CarrierScene {
+export function createScene(w: number, h: number, home?: Ship): CarrierScene {
   const g = geometry(w, h)
+  const base = home ?? { x: g.planeX - g.length * 0.3, len: g.length }
   const clouds: Cloud[] = Array.from({ length: 7 }, (_, i) => ({
     x: (i / 7) * w * 1.3,
     y: h * (0.08 + Math.random() * 0.45),
@@ -106,9 +115,9 @@ export function createScene(w: number, h: number): CarrierScene {
     t: 0,
     speed: 0,
     scroll: 0,
-    plane: { x: g.planeX, y: g.deckY - g.rideHeight, angle: 0, visible: true, flame: 0.2, hook: false },
-    launch: g.planeX - g.length * 0.34,
-    carrier: null,
+    plane: { x: base.x + base.len * 0.3, y: g.deckY - g.rideHeight, angle: 0, visible: true, flame: 0.2, hook: false },
+    fleet: idleFleet(w, h, base),
+    focus: -1,
     zoneGlow: 0,
     particles: [],
     popups: [],
@@ -181,8 +190,37 @@ function drawSea(ctx: CanvasRenderingContext2D, s: CarrierScene, seaY: number) {
   }
 }
 
-function drawCarrier(ctx: CanvasRenderingContext2D, s: CarrierScene, stern: number, landing: boolean) {
-  const { seaY, deckY, length: L, scale, zoneCenter, zoneHalf } = geometry(s.w, s.h)
+/** Random ship length around the typical size. */
+export function shipLength(base: number, rng: () => number = Math.random): number {
+  return Math.round(base * (0.6 + rng() * 0.75))
+}
+
+/** A flotilla filling the view around the ship the jet is parked on. */
+export function idleFleet(w: number, h: number, home: Ship): Ship[] {
+  const g = geometry(w, h)
+  const fleet: Ship[] = [home]
+  let left = home.x
+  while (left > -g.length * 1.5) {
+    const len = shipLength(g.length)
+    left -= g.minGap * (1 + Math.random() * 0.7) + len
+    fleet.unshift({ x: left, len })
+  }
+  let right = home.x + home.len
+  while (right < w + g.length) {
+    const len = shipLength(g.length)
+    right += g.minGap * (1 + Math.random() * 0.7)
+    fleet.push({ x: right, len })
+    right += len
+  }
+  return fleet
+}
+
+function drawCarrier(ctx: CanvasRenderingContext2D, s: CarrierScene, stern: number, L: number, focused: boolean) {
+  const g = geometry(s.w, s.h)
+  const { seaY, deckY, scale } = g
+  const zoneCenter = g.zoneCenter(L)
+  const zoneHalf = g.zoneHalf(L)
+  const size = Math.pow(L / g.length, 0.6)
   if (stern > s.w + 10 || stern + L < -10) return
   const bow = stern + L
   const hullBottom = seaY + 7 * scale
@@ -190,7 +228,7 @@ function drawCarrier(ctx: CanvasRenderingContext2D, s: CarrierScene, stern: numb
   // Wake behind the stern and foam at the bow.
   ctx.fillStyle = 'rgba(200,245,255,0.18)'
   ctx.beginPath()
-  ctx.ellipse(stern - 30 * scale, seaY + 2, 60 * scale, 3 * scale, 0, 0, Math.PI * 2)
+  ctx.ellipse(stern - 22 * scale, seaY + 2, 40 * scale, 2.5 * scale, 0, 0, Math.PI * 2)
   ctx.fill()
 
   // Hull.
@@ -210,10 +248,10 @@ function drawCarrier(ctx: CanvasRenderingContext2D, s: CarrierScene, stern: numb
 
   // Portholes and hull code.
   ctx.fillStyle = 'rgba(34,225,255,0.55)'
-  for (let x = stern + L * 0.06; x < bow - L * 0.12; x += 18 * scale) ctx.fillRect(x, deckY + (seaY - deckY) * 0.45, 2.2 * scale, 1.6 * scale)
+  for (let x = stern + L * 0.08; x < bow - L * 0.3; x += 14 * scale) ctx.fillRect(x, deckY + (seaY - deckY) * 0.42, 1.8 * scale, 1.4 * scale)
   ctx.fillStyle = 'rgba(243,207,110,0.55)'
-  ctx.font = `800 ${Math.round(11 * scale)}px "Exo 2 Variable", system-ui, sans-serif`
-  ctx.fillText('AX-01', bow - L * 0.2, deckY + (seaY - deckY) * 0.82)
+  ctx.font = `800 ${Math.round(9 * scale)}px "Exo 2 Variable", system-ui, sans-serif`
+  ctx.fillText('AX', bow - L * 0.22, deckY + (seaY - deckY) * 0.85)
 
   // Flight deck.
   ctx.fillStyle = '#323d4f'
@@ -226,7 +264,7 @@ function drawCarrier(ctx: CanvasRenderingContext2D, s: CarrierScene, stern: numb
   ctx.stroke()
 
   // Deck edge lights.
-  for (let x = stern + 6; x < bow - L * 0.04; x += 26 * scale) {
+  for (let x = stern + 6; x < bow - L * 0.04; x += 18 * scale) {
     const on = Math.sin(s.t * 6 - x * 0.05) > 0
     ctx.fillStyle = on ? 'rgba(25,245,163,0.95)' : 'rgba(25,245,163,0.25)'
     ctx.fillRect(x, deckY - 4.5 * scale, 2 * scale, 2 * scale)
@@ -234,7 +272,7 @@ function drawCarrier(ctx: CanvasRenderingContext2D, s: CarrierScene, stern: numb
 
   // Touchdown zone with arrestor wires.
   const zx = stern + zoneCenter
-  const glow = landing ? 0.35 + 0.65 * s.zoneGlow : 0.25
+  const glow = focused ? 0.35 + 0.65 * s.zoneGlow : 0.25
   ctx.save()
   ctx.shadowColor = '#19f5a3'
   ctx.shadowBlur = 16 * glow
@@ -252,8 +290,8 @@ function drawCarrier(ctx: CanvasRenderingContext2D, s: CarrierScene, stern: numb
 
   // Island superstructure.
   const ix = stern + L * 0.64
-  const iw = L * 0.075
-  const ih = s.h * 0.13
+  const iw = L * 0.1
+  const ih = s.h * 0.085 * size
   ctx.fillStyle = '#1c2431'
   ctx.fillRect(ix, deckY - 3 * scale - ih, iw, ih)
   ctx.fillStyle = 'rgba(34,225,255,0.7)'
@@ -488,8 +526,7 @@ export function drawScene(ctx: CanvasRenderingContext2D, s: CarrierScene, dt: nu
   ctx.clearRect(0, 0, s.w, s.h)
   drawSky(ctx, s, seaY)
   drawSea(ctx, s, seaY)
-  if (s.launch !== null) drawCarrier(ctx, s, s.launch, false)
-  if (s.carrier !== null) drawCarrier(ctx, s, s.carrier, true)
+  s.fleet.forEach((ship, i) => drawCarrier(ctx, s, ship.x, ship.len, i === s.focus))
   for (const tok of tokens) if (tok.x > -40 && tok.x < s.w + 40) drawToken(ctx, s, tok, label(tok.bonus))
   drawParticles(ctx, s, dt)
   drawPlane(ctx, s)

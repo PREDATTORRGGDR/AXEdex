@@ -10,6 +10,7 @@ import { useUi } from '../../store/ui'
 import { useHasClaimable } from '../../hooks/useHasClaimable'
 import { Icon } from '../ui/Icon'
 import type { IconName } from '../ui/iconNames'
+import { SecretCredit } from '../brand/SecretCredit'
 import { Logo } from './Logo'
 
 function NavItem({
@@ -116,7 +117,7 @@ export function Sidebar() {
 
       <div className="shrink-0 border-t border-white/[0.04] px-5 py-3.5">
         <p className="text-[11px] text-slate-600">
-          Зроблено by <span className="font-display font-bold text-gold-gradient">kyrapyto</span>
+          <SecretCredit />
         </p>
       </div>
     </aside>
