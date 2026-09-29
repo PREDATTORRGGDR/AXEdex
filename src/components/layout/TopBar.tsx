@@ -1,4 +1,4 @@
-import { Gift, Volume2, VolumeX } from 'lucide-react'
+import { Volume2, VolumeX } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useEffect, useState } from 'react'
 import { sfx } from '../../audio/sfx'
@@ -8,6 +8,7 @@ import { GAMES } from '../../games/meta'
 import { useCasino } from '../../store/casino'
 import { levelFromXp } from '../../store/progression'
 import { useUi } from '../../store/ui'
+import { Icon } from '../ui/Icon'
 import { BalancePill } from '../wallet/BalancePill'
 import { LevelBadge } from '../wallet/LevelBadge'
 import { useHasClaimable } from '../../hooks/useHasClaimable'
@@ -89,7 +90,7 @@ export function TopBar() {
             aria-label="Бесплатные фишки"
             title="Бесплатные фишки"
           >
-            <Gift className={cn('size-5', claimable && 'animate-[pulse-glow_1.6s_ease-in-out_infinite]')} />
+            <Icon name="wrapped-gift" size={26} className={cn(claimable && 'animate-wiggle')} />
             {claimable && (
               <span className="absolute -top-1 -right-1 flex size-3">
                 <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" />

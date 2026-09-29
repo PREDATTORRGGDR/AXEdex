@@ -1,13 +1,15 @@
-import { Award, BarChart3, Coins, Crown, Flame, Gift, RotateCcw, Settings2, Target, TrendingUp, Trophy, UserRound, Vibrate, Volume2 } from 'lucide-react'
+import { Award, RotateCcw, Settings2, Vibrate, Volume2 } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { sfx } from '../audio/sfx'
 import { AchievementGrid } from '../components/profile/AchievementGrid'
 import { BalanceChart } from '../components/profile/BalanceChart'
 import { Button } from '../components/ui/Button'
+import { Icon } from '../components/ui/Icon'
 import { Modal } from '../components/ui/Modal'
 import { Panel, SectionTitle } from '../components/ui/Panel'
 import { StatTile } from '../components/ui/StatTile'
+import { LogoMark } from '../components/layout/Logo'
 import { LevelBadge } from '../components/wallet/LevelBadge'
 import { GAME_IDS } from '../games/ids'
 import { GAMES } from '../games/meta'
@@ -152,14 +154,13 @@ function GameTable() {
         </thead>
         <tbody className="divide-y divide-white/5">
           {rows.map(({ id, meta, stats }) => {
-            const Icon = meta.icon
             const net = stats ? stats.returned - stats.wagered : 0
             return (
               <tr key={id} className="cursor-pointer transition hover:bg-white/[0.03]" onClick={() => navigate(paths.game(id))}>
                 <td className="py-2.5 pr-3">
                   <span className="flex items-center gap-2.5">
-                    <span className="grid size-7 place-items-center rounded-lg" style={{ background: `linear-gradient(135deg, ${meta.colors[0]}, ${meta.colors[1]})` }}>
-                      <Icon className="size-3.5 text-white" />
+                    <span className="grid size-8 place-items-center rounded-lg" style={{ background: `linear-gradient(135deg, ${meta.colors[0]}, ${meta.colors[1]})` }}>
+                      <Icon name={meta.emoji} size={22} />
                     </span>
                     <span className="font-medium text-white">{meta.name}</span>
                   </span>
@@ -198,7 +199,7 @@ export function Profile() {
           <div className="relative">
             <div className="grid size-20 place-items-center rounded-3xl bg-[linear-gradient(135deg,#a78bfa,#34f5a0)] p-0.5 shadow-[0_0_40px_-8px_rgba(167,139,250,0.7)]">
               <div className="grid size-full place-items-center rounded-[22px] bg-ink-900">
-                <UserRound className="size-10 text-white" strokeWidth={1.5} />
+                <LogoMark className="size-14" />
               </div>
             </div>
             <div className="absolute -right-3 -bottom-3">
@@ -230,14 +231,14 @@ export function Profile() {
       </Panel>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StatTile index={0} icon={Target} accent="cyan" label="Сыграно раундов" value={formatChips(lifetime.rounds)} hint={`${formatChips(lifetime.wins)} побед · ${formatChips(lifetime.losses)} пораж. · ${formatChips(lifetime.pushes)} ничьих`} />
-        <StatTile index={1} icon={Crown} accent="emerald" label="Доля побед" value={hasDecided(lifetime) ? formatPercent(winRate(lifetime), 1) : '—'} hint="без учёта ничьих" />
-        <StatTile index={2} icon={Trophy} accent="gold" label="Крупнейший выигрыш" value={lifetime.biggestWin > 0 ? `+${formatChips(lifetime.biggestWin)}` : '—'} hint="чистая прибыль за раунд" />
-        <StatTile index={3} icon={TrendingUp} accent="violet" label="Лучший множитель" value={lifetime.bestMultiplier ? formatMultiplier(lifetime.bestMultiplier) : '—'} hint={`Лучшая серия: ${lifetime.bestStreak} ${plural(lifetime.bestStreak, ['победа', 'победы', 'побед'])}`} />
-        <StatTile index={4} icon={Coins} accent="gold" label="Всего поставлено" value={formatChips(lifetime.wagered)} hint={`Возвращено ${formatChips(lifetime.returned)}`} />
-        <StatTile index={5} icon={BarChart3} accent={net >= 0 ? 'emerald' : 'rose'} label="Чистый итог" value={formatSigned(net)} hint="за всё время" />
-        <StatTile index={6} icon={Gift} accent="emerald" label="Бесплатные фишки" value={formatChips(lifetime.rewardChips)} hint={`Бонусов: ${lifetime.dailyClaims} · кранов: ${lifetime.faucetClaims} · пополнений: ${lifetime.refills}`} />
-        <StatTile index={7} icon={Flame} accent="rose" label="Серия бонусов" value={`${daily.streak} / 7`} hint={`Пик баланса: ${formatChips(lifetime.peakBalance)}`} />
+        <StatTile index={0} emoji="bullseye" accent="cyan" label="Сыграно раундов" value={formatChips(lifetime.rounds)} hint={`${formatChips(lifetime.wins)} побед · ${formatChips(lifetime.losses)} пораж. · ${formatChips(lifetime.pushes)} ничьих`} />
+        <StatTile index={1} emoji="chart-increasing" accent="emerald" label="Доля побед" value={hasDecided(lifetime) ? formatPercent(winRate(lifetime), 1) : '—'} hint="без учёта ничьих" />
+        <StatTile index={2} emoji="trophy" accent="gold" label="Крупнейший выигрыш" value={lifetime.biggestWin > 0 ? `+${formatChips(lifetime.biggestWin)}` : '—'} hint="чистая прибыль за раунд" />
+        <StatTile index={3} emoji="hundred-points" accent="violet" label="Лучший множитель" value={lifetime.bestMultiplier ? formatMultiplier(lifetime.bestMultiplier) : '—'} hint={`Лучшая серия: ${lifetime.bestStreak} ${plural(lifetime.bestStreak, ['победа', 'победы', 'побед'])}`} />
+        <StatTile index={4} emoji="coin" accent="gold" label="Всего поставлено" value={formatChips(lifetime.wagered)} hint={`Возвращено ${formatChips(lifetime.returned)}`} />
+        <StatTile index={5} emoji="bar-chart" accent={net >= 0 ? 'emerald' : 'rose'} label="Чистый итог" value={formatSigned(net)} hint="за всё время" />
+        <StatTile index={6} emoji="wrapped-gift" accent="emerald" label="Бесплатные фишки" value={formatChips(lifetime.rewardChips)} hint={`Бонусов: ${lifetime.dailyClaims} · кранов: ${lifetime.faucetClaims} · пополнений: ${lifetime.refills}`} />
+        <StatTile index={7} emoji="fire" accent="rose" label="Серия бонусов" value={`${daily.streak} / 7`} hint={`Пик баланса: ${formatChips(lifetime.peakBalance)}`} />
       </div>
 
       <div className="grid gap-5 lg:grid-cols-[1.5fr_1fr]">

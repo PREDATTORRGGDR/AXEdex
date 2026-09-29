@@ -303,7 +303,7 @@ export const useCasino = create<CasinoState>()(
           }
         })
         for (const a of fresh) {
-          toast({ kind: 'achievement', title: a.title, message: a.description, amount: a.reward })
+          toast({ kind: 'achievement', title: a.title, message: a.description, amount: a.reward, icon: a.icon })
         }
       }
 
@@ -325,6 +325,7 @@ export const useCasino = create<CasinoState>()(
             title: `Уровень ${after}!`,
             message: `Новое звание: ${levelFromXp(xp).title}.`,
             amount: reward,
+            icon: 'glowing-star',
           })
         }
       }

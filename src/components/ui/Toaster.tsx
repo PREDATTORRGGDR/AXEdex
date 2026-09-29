@@ -5,6 +5,7 @@ import { sfx, type SoundName } from '../../audio/sfx'
 import { cn } from '../../lib/cn'
 import { formatChips } from '../../lib/format'
 import { useToasts, type Toast, type ToastKind } from '../../store/toasts'
+import { Icon as ColorIcon } from './Icon'
 
 const KIND: Record<ToastKind, { icon: LucideIcon; ring: string; iconClass: string; label: string; sound: SoundName }> = {
   achievement: {
@@ -74,7 +75,7 @@ function ToastCard({ toast }: { toast: Toast }) {
       />
       <div className="flex items-start gap-3">
         <div className={cn('grid size-11 shrink-0 place-items-center rounded-xl', k.iconClass)}>
-          <Icon className="size-6" strokeWidth={2} />
+          {toast.icon ? <ColorIcon name={toast.icon} size={30} /> : <Icon className="size-6" strokeWidth={2} />}
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase">{k.label}</p>

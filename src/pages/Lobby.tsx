@@ -1,4 +1,4 @@
-import { Crown, Flame, Gift, Heart, History, Search, Shuffle, Sparkles, Target, Trophy, X } from 'lucide-react'
+import { Flame, Gift, Heart, History, Search, Shuffle, Sparkles, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useMemo, useState } from 'react'
 import { sfx } from '../audio/sfx'
@@ -8,6 +8,7 @@ import { LiveTicker } from '../components/lobby/LiveTicker'
 import { AnimatedNumber } from '../components/ui/AnimatedNumber'
 import { Button } from '../components/ui/Button'
 import { Panel, SectionTitle } from '../components/ui/Panel'
+import { Icon } from '../components/ui/Icon'
 import { StatTile } from '../components/ui/StatTile'
 import { DailyBonusCard, FaucetCard } from '../components/wallet/RewardsPanel'
 import { GAME_IDS } from '../games/ids'
@@ -100,7 +101,7 @@ function Hero() {
           }}
           className="group relative overflow-hidden rounded-2xl border border-white/10 text-left"
         >
-          <GameArt game={spotlight} className="h-full min-h-40 transition-transform duration-700 group-hover:scale-105" iconSize="size-9" />
+          <GameArt game={spotlight} className="h-full min-h-40 transition-transform duration-700 group-hover:scale-105" iconSize={84} iconPosition="right" />
           <div className="absolute inset-0 bg-gradient-to-r from-ink-950/90 via-ink-950/40 to-transparent" />
           <div className="absolute inset-y-0 left-0 flex flex-col justify-center gap-1 p-5">
             <span className="inline-flex w-fit items-center gap-1 rounded-full bg-rose-500/90 px-2 py-0.5 text-[10px] font-black tracking-wider text-white uppercase">
@@ -121,10 +122,10 @@ function StatsRow() {
   const unlocked = useCasino((s) => Object.keys(s.achievements).length)
   return (
     <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-      <StatTile index={0} icon={Target} accent="cyan" label="Сыграно раундов" value={formatChips(lifetime.rounds)} hint={`${formatChips(lifetime.wins)} ${plural(lifetime.wins, ['победа', 'победы', 'побед'])}`} />
-      <StatTile index={1} icon={Crown} accent="emerald" label="Доля побед" value={hasDecided(lifetime) ? formatPercent(winRate(lifetime), 1) : '—'} hint="без учёта ничьих" />
-      <StatTile index={2} icon={Trophy} accent="gold" label="Крупнейший выигрыш" value={lifetime.biggestWin > 0 ? `+${formatChips(lifetime.biggestWin)}` : '—'} hint={`Лучший множитель ${lifetime.bestMultiplier ? formatMultiplier(lifetime.bestMultiplier) : '—'}`} />
-      <StatTile index={3} icon={Sparkles} accent="violet" label="Достижения" value={`${unlocked}`} hint={`Лучшая серия: ${lifetime.bestStreak}`} />
+      <StatTile index={0} emoji="bullseye" accent="cyan" label="Сыграно раундов" value={formatChips(lifetime.rounds)} hint={`${formatChips(lifetime.wins)} ${plural(lifetime.wins, ['победа', 'победы', 'побед'])}`} />
+      <StatTile index={1} emoji="chart-increasing" accent="emerald" label="Доля побед" value={hasDecided(lifetime) ? formatPercent(winRate(lifetime), 1) : '—'} hint="без учёта ничьих" />
+      <StatTile index={2} emoji="trophy" accent="gold" label="Крупнейший выигрыш" value={lifetime.biggestWin > 0 ? `+${formatChips(lifetime.biggestWin)}` : '—'} hint={`Лучший множитель ${lifetime.bestMultiplier ? formatMultiplier(lifetime.bestMultiplier) : '—'}`} />
+      <StatTile index={3} emoji="sports-medal" accent="violet" label="Достижения" value={`${unlocked}`} hint={`Лучшая серия: ${lifetime.bestStreak}`} />
     </div>
   )
 }
@@ -150,11 +151,10 @@ function RecentActivity() {
         <ul className="divide-y divide-white/5">
           {recent.slice(0, 7).map((r) => {
             const g = GAMES[r.game]
-            const Icon = g.icon
             return (
               <li key={r.id} className="flex items-center gap-3 py-2.5">
-                <span className="grid size-9 shrink-0 place-items-center rounded-xl" style={{ background: `linear-gradient(135deg, ${g.colors[0]}, ${g.colors[1]})` }}>
-                  <Icon className="size-4 text-white" />
+                <span className="grid size-10 shrink-0 place-items-center rounded-xl" style={{ background: `linear-gradient(135deg, ${g.colors[0]}, ${g.colors[1]})` }}>
+                  <Icon name={g.emoji} size={26} />
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold text-white">{g.name}</p>

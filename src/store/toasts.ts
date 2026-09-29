@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import type { IconName } from '../components/ui/iconNames'
 import { randomId } from '../lib/rng'
 
 export type ToastKind = 'achievement' | 'level' | 'bonus' | 'info' | 'warning'
@@ -10,6 +11,7 @@ export interface Toast {
   message?: string
   /** Optional chip amount shown as a badge. */
   amount?: number
+  icon?: IconName
 }
 
 interface ToastState {

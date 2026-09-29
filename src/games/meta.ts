@@ -12,6 +12,7 @@ import {
   Spade,
   type LucideIcon,
 } from 'lucide-react'
+import type { IconName } from '../components/ui/iconNames'
 import type { GameId } from './ids'
 
 export type GameCategory = 'table' | 'cards' | 'slots' | 'instant'
@@ -31,6 +32,8 @@ export interface GameMeta {
   tagline: string
   category: GameCategory
   icon: LucideIcon
+  /** Colour illustration used on covers, menus and headers. */
+  emoji: IconName
   /** Two-stop gradient used for the game's artwork and accents. */
   colors: [string, string]
   motif: ArtMotif
@@ -44,6 +47,7 @@ export interface GameMeta {
 export const GAMES: Record<GameId, GameMeta> = {
   roulette: {
     id: 'roulette',
+    emoji: 'roulette',
     name: 'Кибер-рулетка',
     tagline: 'Европейское колесо с одним зеро',
     category: 'table',
@@ -63,6 +67,7 @@ export const GAMES: Record<GameId, GameMeta> = {
   },
   blackjack: {
     id: 'blackjack',
+    emoji: 'blackjack-cards',
     name: 'Элитный блэкджек',
     tagline: 'Классическое «21» против дилера',
     category: 'cards',
@@ -84,6 +89,7 @@ export const GAMES: Record<GameId, GameMeta> = {
   },
   slots: {
     id: 'slots',
+    emoji: 'slot-machine',
     name: 'Неон-слоты 777',
     tagline: '5 барабанов, 10 линий, вайлды и фриспины',
     category: 'slots',
@@ -103,6 +109,7 @@ export const GAMES: Record<GameId, GameMeta> = {
   },
   crash: {
     id: 'crash',
+    emoji: 'rocket',
     name: 'Ракета',
     tagline: 'Забери множитель до взрыва',
     category: 'instant',
@@ -122,6 +129,7 @@ export const GAMES: Record<GameId, GameMeta> = {
   },
   plinko: {
     id: 'plinko',
+    emoji: 'plinko',
     name: 'Плинко',
     tagline: 'Шарик, штырьки и множители',
     category: 'instant',
@@ -140,6 +148,7 @@ export const GAMES: Record<GameId, GameMeta> = {
   },
   mines: {
     id: 'mines',
+    emoji: 'bomb',
     name: 'Мины',
     tagline: 'Открывай кристаллы, обходи бомбы',
     category: 'instant',
@@ -157,6 +166,7 @@ export const GAMES: Record<GameId, GameMeta> = {
   },
   dice: {
     id: 'dice',
+    emoji: 'game-die',
     name: 'Дуэль костей',
     tagline: 'Больше, меньше или ровно семь',
     category: 'table',
@@ -175,6 +185,7 @@ export const GAMES: Record<GameId, GameMeta> = {
   },
   wheel: {
     id: 'wheel',
+    emoji: 'fortune-wheel',
     name: 'Колесо фортуны',
     tagline: 'Хай-тек колесо с джекпот-сектором',
     category: 'slots',
@@ -192,6 +203,7 @@ export const GAMES: Record<GameId, GameMeta> = {
   },
   poker: {
     id: 'poker',
+    emoji: 'joker',
     name: 'Видеопокер',
     tagline: '«Валеты или старше», пять карт',
     category: 'cards',
@@ -209,6 +221,7 @@ export const GAMES: Record<GameId, GameMeta> = {
   },
   keno: {
     id: 'keno',
+    emoji: 'input-numbers',
     name: 'Кено',
     tagline: 'Выбери до 10 чисел из 40',
     category: 'instant',
@@ -226,6 +239,7 @@ export const GAMES: Record<GameId, GameMeta> = {
   },
   hilo: {
     id: 'hilo',
+    emoji: 'crystal-ball',
     name: 'Выше-Ниже',
     tagline: 'Угадай следующую карту',
     category: 'cards',

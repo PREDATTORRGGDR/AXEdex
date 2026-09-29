@@ -1,17 +1,18 @@
-import { Award, Lock } from 'lucide-react'
+import { Lock } from 'lucide-react'
 import { motion } from 'motion/react'
 import { GAME_IDS } from '../../games/ids'
 import { cn } from '../../lib/cn'
+import { Icon } from '../ui/Icon'
 import { formatChips } from '../../lib/format'
 import { ACHIEVEMENTS, type AchievementSnapshot, type AchievementTier } from '../../store/achievements'
 import { useCasino } from '../../store/casino'
 import { levelFromXp } from '../../store/progression'
 
-const TIER: Record<AchievementTier, { label: string; ring: string; icon: string; glow: string }> = {
-  bronze: { label: 'Бронза', ring: 'from-orange-300 to-amber-700', icon: 'text-orange-200', glow: 'shadow-[0_0_24px_-6px_rgba(251,146,60,0.6)]' },
-  silver: { label: 'Серебро', ring: 'from-slate-100 to-slate-500', icon: 'text-slate-100', glow: 'shadow-[0_0_24px_-6px_rgba(226,232,240,0.5)]' },
-  gold: { label: 'Золото', ring: 'from-gold-200 to-gold-600', icon: 'text-gold-200', glow: 'shadow-[0_0_24px_-6px_rgba(245,197,66,0.7)]' },
-  platinum: { label: 'Платина', ring: 'from-cyan-200 via-violet-300 to-emerald-300', icon: 'text-cyan-100', glow: 'shadow-[0_0_28px_-6px_rgba(165,243,252,0.7)]' },
+const TIER: Record<AchievementTier, { label: string; ring: string; glow: string }> = {
+  bronze: { label: 'Бронза', ring: 'from-orange-300 to-amber-700', glow: 'shadow-[0_0_24px_-6px_rgba(251,146,60,0.6)]' },
+  silver: { label: 'Серебро', ring: 'from-slate-100 to-slate-500', glow: 'shadow-[0_0_24px_-6px_rgba(226,232,240,0.5)]' },
+  gold: { label: 'Золото', ring: 'from-gold-200 to-gold-600', glow: 'shadow-[0_0_24px_-6px_rgba(245,197,66,0.7)]' },
+  platinum: { label: 'Платина', ring: 'from-cyan-200 via-violet-300 to-emerald-300', glow: 'shadow-[0_0_28px_-6px_rgba(165,243,252,0.7)]' },
 }
 
 export function AchievementGrid() {
@@ -47,10 +48,15 @@ export function AchievementGrid() {
               unlockedAt ? 'border-white/15 bg-white/[0.05]' : 'border-white/5 bg-white/[0.02]',
             )}
           >
-            <div className={cn('relative grid size-12 shrink-0 place-items-center rounded-full bg-gradient-to-br p-0.5', tier.ring, unlockedAt ? tier.glow : 'opacity-30 grayscale')}>
+            <div className={cn('relative grid size-14 shrink-0 place-items-center rounded-full bg-gradient-to-br p-0.5', tier.ring, unlockedAt ? tier.glow : 'opacity-60')}>
               <div className="grid size-full place-items-center rounded-full bg-ink-900">
-                {unlockedAt ? <Award className={cn('size-6', tier.icon)} /> : <Lock className="size-5 text-slate-400" />}
+                <Icon name={a.icon} size={32} className={cn(!unlockedAt && 'opacity-35 grayscale')} />
               </div>
+              {!unlockedAt && (
+                <span className="absolute -right-0.5 -bottom-0.5 grid size-5 place-items-center rounded-full bg-ink-950 ring-1 ring-white/15">
+                  <Lock className="size-3 text-slate-400" />
+                </span>
+              )}
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">

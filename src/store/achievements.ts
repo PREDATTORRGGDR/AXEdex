@@ -1,3 +1,4 @@
+import type { IconName } from '../components/ui/iconNames'
 import { GAME_IDS, type GameId } from '../games/ids'
 
 export type AchievementTier = 'bronze' | 'silver' | 'gold' | 'platinum'
@@ -41,6 +42,7 @@ export interface AchievementDef {
   title: string
   description: string
   tier: AchievementTier
+  icon: IconName
   /** Free chips credited on unlock. */
   reward: number
   check: (s: AchievementSnapshot, round?: AchievementRound) => boolean
@@ -52,6 +54,7 @@ const tagged = (tag: RoundTag) => (_: AchievementSnapshot, r?: AchievementRound)
 export const ACHIEVEMENTS: readonly AchievementDef[] = [
   {
     id: 'first-round',
+    icon: 'party-popper',
     title: 'Добро пожаловать',
     description: 'Сыграйте первый раунд в любой игре.',
     tier: 'bronze',
@@ -61,6 +64,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   },
   {
     id: 'grand-tour',
+    icon: 'world-map',
     title: 'Большое турне',
     description: `Сыграйте во все ${GAME_IDS.length} игр.`,
     tier: 'gold',
@@ -70,6 +74,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   },
   {
     id: 'regular',
+    icon: 'tear-off-calendar',
     title: 'Завсегдатай',
     description: 'Сыграйте 100 раундов.',
     tier: 'silver',
@@ -79,6 +84,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   },
   {
     id: 'marathon',
+    icon: 'person-running',
     title: 'Марафонец',
     description: 'Сыграйте 1000 раундов.',
     tier: 'gold',
@@ -88,6 +94,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   },
   {
     id: 'high-roller',
+    icon: 'money-bag',
     title: 'Хайроллер',
     description: 'Поставьте 5000 фишек или больше за один раунд.',
     tier: 'silver',
@@ -96,6 +103,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   },
   {
     id: 'big-winner',
+    icon: 'trophy',
     title: 'Крупный куш',
     description: 'Выиграйте 10 000 фишек чистыми за один раунд.',
     tier: 'gold',
@@ -104,6 +112,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   },
   {
     id: 'fifty-bagger',
+    icon: 'hundred-points',
     title: 'Полтинник',
     description: 'Получите выплату ×50 или больше.',
     tier: 'gold',
@@ -112,6 +121,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   },
   {
     id: 'hot-streak',
+    icon: 'fire',
     title: 'Горячая серия',
     description: 'Выиграйте 5 раундов подряд.',
     tier: 'silver',
@@ -121,6 +131,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   },
   {
     id: 'on-fire',
+    icon: 'comet',
     title: 'В огне',
     description: 'Выиграйте 10 раундов подряд.',
     tier: 'gold',
@@ -130,6 +141,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   },
   {
     id: 'six-figures',
+    icon: 'gem-stone',
     title: 'Шестизначный',
     description: 'Доведите баланс до 100 000 фишек.',
     tier: 'gold',
@@ -139,6 +151,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   },
   {
     id: 'millionaire',
+    icon: 'crown',
     title: 'Фишечный миллионер',
     description: 'Доведите баланс до 1 000 000 фишек.',
     tier: 'platinum',
@@ -148,6 +161,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   },
   {
     id: 'rising-star',
+    icon: 'glowing-star',
     title: 'Восходящая звезда',
     description: 'Достигните 10-го уровня.',
     tier: 'silver',
@@ -157,6 +171,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   },
   {
     id: 'vip',
+    icon: 'top-hat',
     title: 'ВИП-зал',
     description: 'Достигните 25-го уровня.',
     tier: 'platinum',
@@ -166,6 +181,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   },
   {
     id: 'loyal',
+    icon: 'spiral-calendar',
     title: 'Верный гость',
     description: 'Забирайте ежедневный бонус 7 дней подряд.',
     tier: 'gold',
@@ -175,6 +191,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   },
   {
     id: 'comeback',
+    icon: 'flexed-biceps',
     title: 'Второе дыхание',
     description: 'Опустошите баланс и возьмите бесплатное пополнение.',
     tier: 'bronze',
@@ -183,6 +200,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   },
   {
     id: 'natural',
+    icon: 'spade-suit',
     title: 'Натуральный',
     description: 'Получите блэкджек с раздачи.',
     tier: 'bronze',
@@ -191,6 +209,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   },
   {
     id: 'royal-flush',
+    icon: 'joker',
     title: 'Королевская особа',
     description: 'Соберите роял-флеш в видеопокере.',
     tier: 'platinum',
@@ -199,6 +218,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   },
   {
     id: 'straight-up',
+    icon: 'roulette',
     title: 'Точно в цель',
     description: 'Выиграйте ставку на одно число в рулетке.',
     tier: 'silver',
@@ -207,6 +227,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   },
   {
     id: 'bonus-round',
+    icon: 'slot-machine',
     title: 'Бонусный раунд',
     description: 'Запустите фриспины в Неон-слотах.',
     tier: 'silver',
@@ -215,6 +236,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   },
   {
     id: 'to-the-moon',
+    icon: 'crescent-moon',
     title: 'На Луну',
     description: 'Заберите выигрыш в «Ракете» на ×10 или выше.',
     tier: 'gold',
@@ -223,6 +245,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   },
   {
     id: 'minefield',
+    icon: 'bomb',
     title: 'Сапёр',
     description: 'Откройте 15 безопасных клеток за один раунд «Мин».',
     tier: 'gold',
@@ -231,6 +254,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   },
   {
     id: 'edge-lord',
+    icon: 'plinko',
     title: 'На самом краю',
     description: 'Отправьте шарик Плинко в крайнюю лунку.',
     tier: 'gold',
@@ -239,6 +263,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   },
   {
     id: 'wheel-jackpot',
+    icon: 'fortune-wheel',
     title: 'Джекпот-сектор',
     description: 'Попадите в сектор джекпота на Колесе фортуны.',
     tier: 'gold',
@@ -247,6 +272,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   },
   {
     id: 'keno-oracle',
+    icon: 'crystal-ball',
     title: 'Оракул Кено',
     description: 'Угадайте 7 или больше чисел в одном тираже Кено.',
     tier: 'gold',
@@ -255,6 +281,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   },
   {
     id: 'point-made',
+    icon: 'game-die',
     title: 'Пойнт взят',
     description: 'Выиграйте ставку «Пас» после установки пойнта в крэпсе.',
     tier: 'bronze',
@@ -263,6 +290,7 @@ export const ACHIEVEMENTS: readonly AchievementDef[] = [
   },
   {
     id: 'seer',
+    icon: 'person-mage',
     title: 'Ясновидящий',
     description: 'Угадайте 10 карт подряд в «Выше-Ниже».',
     tier: 'gold',

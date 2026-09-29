@@ -74,7 +74,7 @@ export function GamesSheet() {
             }}
             className="overflow-hidden rounded-2xl border border-white/10 text-left transition active:scale-[0.97]"
           >
-            <GameArt game={g} className="h-20" iconSize="size-6" />
+            <GameArt game={g} className="h-24" iconSize={44} />
             <div className="bg-ink-900/80 px-3 py-2">
               <p className="truncate text-sm font-bold text-white">{g.name}</p>
             </div>

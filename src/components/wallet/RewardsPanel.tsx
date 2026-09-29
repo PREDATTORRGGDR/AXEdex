@@ -1,4 +1,4 @@
-import { CalendarCheck, Check, Droplets, Gift, LifeBuoy, Lock } from 'lucide-react'
+import { Check, Droplets, Gift, LifeBuoy, Lock } from 'lucide-react'
 import { motion } from 'motion/react'
 import { sfx, haptic } from '../../audio/sfx'
 import { useNow } from '../../hooks/useNow'
@@ -19,13 +19,14 @@ import {
 import { celebrate } from '../../store/fx'
 import { toast } from '../../store/toasts'
 import { Button } from '../ui/Button'
+import { Icon } from '../ui/Icon'
 
 function onClaimed(amount: number, title: string) {
   if (amount <= 0) return
   sfx.play('cashout')
   haptic([20, 30, 20])
   celebrate('coins', 1.2)
-  toast({ kind: 'bonus', title, message: 'Фишки зачислены на баланс.', amount })
+  toast({ kind: 'bonus', title, message: 'Фишки зачислены на баланс.', amount, icon: 'money-bag' })
 }
 
 function CooldownBar({ remaining, total, className }: { remaining: number; total: number; className?: string }) {
@@ -54,8 +55,8 @@ export function DailyBonusCard({ compact }: { compact?: boolean }) {
     <div className="relative overflow-hidden rounded-2xl border border-gold-400/25 bg-[linear-gradient(135deg,rgba(245,197,66,0.14),rgba(7,11,24,0.6)_60%)] p-4">
       <div className="absolute -top-10 -right-10 size-36 rounded-full bg-gold-400/20 blur-3xl" />
       <div className="relative flex items-start gap-3">
-        <div className="grid size-11 shrink-0 place-items-center rounded-xl bg-gold-400/15 text-gold-300">
-          <CalendarCheck className="size-6" />
+        <div className="grid size-12 shrink-0 place-items-center rounded-xl bg-gold-400/15">
+          <Icon name="spiral-calendar" size={32} />
         </div>
         <div className="min-w-0 flex-1">
           <h3 className="font-display text-sm font-bold text-white">Ежедневный бонус</h3>
@@ -134,8 +135,8 @@ export function FaucetCard() {
     <div className="relative overflow-hidden rounded-2xl border border-emerald-400/20 bg-[linear-gradient(135deg,rgba(52,245,160,0.12),rgba(7,11,24,0.6)_60%)] p-4">
       <div className="absolute -top-10 -right-10 size-36 rounded-full bg-emerald-400/15 blur-3xl" />
       <div className="relative flex items-center gap-3">
-        <div className="grid size-11 shrink-0 place-items-center rounded-xl bg-emerald-400/15 text-emerald-300">
-          <Droplets className="size-6" />
+        <div className="grid size-12 shrink-0 place-items-center rounded-xl bg-emerald-400/15">
+          <Icon name="droplet" size={32} />
         </div>
         <div className="min-w-0 flex-1">
           <h3 className="font-display text-sm font-bold text-white">Ежечасный кран</h3>
@@ -182,8 +183,8 @@ export function RefillCard() {
       )}
     >
       <div className="flex items-center gap-3">
-        <div className={cn('grid size-11 shrink-0 place-items-center rounded-xl', available ? 'bg-cyan-400/15 text-cyan-300' : 'bg-white/5 text-slate-500')}>
-          <LifeBuoy className="size-6" />
+        <div className={cn('grid size-12 shrink-0 place-items-center rounded-xl', available ? 'bg-cyan-400/15' : 'bg-white/5')}>
+          <Icon name="money-bag" size={32} className={cn(!available && 'opacity-50 grayscale')} />
         </div>
         <div className="min-w-0 flex-1">
           <h3 className="font-display text-sm font-bold text-white">Бесплатное пополнение</h3>

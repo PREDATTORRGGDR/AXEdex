@@ -1,7 +1,6 @@
 import { AnimatePresence, MotionConfig, motion } from 'motion/react'
 import { useEffect } from 'react'
 import { Background } from './components/layout/Background'
-import { Footer } from './components/layout/Footer'
 import { GamesSheet, MobileNav } from './components/layout/MobileNav'
 import { Sidebar } from './components/layout/Sidebar'
 import { TopBar } from './components/layout/TopBar'
@@ -54,7 +53,7 @@ export default function App() {
         <Sidebar />
         <div className="flex min-w-0 flex-1 flex-col">
           <TopBar />
-          <main className="flex-1 px-4 pt-2 pb-6 sm:px-6 lg:px-8">
+          <main className="flex-1 px-4 pt-2 pb-28 sm:px-6 lg:px-8 lg:pb-10">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={key}
@@ -67,7 +66,6 @@ export default function App() {
               </motion.div>
             </AnimatePresence>
           </main>
-          <Footer />
         </div>
       </div>
       <MobileNav />

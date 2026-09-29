@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { cn } from '../../lib/cn'
+import { Icon } from '../ui/Icon'
 import type { ArtMotif, GameMeta } from '../../games/meta'
 
 /** Decorative vector motif per game family, drawn in white at low opacity. */
@@ -96,12 +97,13 @@ function Motif({ motif }: { motif: ArtMotif }): ReactNode {
 interface GameArtProps {
   game: GameMeta
   className?: string
-  iconSize?: string
+  /** Pixel size of the illustration. */
+  iconSize?: number
+  iconPosition?: 'left' | 'right'
 }
 
 /** Procedural cover art: gradient, motif, glow and the game's icon. */
-export function GameArt({ game, className, iconSize = 'size-12' }: GameArtProps) {
-  const Icon = game.icon
+export function GameArt({ game, className, iconSize = 64, iconPosition = 'left' }: GameArtProps) {
   const [from, to] = game.colors
   return (
     <div
@@ -113,8 +115,13 @@ export function GameArt({ game, className, iconSize = 'size-12' }: GameArtProps)
       </svg>
       <div className="absolute inset-0 bg-[radial-gradient(60%_80%_at_20%_100%,rgba(255,255,255,0.18),transparent_60%)]" />
       <div className="absolute inset-0 bg-gradient-to-t from-ink-950/70 via-transparent to-transparent" />
-      <div className="absolute bottom-3 left-3 grid place-items-center rounded-2xl bg-white/10 p-2.5 ring-1 ring-white/20 backdrop-blur-md">
-        <Icon className={cn(iconSize, 'text-white drop-shadow-[0_0_12px_rgba(255,255,255,0.7)]')} strokeWidth={1.6} />
+      <div className={cn('absolute', iconPosition === 'left' ? 'bottom-3 left-3' : 'top-1/2 right-5 -translate-y-1/2')}>
+        <div className="absolute inset-0 scale-110 rounded-full bg-white/25 blur-xl" />
+        <Icon
+          name={game.emoji}
+          size={iconSize}
+          className="relative drop-shadow-[0_10px_14px_rgba(0,0,0,0.55)] transition-transform duration-500 group-hover:-translate-y-1 group-hover:-rotate-6 group-hover:scale-110"
+        />
       </div>
     </div>
   )

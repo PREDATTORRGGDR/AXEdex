@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+<defs>
+<linearGradient id="pbg" x1="3" y1="2" x2="29" y2="31" gradientUnits="userSpaceOnUse"><stop stop-color="#6D28D9"/><stop offset="1" stop-color="#2E1065"/></linearGradient>
+<radialGradient id="pp" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(-.4 -.4) scale(1.6)" ><stop stop-color="#fff"/><stop offset="1" stop-color="#A5B4FC"/></radialGradient>
+<radialGradient id="pb" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(19.6 6.4) scale(3)"><stop stop-color="#fff"/><stop offset=".45" stop-color="#F9A8D4"/><stop offset="1" stop-color="#DB2777"/></radialGradient>
+</defs>
+<rect x="2" y="2.6" width="28" height="28" rx="7" fill="#000" opacity=".25"/>
+<rect x="2" y="2" width="28" height="28" rx="7" fill="url(#pbg)"/>
+<rect x="2.6" y="2.6" width="26.8" height="26.8" rx="6.4" fill="none" stroke="#fff" stroke-opacity=".18"/>
+<circle cx="13.4" cy="8.5" r="1.35" fill="#E0E7FF"/><circle cx="18.6" cy="8.5" r="1.35" fill="#E0E7FF"/><circle cx="10.8" cy="13.1" r="1.35" fill="#E0E7FF"/><circle cx="16" cy="13.1" r="1.35" fill="#E0E7FF"/><circle cx="21.2" cy="13.1" r="1.35" fill="#E0E7FF"/><circle cx="8.2" cy="17.7" r="1.35" fill="#E0E7FF"/><circle cx="13.4" cy="17.7" r="1.35" fill="#E0E7FF"/><circle cx="18.6" cy="17.7" r="1.35" fill="#E0E7FF"/><circle cx="23.8" cy="17.7" r="1.35" fill="#E0E7FF"/><circle cx="5.6" cy="22.3" r="1.35" fill="#E0E7FF"/><circle cx="10.8" cy="22.3" r="1.35" fill="#E0E7FF"/><circle cx="16" cy="22.3" r="1.35" fill="#E0E7FF"/><circle cx="21.2" cy="22.3" r="1.35" fill="#E0E7FF"/><circle cx="26.4" cy="22.3" r="1.35" fill="#E0E7FF"/>
+<rect x="2.5" y="26.4" width="4" height="3.6" rx="1" fill="#F43F5E"/><rect x="7.1" y="26.4" width="4" height="3.6" rx="1" fill="#FB923C"/><rect x="11.7" y="26.4" width="4" height="3.6" rx="1" fill="#FACC15"/><rect x="16.3" y="26.4" width="4" height="3.6" rx="1" fill="#FACC15"/><rect x="20.9" y="26.4" width="4" height="3.6" rx="1" fill="#FB923C"/><rect x="25.5" y="26.4" width="4" height="3.6" rx="1" fill="#F43F5E"/>
+<path d="M16 4.4c1.8 0 3 2 4.2 3.2" stroke="#F9A8D4" stroke-opacity=".6" stroke-width=".8" stroke-linecap="round" fill="none" stroke-dasharray="1 1.2"/>
+<circle cx="20.4" cy="7.4" r="2.3" fill="url(#pb)"/>
+</svg>

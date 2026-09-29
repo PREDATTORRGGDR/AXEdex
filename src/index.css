@@ -45,6 +45,7 @@
   --animate-float-slow: float-slow 18s ease-in-out infinite;
   --animate-pulse-glow: pulse-glow 1.6s ease-in-out infinite;
   --animate-marquee: marquee 60s linear infinite;
+  --animate-wiggle: wiggle 1.8s ease-in-out infinite;
   --animate-spin-slow: spin 12s linear infinite;
 
   @keyframes shimmer {
@@ -70,6 +71,22 @@
     }
     to {
       transform: translate3d(-50%, 0, 0);
+    }
+  }
+  @keyframes wiggle {
+    0%,
+    60%,
+    100% {
+      transform: rotate(0deg) scale(1);
+    }
+    70% {
+      transform: rotate(-12deg) scale(1.1);
+    }
+    80% {
+      transform: rotate(10deg) scale(1.1);
+    }
+    90% {
+      transform: rotate(-6deg) scale(1.05);
     }
   }
   @keyframes pulse-glow {

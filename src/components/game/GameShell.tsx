@@ -9,6 +9,7 @@ import { cn } from '../../lib/cn'
 import { formatChips, formatDecimal, formatMultiplier, formatPercent } from '../../lib/format'
 import { navigate, paths } from '../../router/router'
 import { hasDecided, useCasino, winRate } from '../../store/casino'
+import { Icon } from '../ui/Icon'
 import { Modal } from '../ui/Modal'
 import { GameErrorBoundary } from './GameErrorBoundary'
 
@@ -31,7 +32,6 @@ export function GameShell({ id }: { id: GameId }) {
   const favorite = useCasino((s) => s.favorites.includes(id))
   const toggleFavorite = useCasino((s) => s.toggleFavorite)
   const [rulesOpen, setRulesOpen] = useState(false)
-  const Icon = game.icon
 
   return (
     <div className="mx-auto w-full max-w-7xl">
@@ -48,10 +48,10 @@ export function GameShell({ id }: { id: GameId }) {
           <ArrowLeft className="size-5" />
         </button>
         <div
-          className="grid size-11 place-items-center rounded-2xl ring-1 ring-white/15"
+          className="grid size-12 place-items-center rounded-2xl ring-1 ring-white/15"
           style={{ background: `linear-gradient(135deg, ${game.colors[0]}, ${game.colors[1]})` }}
         >
-          <Icon className="size-6 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]" strokeWidth={1.8} />
+          <Icon name={game.emoji} size={34} className="drop-shadow-[0_4px_6px_rgba(0,0,0,0.5)]" />
         </div>
         <div className="min-w-0 flex-1">
           <h1 className="truncate font-display text-lg font-bold text-white sm:text-2xl">{game.name}</h1>

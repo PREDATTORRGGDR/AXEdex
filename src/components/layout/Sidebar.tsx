@@ -1,4 +1,4 @@
-import { Gift, Heart, House, UserRound } from 'lucide-react'
+import { Heart } from 'lucide-react'
 import { motion } from 'motion/react'
 import { sfx } from '../../audio/sfx'
 import { GAME_LIST } from '../../games/meta'
@@ -7,21 +7,21 @@ import { navigate, paths, useRoute } from '../../router/router'
 import { useCasino } from '../../store/casino'
 import { useUi } from '../../store/ui'
 import { useHasClaimable } from '../../hooks/useHasClaimable'
+import { Icon } from '../ui/Icon'
+import type { IconName } from '../ui/iconNames'
 import { Logo } from './Logo'
 
 function NavItem({
   active,
   onClick,
-  icon: Icon,
+  icon,
   label,
-  accent,
   trailing,
 }: {
   active?: boolean
   onClick: () => void
-  icon: React.ComponentType<{ className?: string; strokeWidth?: number; style?: React.CSSProperties }>
+  icon: IconName
   label: string
-  accent?: string
   trailing?: React.ReactNode
 }) {
   return (
@@ -44,11 +44,7 @@ function NavItem({
         />
       )}
       {active && <span className="absolute top-2 bottom-2 left-0 w-0.5 rounded-full bg-gold-300 shadow-glow-gold" />}
-      <Icon
-        className="relative size-[18px] shrink-0 transition-transform group-hover:scale-110"
-        strokeWidth={2}
-        style={accent ? { color: active ? accent : undefined } : undefined}
-      />
+      <Icon name={icon} size={22} className="relative transition-transform duration-300 group-hover:scale-115 group-hover:-rotate-6" />
       <span className="relative truncate">{label}</span>
       {trailing && <span className="relative ml-auto">{trailing}</span>}
     </button>
@@ -72,10 +68,10 @@ export function Sidebar() {
       </div>
 
       <nav className="flex flex-col gap-1 px-3" aria-label="Основное меню">
-        <NavItem icon={House} label="Лобби" active={route.name === 'lobby'} onClick={() => navigate(paths.lobby)} />
-        <NavItem icon={UserRound} label="Профиль" active={route.name === 'profile'} onClick={() => navigate(paths.profile)} />
+        <NavItem icon="house" label="Лобби" active={route.name === 'lobby'} onClick={() => navigate(paths.lobby)} />
+        <NavItem icon="crown" label="Профиль" active={route.name === 'profile'} onClick={() => navigate(paths.profile)} />
         <NavItem
-          icon={Gift}
+          icon="wrapped-gift"
           label="Бесплатные фишки"
           onClick={() => setRewardsOpen(true)}
           trailing={
@@ -95,9 +91,8 @@ export function Sidebar() {
           {sorted.map((g) => (
             <NavItem
               key={g.id}
-              icon={g.icon}
+              icon={g.emoji}
               label={g.name}
-              accent={g.colors[0]}
               active={route.name === 'game' && route.id === g.id}
               onClick={() => navigate(paths.game(g.id))}
               trailing={favorites.includes(g.id) && <Heart className="size-3.5 fill-rose-400 text-rose-400" />}
@@ -106,11 +101,6 @@ export function Sidebar() {
         </div>
       </nav>
 
-      <div className="border-t border-white/5 p-4">
-        <p className="text-[10px] leading-relaxed text-slate-500">
-          Только виртуальные фишки. Без реальных денег, депозитов и выводов.
-        </p>
-      </div>
     </aside>
   )
 }
