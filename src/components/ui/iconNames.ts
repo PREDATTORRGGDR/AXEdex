@@ -8,6 +8,8 @@ export const ICON_MAP = {
   'blackjack-cards': ['spades', 'emerald'],
   'slot-machine': ['slot-machine', 'pink'],
   rocket: ['rocket-flight', 'cyan'],
+  'jet-fighter': ['jet-fighter', 'sky'],
+  'plane-landing': ['airplane-arrival', 'emerald'],
   plinko: ['ball-pyramid', 'violet'],
   bomb: ['unlit-bomb', 'orange'],
   'game-die': ['rolling-dices', 'rose'],

@@ -22,6 +22,7 @@ export type RoundTag =
   | 'tower-top'
   | 'coin-5'
   | 'scratch-top'
+  | 'carrier-10'
 
 /** The subset of casino state achievements are evaluated against. */
 export interface AchievementSnapshot {
@@ -324,6 +325,14 @@ const DEFS: readonly Omit<AchievementDef, 'reward'>[] = [
     description: 'Знайдіть три корони на скретч-картці.',
     tier: 'platinum',
     check: tagged('scratch-top'),
+  },
+  {
+    id: 'carrier-ace',
+    icon: 'plane-landing',
+    title: 'Палубний ас',
+    description: 'Посадіть літак на крейсер із виграшем ×10 або вище.',
+    tier: 'gold',
+    check: tagged('carrier-10'),
   },
 ]
 

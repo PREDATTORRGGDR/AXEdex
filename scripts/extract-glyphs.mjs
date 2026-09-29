@@ -19,6 +19,7 @@ export const GLYPHS = [
   'checkered-flag', 'world', 'run', 'comet-spark', 'cut-diamond', 'top-hat', 'sands-of-time', 'muscle-up',
   'laurels-trophy', 'bullseye', 'moon', 'diamond-trophy', 'crystal-ball', 'wizard-face', 'stone-tower', 'death-skull',
   'eagle-emblem', 'cherry', 'clover', 'ringing-bell', 'sparkles', 'star-medal', 'lemon', 'grapes', 'flat-star',
+  'jet-fighter', 'airplane-arrival',
 ]
 
 const root = process.env.ICON_SOURCE ?? 'node_modules'

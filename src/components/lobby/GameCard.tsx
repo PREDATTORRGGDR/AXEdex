@@ -93,7 +93,7 @@ export const GameCard = memo(function GameCard({ game, index = 0 }: { game: Game
         </div>
 
         <div className="absolute inset-x-0 bottom-0 p-2.5 sm:p-3">
-          <h3 className="truncate font-display text-[13.5px] leading-tight font-bold text-white sm:text-[15px]">{game.name}</h3>
+          <h3 className="line-clamp-2 font-display text-[13.5px] leading-tight font-bold text-white sm:text-[15px]">{game.name}</h3>
           <p className="mt-0.5 flex items-center gap-1.5 text-[10.5px] text-slate-400 sm:text-[11px]">
             <span className="num text-neon-emerald/90">{formatDecimal(game.rtp, 1)}%</span>
             <span className="size-0.5 rounded-full bg-slate-500" />

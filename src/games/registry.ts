@@ -21,4 +21,5 @@ export const GAME_COMPONENTS: Record<GameId, LazyExoticComponent<ComponentType>>
   tower: lazy(() => import('./tower/TowerGame')),
   coinflip: lazy(() => import('./coinflip/CoinFlipGame')),
   scratch: lazy(() => import('./scratch/ScratchGame')),
+  carrier: lazy(() => import('./carrier/CarrierGame')),
 }
